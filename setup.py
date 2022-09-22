@@ -19,7 +19,7 @@ def load_readme() -> str:
 def load_about() -> Dict[str, str]:
     about: Dict[str, str] = {}
     with io.open(
-        os.path.join(HERE, "tutor", "__about__.py"), "rt", encoding="utf-8"
+        os.path.join(HERE, "lek", "__about__.py"), "rt", encoding="utf-8"
     ) as f:
         exec(f.read(), about)  # pylint: disable=exec-used
     return about
@@ -39,7 +39,7 @@ def is_requirement(line: str) -> bool:
 ABOUT = load_about()
 
 setup(
-    name="tutor",
+    name="lek",
     version=ABOUT["__package_version__"],
     url="https://docs.tutor.overhang.io/",
     project_urls={
