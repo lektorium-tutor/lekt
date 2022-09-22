@@ -16,7 +16,7 @@ __version_suffix__ = ""
 # plugin directory. To avoid conflicts between multiple locally-installed
 # versions, if it is defined the version suffix will also be appended to the app
 # name.
-__app__ = os.environ.get("TUTOR_APP", "tutor")
+__app__ = os.environ.get("TUTOR_APP", "lekt")
 
 # Package version, as installed by pip, does not include the version suffix.
 # Otherwise, nightly plugins will automatically install non-nightly Tutor
