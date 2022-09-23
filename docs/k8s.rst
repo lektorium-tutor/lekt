@@ -32,7 +32,7 @@ Load Balancer and SSL/TLS certificates
 
 By default, Lekt deploys a `LoadBalancer <https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer>`__ service that exposes the Caddy deployment to the outside world. As in the local installation, this service is responsible for transparently generating SSL/TLS certificates at runtime. You will need to point your DNS records to this LoadBalancer object before the platform can work correctly. Thus, you should first start the Caddy load balancer, with::
 
-    tutor k8s start caddy
+    lekt k8s start caddy
 
 Get the external IP of this service::
 
@@ -40,7 +40,7 @@ Get the external IP of this service::
 
 Use this external IP to configure your DNS records. Once the DNS records are configured, you should verify that the Caddy container has properly generated the SSL/TLS certificates by checking the container logs::
 
-    tutor k8s logs -f caddy
+    lekt k8s logs -f caddy
 
 If for some reason, you would like to deploy your own load balancer, you should set ``ENABLE_WEB_PROXY=false`` just like in the :ref:`local installation <web_proxy>`. Then, point your load balancer at the "caddy" service, which will be a `ClusterIP <https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types>`__.
 
@@ -51,7 +51,7 @@ Like many web applications, Open edX needs to persist data. In particular, it ne
 
 Luckily, there is another solution: at `edx.org <edx.org>`_, uploaded files are persisted on AWS S3: Open edX is compatible out-of-the-box with the S3 API for storing user-generated files. The problem with S3 is that it introduces a dependency on AWS. To solve this problem, Lekt comes with a plugin that emulates the S3 API but stores files on-premises. This is achieved thanks to `MinIO <https://www.minio.io/>`__. If you want to deploy a production platform to Kubernetes, you will most certainly need to enable the ``minio`` plugin::
 
-    tutor plugins enable minio
+    lekt plugins enable minio
 
 The "minio.LMS_HOST" domain name will have to point to your Kubernetes cluster. This will not be necessary if you have a CNAME from "\*.LMS_HOST" to "LMS_HOST", of course.
 
@@ -66,16 +66,16 @@ On Minikube, the dashboard is already installed. To access the dashboard, run::
 
 Lastly, Lekt itself provides a rudimentary listing of your cluster's nodes, workloads, and services::
 
-    tutor k8s status
+    lekt k8s status
 
 Technical details
 -----------------
 
 Under the hood, Lekt wraps ``kubectl`` commands to interact with the cluster. The various commands called by Lekt are printed in the console so that you can reproduce and modify them yourself.
 
-Basically, the whole platform is described in manifest files stored in ``$(tutor config printroot)/env/k8s``. There is also a ``kustomization.yml`` file at the project root for `declarative application management <https://kubectl.docs.kubernetes.io/guides/config_management/introduction/#declarative-application-management>`__. This allows us to start and update resources with commands similar to ``kubectl apply -k $(tutor config printroot) --selector=...`` (see the ``kubectl apply`` `official documentation <https://kubectl.docs.kubernetes.io/references/kubectl/apply/>`__).
+Basically, the whole platform is described in manifest files stored in ``$(lekt config printroot)/env/k8s``. There is also a ``kustomization.yml`` file at the project root for `declarative application management <https://kubectl.docs.kubernetes.io/guides/config_management/introduction/#declarative-application-management>`__. This allows us to start and update resources with commands similar to ``kubectl apply -k $(lekt config printroot) --selector=...`` (see the ``kubectl apply`` `official documentation <https://kubectl.docs.kubernetes.io/references/kubectl/apply/>`__).
 
-The other benefit of ``kubectl apply`` is that it allows you to customise the Kubernetes resources as much as you want. For instance, the default Lekt configuration can be extended by a ``kustomization.yml`` file stored in ``$(tutor config printroot)/env-custom/`` and which would start with::
+The other benefit of ``kubectl apply`` is that it allows you to customise the Kubernetes resources as much as you want. For instance, the default Lekt configuration can be extended by a ``kustomization.yml`` file stored in ``$(lekt config printroot)/env-custom/`` and which would start with::
 
     apiVersion: kustomize.config.k8s.io/v1beta1
     kind: Kustomization
@@ -90,26 +90,26 @@ Quickstart
 
 Launch the platform on Kubernetes in one command::
 
-    tutor k8s quickstart
+    lekt k8s quickstart
 
 All Kubernetes resources are associated with the "openedx" namespace. If you don't see anything in the Kubernetes dashboard, you are probably looking at the wrong namespace... 😉
 
 .. image:: img/k8s-dashboard.png
     :alt: Kubernetes dashboard ("openedx" namespace)
 
-The same ``tutor k8s quickstart`` command can be used to upgrade the cluster to the latest version.
+The same ``lekt k8s quickstart`` command can be used to upgrade the cluster to the latest version.
 
 Other commands
 --------------
 
 As with the :ref:`local installation <local>`, there are multiple commands to run operations on your Open edX platform. To view those commands, run::
 
-    tutor k8s -h
+    lekt k8s -h
 
-In particular, the ``tutor k8s start`` command restarts and reconfigures all services by running ``kubectl apply``. That means that you can delete containers, deployments, or just any other kind of resources, and Lekt will re-create them automatically. You should just beware of not deleting any persistent data stored in persistent volume claims. For instance, to restart from a "blank slate", run::
+In particular, the ``lekt k8s start`` command restarts and reconfigures all services by running ``kubectl apply``. That means that you can delete containers, deployments, or just any other kind of resources, and Lekt will re-create them automatically. You should just beware of not deleting any persistent data stored in persistent volume claims. For instance, to restart from a "blank slate", run::
 
-    tutor k8s stop
-    tutor k8s start
+    lekt k8s stop
+    lekt k8s start
 
 All non-persisting data will be deleted, and then re-created.
 
@@ -119,27 +119,27 @@ Common tasks
 Executing commands inside service pods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Lekt and plugin documentation usually often instructions to execute some ``tutor local run ...`` commands. These commands are only valid when running Lekt locally with docker-compose, and will not work on Kubernetes. Instead, you should run ``tutor k8s exec ...`` commands. Arguments and options should be identical.
+The Lekt and plugin documentation usually often instructions to execute some ``lekt local run ...`` commands. These commands are only valid when running Lekt locally with docker-compose, and will not work on Kubernetes. Instead, you should run ``lekt k8s exec ...`` commands. Arguments and options should be identical.
 
 For instance, to run a Python shell in the lms container, run::
 
-    tutor k8s exec lms ./manage.py lms shell
+    lekt k8s exec lms ./manage.py lms shell
 
 Running a custom "openedx" Docker image
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Some Lekt plugins and customization procedures require that the "openedx" image be rebuilt (see :ref:`customization <custom_openedx_docker_image>`). This is for instance the case if you want to :ref:`install a custom XBlock <custom_extra_xblocks>` or :ref:`run an edx-platform fork <edx_platform_fork>`. When running Open edX on Kubernetes, your custom images will have to be downloaded from a custom registry. You should define a custom image name, build the image and then push them to your custom registry. For instance, for the "openedx" image::
 
-    tutor config save --set "DOCKER_IMAGE_OPENEDX=docker.io/myusername/openedx:{{ LEKT_VERSION }}"
-    tutor images build openedx
-    tutor images push openedx
+    lekt config save --set "DOCKER_IMAGE_OPENEDX=docker.io/myusername/openedx:{{ LEKT_VERSION }}"
+    lekt images build openedx
+    lekt images push openedx
 
 Updating docker images
 ~~~~~~~~~~~~~~~~~~~~~~
 
 Kubernetes does not provide a single command for updating docker images out of the box. A `commonly used trick <https://github.com/kubernetes/kubernetes/issues/33664>`__ is to modify an innocuous label on all resources::
 
-    kubectl patch -k "$(tutor config printroot)/env" --patch "{\"spec\": {\"template\": {\"metadata\": {\"labels\": {\"date\": \"`date +'%Y%m%d-%H%M%S'`\"}}}}}"
+    kubectl patch -k "$(lekt config printroot)/env" --patch "{\"spec\": {\"template\": {\"metadata\": {\"labels\": {\"date\": \"`date +'%Y%m%d-%H%M%S'`\"}}}}}"
 
 
 .. _customizing_kubernetes_sources:

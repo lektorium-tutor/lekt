@@ -15,17 +15,17 @@ This section does not cover :ref:`plugin development <plugins>`. For simple chan
 Configuration
 -------------
 
-With Lekt, all Open edX deployment parameters are stored in a single ``config.yml`` file. This is the file that is generated when you run ``tutor local quickstart`` or ``tutor config save``. To view the content of this file, run::
+With Lekt, all Open edX deployment parameters are stored in a single ``config.yml`` file. This is the file that is generated when you run ``lekt local quickstart`` or ``lekt config save``. To view the content of this file, run::
 
-    cat "$(tutor config printroot)/config.yml"
+    cat "$(lekt config printroot)/config.yml"
 
 By default, this file contains only the required configuration parameters for running the platform. Optional configuration parameters may also be specified to modify the default behaviour. To do so, you can edit the ``config.yml`` file manually::
 
-    vim "$(tutor config printroot)/config.yml"
+    vim "$(lekt config printroot)/config.yml"
 
 Alternatively, you can set each parameter from the command line::
 
-    tutor config save --set PARAM1=VALUE1 --set PARAM2=VALUE2
+    lekt config save --set PARAM1=VALUE1 --set PARAM2=VALUE2
 
 Or from the system environment::
 
@@ -33,7 +33,7 @@ Or from the system environment::
 
 Once the base configuration is created or updated, the environment is automatically re-generated. The environment is the set of all files required to manage an Open edX platform: Dockerfile, ``lms.env.yml``, settings files, etc. You can view the environment files in the ``env`` folder::
 
-    ls "$(tutor config printroot)/env"
+    ls "$(lekt config printroot)/env"
 
 With an up-to-date environment, Lekt is ready to launch an Open edX platform and perform usual operations. Below, we document some of the configuration parameters.
 
@@ -316,15 +316,15 @@ Custom Open edX docker image
 
 There are different ways you can customise your Open edX platform. For instance, optional features can be activated during configuration. But if you want to add unique features to your Open edX platform, you are going to have to modify and re-build the ``openedx`` docker image. This is the image that contains the ``edx-platform`` repository: it is in charge of running the web application for the Open edX "core". Both the LMS and the CMS run from the ``openedx`` docker image.
 
-On a vanilla platform deployed by Lekt, the image that is run is downloaded from the `overhangio/openedx repository on Docker Hub <https://hub.docker.com/r/overhangio/openedx/>`_. This is also the image that is downloaded whenever we run ``tutor images pull openedx``. But you can decide to build the image locally instead of downloading it. To do so, build and tag the ``openedx`` image::
+On a vanilla platform deployed by Lekt, the image that is run is downloaded from the `overhangio/openedx repository on Docker Hub <https://hub.docker.com/r/overhangio/openedx/>`_. This is also the image that is downloaded whenever we run ``lekt images pull openedx``. But you can decide to build the image locally instead of downloading it. To do so, build and tag the ``openedx`` image::
 
-    tutor images build openedx
+    lekt images build openedx
 
 The following sections describe how to modify various aspects of the docker image. Every time, you will have to re-build your own image with this command. Re-building should take ~20 minutes on a server with good bandwidth. After building a custom image, you should stop the old running containers::
 
-    tutor local stop
+    lekt local stop
 
-The custom image will be used the next time you run ``tutor local quickstart`` or ``tutor local start``. Do not attempt to run ``tutor local restart``! Restarting will not pick up the new image and will continue to use the old image.
+The custom image will be used the next time you run ``lekt local quickstart`` or ``lekt local start``. Do not attempt to run ``lekt local restart``! Restarting will not pick up the new image and will continue to use the old image.
 
 openedx Docker Image build arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -337,7 +337,7 @@ When building the "openedx" Docker image, it is possible to specify a few `argum
 
 These arguments can be specified from the command line, `very much like Docker <https://docs.docker.com/engine/reference/commandline/build/#set-build-time-variables---build-arg>`__. For instance::
 
-    tutor images build -a EDX_PLATFORM_VERSION=customsha1 openedx
+    lekt images build -a EDX_PLATFORM_VERSION=customsha1 openedx
 
 Adding custom themes
 ~~~~~~~~~~~~~~~~~~~~
@@ -361,12 +361,12 @@ Would you like to include custom xblocks, or extra requirements to your Open edX
 
 - or add the dependency to ``private.txt``::
 
-    echo "git+https://github.com/open-craft/xblock-poll.git" >> "$(tutor config printroot)/env/build/openedx/requirements/private.txt"
+    echo "git+https://github.com/open-craft/xblock-poll.git" >> "$(lekt config printroot)/env/build/openedx/requirements/private.txt"
 
 
 Then, the ``openedx`` docker image must be rebuilt::
 
-    tutor images build openedx
+    lekt images build openedx
 
 .. _extra_private_xblocks:
 
@@ -377,11 +377,11 @@ When installing extra xblock or requirements from private repositories, ``privat
 
 To install xblocks from a private repository that requires authentication, you must first clone the repository inside the ``openedx/requirements`` folder on the host::
 
-    git clone git@github.com:me/myprivaterepo.git "$(tutor config printroot)/env/build/openedx/requirements/myprivaterepo"
+    git clone git@github.com:me/myprivaterepo.git "$(lekt config printroot)/env/build/openedx/requirements/myprivaterepo"
 
 Then, declare your extra requirements with the ``-e`` flag in ``openedx/requirements/private.txt``::
 
-    echo "-e ./myprivaterepo" >> "$(tutor config printroot)/env/build/openedx/requirements/private.txt"
+    echo "-e ./myprivaterepo" >> "$(lekt config printroot)/env/build/openedx/requirements/private.txt"
 
 .. _edx_platform_fork:
 
@@ -390,13 +390,13 @@ Running a fork of ``edx-platform``
 
 You may want to run your own flavor of edx-platform instead of the `official version <https://github.com/openedx/edx-platform/>`_. To do so, you will have to re-build the openedx image with the proper environment variables pointing to your repository and version::
 
-    tutor images build openedx \
+    lekt images build openedx \
         --build-arg EDX_PLATFORM_REPOSITORY=https://mygitrepo/edx-platform.git \
         --build-arg EDX_PLATFORM_VERSION=my-tag-or-branch
 
 Note that your edx-platform version must be a fork of the latest release **tag** (and not branch) in order to work. This latest tag can be obtained by running::
 
-    tutor config printvalue OPENEDX_COMMON_VERSION
+    lekt config printvalue OPENEDX_COMMON_VERSION
 
 If you don't create your fork from this tag, you *will* have important compatibility issues with other services. In particular:
 
@@ -413,7 +413,7 @@ If you are not running Open edX in English (``LANGUAGE_CODE`` default: ``"en"``)
 
 Lekt offers a relatively simple mechanism to add custom translations to the openedx Docker image. You should create a folder that corresponds to your language code in the "build/openedx/locale" folder of the Lekt environment. This folder should contain a "LC_MESSAGES" folder. For instance::
 
-    mkdir -p "$(tutor config printroot)/env/build/openedx/locale/fr/LC_MESSAGES"
+    mkdir -p "$(lekt config printroot)/env/build/openedx/locale/fr/LC_MESSAGES"
 
 The language code should be similar to those used in edx-platform or openedx-i18n (see links above).
 
@@ -436,7 +436,7 @@ If you cannot find the string to translate in this file, then it means that you 
 
 To recap, here is an example. To translate a few strings in French, both from django.po and djangojs.po, we would have the following file hierarchy::
 
-    $(tutor config printroot)/env/build/openedx/locale/
+    $(lekt config printroot)/env/build/openedx/locale/
         fr/
             LC_MESSAGES/
                 django.po
@@ -464,7 +464,7 @@ And djangojs.po::
 
 Then you will have to re-build the openedx Docker image::
 
-    tutor images build openedx
+    lekt images build openedx
 
 Beware that this will take a long time! Unfortunately, it's difficult to accelerate this process, as translation files need to be compiled before collecting the assets. In development it's possible to accelerate the iteration loop -- but that exercise is left to the reader.
 
@@ -474,22 +474,22 @@ Running a different ``openedx`` Docker image
 
 By default, Lekt runs the `overhangio/openedx <https://hub.docker.com/r/overhangio/openedx/>`_ docker image from Docker Hub. If you have an account on `hub.docker.com <https://hub.docker.com>`_ or you have a private image registry, you can build your image and push it to your registry with::
 
-    tutor config save --set DOCKER_IMAGE_OPENEDX=docker.io/myusername/openedx:mytag
-    tutor images build openedx
-    tutor images push openedx
+    lekt config save --set DOCKER_IMAGE_OPENEDX=docker.io/myusername/openedx:mytag
+    lekt images build openedx
+    lekt images push openedx
 
 (See the relevant :ref:`configuration parameters <docker_images>`.)
 
-The customised Docker image tag value will then be used by Lekt to run the platform, for instance when running ``tutor local quickstart``.
+The customised Docker image tag value will then be used by Lekt to run the platform, for instance when running ``lekt local quickstart``.
 
 
 Passing custom docker build options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can set a limited set of Docker build options via ``tutor images build`` command. In some situations it might be necessary to tweak the docker build command, ex- setting up build caching using buildkit.
-In these situations, you can set ``--docker-arg`` flag in the ``tutor images build`` command. You can set any `supported options <https://docs.docker.com/engine/reference/commandline/build/#options>`_ in the docker build command, For example::
+You can set a limited set of Docker build options via ``lekt images build`` command. In some situations it might be necessary to tweak the docker build command, ex- setting up build caching using buildkit.
+In these situations, you can set ``--docker-arg`` flag in the ``lekt images build`` command. You can set any `supported options <https://docs.docker.com/engine/reference/commandline/build/#options>`_ in the docker build command, For example::
 
-    tutor images build openedx \
+    lekt images build openedx \
         --build-arg BUILDKIT_INLINE_CACHE=1 \
         --docker-arg="--cache-from" \
         --docker-arg="docker.io/myusername/openedx:mytag"

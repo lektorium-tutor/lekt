@@ -49,4 +49,4 @@ Verifying your environment
 
 Once you have configured your symbolic links as described, you should be able to run ``docker version`` and ``docker-compose --help`` and their output should agree, respectively, with ``podman version`` and ``podman-compose --help``.
 
-After that, you should be able to use ``tutor local``, ``tutor build``, and other commands as if you had installed the native Docker tools.
+After that, you should be able to use ``lekt local``, ``lekt build``, and other commands as if you had installed the native Docker tools.

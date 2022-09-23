@@ -18,11 +18,11 @@ To exit the ``telnet`` shell, type ``ctrl+]``, then ``ctrl+d``.
 
 Then, disable the SMTP server that comes with Lekt::
 
-    $ tutor config save --set RUN_SMTP=false
+    $ lekt config save --set RUN_SMTP=false
 
 Configure credentials to access your SMTP server::
 
-    $ tutor config save \
+    $ lekt config save \
       --set SMTP_HOST=smtp.gmail.com \
       --set SMTP_PORT=587 \
       --set SMTP_USE_SSL=false  \
@@ -34,9 +34,9 @@ Don't forget to replace your email address and password in the prompt above. If 
 
 Then, restart your platform::
 
-    $ tutor local quickstart
+    $ lekt local quickstart
 
 That's it! You can send a test email with the following command::
 
-    $ tutor local run --no-deps lms ./manage.py lms shell -c \
+    $ lekt local run --no-deps lms ./manage.py lms shell -c \
       "from django.core.mail import send_mail; send_mail('test subject', 'test message', 'YOURUSERNAME@gmail.com', ['YOURRECIPIENT@domain.com'])"

@@ -19,7 +19,7 @@ config
 The ``config`` attribute is used to modify existing and add new configuration parameters:
 
 * ``config["add"]`` are key/values that should be added to the user-specific ``config.yml`` configuration. Add there the passwords, secret keys, and other values that do not have a reasonable default value for all users.
-* ``config["defaults"]`` are default key/values for this plugin. These values can be accessed even though they are not added to the ``config.yml`` user file. Users can override them manually with ``tutor config save --set ...``.
+* ``config["defaults"]`` are default key/values for this plugin. These values can be accessed even though they are not added to the ``config.yml`` user file. Users can override them manually with ``lekt config save --set ...``.
 * ``config["set"]`` are existing key/values that should be modified. Be very careful what you add there! Different plugins may define conflicting values for some parameters.
 
  "add" and "defaults" key names will be automatically prefixed with the plugin name, in upper case.
@@ -41,7 +41,7 @@ Example::
 This configuration from the "myplugin" plugin will set the following values:
 
 - ``MYPLUGIN_SECRET_KEY``: an 8-character random string will be generated and stored in the user configuration.
-- ``MYPLUGIN_DOCKER_IMAGE``: this value will by default not be stored in ``config.yml``, but ``tutor config printvalue MYPLUGIN_DOCKER_IMAGE`` will print ``username/imagename:latest``.
+- ``MYPLUGIN_DOCKER_IMAGE``: this value will by default not be stored in ``config.yml``, but ``lekt config printvalue MYPLUGIN_DOCKER_IMAGE`` will print ``username/imagename:latest``.
 - ``MASTER_PASSWORD`` will be set to ``h4cked``. Needless to say, plugin developers should avoid doing this.
 
 .. _v0_plugin_patches:
@@ -58,7 +58,7 @@ Example::
     image: redis:latest"""
     }
 
-This will add a Redis instance to the services run with ``tutor local`` commands.
+This will add a Redis instance to the services run with ``lekt local`` commands.
 
 .. note::
     In Python plugins, remember that ``patches`` can be a callable function instead of a static dict value.
@@ -107,11 +107,11 @@ Example::
 
 With this hook, users will be able to build the ``myimage:latest`` docker image by running::
 
-    tutor images build myimage
+    lekt images build myimage
 
 or::
 
-    tutor images build all
+    lekt images build all
 
 This assumes that there is a ``Dockerfile`` file in the ``myplugin/build/myimage`` subfolder of the plugin templates directory.
 
@@ -128,13 +128,13 @@ Example::
 
 With this hook, users will be able to pull and push the ``myimage:latest`` docker image by running::
 
-    tutor images pull myimage
-    tutor images push myimage
+    lekt images pull myimage
+    lekt images push myimage
 
 or::
 
-    tutor images pull all
-    tutor images push all
+    lekt images pull all
+    lekt images push all
 
 .. _v0_plugin_templates:
 
@@ -150,7 +150,7 @@ Example::
 
 With the above declaration, you can store plugin-specific templates in the ``templates/myplugin`` folder next to the ``plugin.py`` file.
 
-In Lekt, templates are `Jinja2 <https://jinja.palletsprojects.com/en/2.11.x/>`__-formatted files that will be rendered in the Lekt environment (the ``$(tutor config printroot)/env`` folder) when running ``tutor config save``. The environment files are overwritten every time the environment is saved. Plugin developers can create templates that make use of the built-in `Jinja2 API <https://jinja.palletsprojects.com/en/2.11.x/api/>`__. In addition, a couple of additional filters are added by Lekt:
+In Lekt, templates are `Jinja2 <https://jinja.palletsprojects.com/en/2.11.x/>`__-formatted files that will be rendered in the Lekt environment (the ``$(lekt config printroot)/env`` folder) when running ``lekt config save``. The environment files are overwritten every time the environment is saved. Plugin developers can create templates that make use of the built-in `Jinja2 API <https://jinja.palletsprojects.com/en/2.11.x/api/>`__. In addition, a couple of additional filters are added by Lekt:
 
 * ``common_domain``: Return the longest common name between two domain names. Example: ``{{ "studio.demo.myopenedx.com"|common_domain("lms.demo.myopenedx.com") }}`` is equal to "demo.myopenedx.com".
 * ``encrypt``: Encrypt an arbitrary string. The encryption process is compatible with `htpasswd <https://httpd.apache.org/docs/2.4/programs/htpasswd.html>`__ verification.
@@ -187,7 +187,7 @@ You may also use the `click.pass_obj <https://click.palletsprojects.com/en/8.0.x
 Example::
 
     import click
-    from tutor import config as tutor_config
+    from lekt import config as tutor_config
 
     @click.command(help="I'm a plugin command")
     @click.pass_obj
@@ -199,7 +199,7 @@ Example::
 
 Any user who installs the ``myplugin`` plugin can then run::
 
-    $ tutor myplugin
+    $ lekt myplugin
     Hello from myplugin!
     My LMS host is demo.openedx.overhang.io
 
@@ -217,8 +217,8 @@ You can even define subcommands by creating `command groups <https://click.palle
 
 This would allow any user to see your sub-commands::
 
-    $ tutor myplugin
-    Usage: tutor myplugin [OPTIONS] COMMAND [ARGS]...
+    $ lekt myplugin
+    Usage: lekt myplugin [OPTIONS] COMMAND [ARGS]...
 
       I'm a plugin command group
 
@@ -227,7 +227,7 @@ This would allow any user to see your sub-commands::
 
 and then run them::
 
-    $ tutor myplugin dosomething
+    $ lekt myplugin dosomething
     This subcommand is awesome
 
 See the official `click documentation <https://click.palletsprojects.com/en/8.0.x/>`__ for more information.

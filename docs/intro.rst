@@ -83,23 +83,23 @@ Lekt is a piece of software that takes care of exactly three things:
 
 You can experiment with Lekt very quickly: start by `installing <install>`_ Lekt. Then run::
 
-    $ tutor config save --interactive
+    $ lekt config save --interactive
 
 Then, to view the result of the above command::
 
-    $ cd "$(tutor config printroot)"
+    $ cd "$(lekt config printroot)"
     $ ls
     config.yml  env
 
 The ``config.yml`` file contains your user-specific Open edX settings (item #1 above). The ``env/`` folder contains the rendered templates which will be used to run your Open edX platform (item #2). For instance, the ``env/local`` folder contains the ``docker-compose.yml`` file to run Open edX locally.
 
-The values from ``config.yml`` are used to generate the environment files in ``env/``. As a consequence, **every time the values from** ``config.yml`` **are modified, the environment must be regenerated** with ``tutor config save``..
+The values from ``config.yml`` are used to generate the environment files in ``env/``. As a consequence, **every time the values from** ``config.yml`` **are modified, the environment must be regenerated** with ``lekt config save``..
 
-Because the Lekt environment is generated entirely from the values in ``config.yml``, you can ``rm -rf`` the ``env/`` folder at any time and re-create it with ``tutor config save``. Another consequence is that **any manual change made to a file in** ``env/`` **will be overwritten by** ``tutor config save`` **commands**. Consider yourself warned!
+Because the Lekt environment is generated entirely from the values in ``config.yml``, you can ``rm -rf`` the ``env/`` folder at any time and re-create it with ``lekt config save``. Another consequence is that **any manual change made to a file in** ``env/`` **will be overwritten by** ``lekt config save`` **commands**. Consider yourself warned!
 
 You can now take advantage of the Lekt-powered CLI (item #3) to bootstrap your Open edX platform::
 
-    tutor local quickstart
+    lekt local quickstart
 
 Under the hood, Lekt simply runs ``docker-compose`` and ``docker`` commands to launch your platform. These commands are printed in the standard output, such that you are free to replicate the same behaviour by simply copying/pasting the same commands.
 
@@ -108,26 +108,26 @@ How do I navigate Lekt's command-line interface?
 
 Lekt commands are structured in an easy-to-follow hierarchy. At the top level, there are command trees for image and configuration management::
 
-    tutor config ...
-    tutor images ...
+    lekt config ...
+    lekt images ...
 
 as well as command trees for each mode in which Lekt can run::
 
-    tutor local ...  # Commands for managing a local Open edX deployment.
-    tutor k8s ...    # Commands for managing a Kubernetes Open edX deployment.
-    tutor dev ...    # Commands for hacking on Open edX in development mode.
+    lekt local ...  # Commands for managing a local Open edX deployment.
+    lekt k8s ...    # Commands for managing a Kubernetes Open edX deployment.
+    lekt dev ...    # Commands for hacking on Open edX in development mode.
 
 Within each mode, Lekt has subcommands for managing that type of Open edX instance. Many of them are common between modes, such as ``quickstart``, ``start``, ``stop``, ``exec``, and ``logs``. For example::
 
-    tutor local logs  # View logs of a local deployment.
-    tutor k8s logs    # View logs of a Kubernetes-managed deployment.
-    tutor dev logs    # View logs of a development platform.
+    lekt local logs  # View logs of a local deployment.
+    lekt k8s logs    # View logs of a Kubernetes-managed deployment.
+    lekt dev logs    # View logs of a development platform.
 
 Many commands can be further parameterized to specify their target and options, for example::
 
-  tutor local logs cms          # View logs of the CMS container in a local deployment.
-  tutor k8s logs mysql          # View logs of MySQL in Kubernetes-managed deployment.
-  tutor dev logs lms --tail 10  # View ten lines of logs of the LMS container in development mode.
+  lekt local logs cms          # View logs of the CMS container in a local deployment.
+  lekt k8s logs mysql          # View logs of MySQL in Kubernetes-managed deployment.
+  lekt dev logs lms --tail 10  # View ten lines of logs of the LMS container in development mode.
 
 And that's it! You do not need to understand Lekt's entire command-line interface to get started. Using the ``--help`` option that's availble on every command, it is easy to learn as you go. For an in-depth guide, you can also explore the `CLI Reference <reference/index.rst>`_.
 

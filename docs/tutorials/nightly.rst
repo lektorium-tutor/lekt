@@ -22,8 +22,8 @@ In addition to installing Lekt Nightly itself, this will install automatically t
 
 Once Lekt Nightly is installed, you can run the usual ``tutor`` commands::
 
-    tutor dev quickstart
-    tutor dev run lms bash
+    lekt dev quickstart
+    lekt dev run lms bash
     # ... and so on
 
 Upgrading to the latest version of Open edX
@@ -36,15 +36,15 @@ To pull the latest upstream changes, you should first upgrade Lekt Nightly::
 
 Then, you will have to generate a more recent version of the nightly Docker images. Images for running Lekt Nightly are published daily to docker.io (see `here <https://hub.docker.com/r/overhangio/openedx/tags?page=1&ordering=last_updated&name=nightly>`__). You can fetch the latest images with::
 
-    tutor images pull all
+    lekt images pull all
 
 Alternatively, you may want to build the images yourself. As usual, this is done with::
 
-        tutor images build all
+        lekt images build all
 
 However, these images include the application master branch at the point in time when the image was built. The Docker layer caching mechanism might cause the ``git clone`` step from the build to be skipped. In such cases, you will have to bypass the caching mechanism with::
 
-    tutor images build --no-cache all
+    lekt images build --no-cache all
 
 Running Lekt Nightly alongside the latest release
 --------------------------------------------------

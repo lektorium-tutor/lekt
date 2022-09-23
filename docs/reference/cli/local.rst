@@ -1,3 +1,3 @@
 .. click:: tutor.commands.local:local
-   :prog: tutor local
+   :prog: lekt local
    :nested: full

@@ -6,29 +6,29 @@ With Lekt, all data are stored in a single folder. This means that it's extremel
 1. Make sure `tutor` is installed on both servers with the same version.
 2. Stop any running platform on server 1::
 
-    tutor local stop
+    lekt local stop
 
 3. Transfer the configuration, environment, and platform data from server 1 to server 2::
 
-    rsync -avr "$(tutor config printroot)/" username@server2:/tmp/tutor/
+    rsync -avr "$(lekt config printroot)/" username@server2:/tmp/tutor/
 
 4. On server 2, move the data to the right location::
 
-    mv /tmp/tutor "$(tutor config printroot)"
+    mv /tmp/lekt "$(lekt config printroot)"
 
 5. Start the instance with::
 
-    tutor local start -d
+    lekt local start -d
 
 Making database dumps
 ---------------------
 
 To dump all data from the MySQL and Mongodb databases used on the platform, run the following commands::
 
-    tutor local exec \
-        -e USERNAME="$(tutor config printvalue MYSQL_ROOT_USERNAME)" \
-        -e PASSWORD="$(tutor config printvalue MYSQL_ROOT_PASSWORD)" \
+    lekt local exec \
+        -e USERNAME="$(lekt config printvalue MYSQL_ROOT_USERNAME)" \
+        -e PASSWORD="$(lekt config printvalue MYSQL_ROOT_PASSWORD)" \
         mysql sh -c 'mysqldump --all-databases --user=$USERNAME --password=$PASSWORD > /var/lib/mysql/dump.sql'
-    tutor local exec mongodb mongodump --out=/data/db/dump.mongodb
+    lekt local exec mongodb mongodump --out=/data/db/dump.mongodb
 
-The ``dump.sql`` and ``dump.mongodb`` files will be located in ``$(tutor config printroot)/data/mysql`` and ``$(tutor config printroot)/data/mongodb``.
+The ``dump.sql`` and ``dump.mongodb`` files will be located in ``$(lekt config printroot)/data/mysql`` and ``$(lekt config printroot)/data/mongodb``.

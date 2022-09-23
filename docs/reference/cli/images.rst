@@ -1,3 +1,3 @@
 .. click:: tutor.commands.images:images_command
-   :prog: tutor images
+   :prog: lekt images
    :nested: full

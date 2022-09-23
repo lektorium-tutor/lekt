@@ -18,27 +18,27 @@ Getting started
 
 In the following, we'll create a new plugin called "myplugin". We start by creating the plugins root folder::
 
-    $ mkdir -p "$(tutor plugins printroot)"
+    $ mkdir -p "$(lekt plugins printroot)"
 
 Then, create an empty "myplugin.py" file in this folder::
 
-    $ touch "$(tutor plugins printroot)/myplugin.py"
+    $ touch "$(lekt plugins printroot)/myplugin.py"
 
 We can verify that the plugin is correctly detected by running::
 
-    $ tutor plugins list
+    $ lekt plugins list
     ...
     myplugin    (disabled)    /home/yourusername/.local/share/tutor-plugins/myplugin.py
     ...
 
 Our plugin is disabled, for now. To enable it, we run::
 
-    $ tutor plugins enable myplugin
+    $ lekt plugins enable myplugin
     Plugin myplugin enabled
     Configuration saved to /home/yourusername/.local/share/tutor/config.yml
-    You should now re-generate your environment with `tutor config save`.
+    You should now re-generate your environment with `lekt config save`.
 
-At this point you could re-generate your environment with ``tutor config save``, but there would not be any change to your environment... because the plugin does not do anything. So let's get started and make some changes.
+At this point you could re-generate your environment with ``lekt config save``, but there would not be any change to your environment... because the plugin does not do anything. So let's get started and make some changes.
 
 Modifying existing files with patches
 -------------------------------------
@@ -51,7 +51,7 @@ Let's say that we would like to limit access to our brand new Open edX platform.
 
 Add the following content to the ``myplugin.py`` file that you created earlier::
 
-    from tutor import hooks
+    from lekt import hooks
 
     hooks.Filters.ENV_PATCHES.add_item(
         (
@@ -62,7 +62,7 @@ Add the following content to the ``myplugin.py`` file that you created earlier::
 
 Let's go over these changes one by one::
 
-    from tutor import hooks
+    from lekt import hooks
 
 This imports the ``hooks`` module from Lekt, which grants us access to ``hooks.Actions`` and ``hooks.Filters`` (among other things).
 
@@ -81,17 +81,17 @@ This means "add ``<content>`` to the ``{{ patch("<name>") }}`` statement, thanks
 
 Now, re-render your environment with::
 
-    $ tutor config save
+    $ lekt config save
 
 You can check that the feature was added to your environment::
 
-    $ grep -r ALLOW_PUBLIC_ACCOUNT_CREATION "$(tutor config printroot)/env"
+    $ grep -r ALLOW_PUBLIC_ACCOUNT_CREATION "$(lekt config printroot)/env"
     /home/yourusername/.local/share/tutor/env/apps/openedx/settings/lms/production.py:FEATURES['ALLOW_PUBLIC_ACCOUNT_CREATION'] = False
     /home/yourusername/.local/share/tutor/env/apps/openedx/settings/lms/development.py:FEATURES['ALLOW_PUBLIC_ACCOUNT_CREATION'] = False
 
 Your new settings will be taken into account by restarting your platform::
 
-    $ tutor local restart
+    $ lekt local restart
 
 Congratulations! You've created your first working plugin. As you can guess, you can add changes to other files by adding other similar patch statements to your plugin.
 
@@ -123,13 +123,13 @@ This new patch makes use of the ``MYPLUGIN_PLATFORM_IS_PUBLIC`` configuration se
 
 You can check that the new configuration setting was properly defined::
 
-    $ tutor config printvalue MYPLUGIN_PLATFORM_IS_PUBLIC
+    $ lekt config printvalue MYPLUGIN_PLATFORM_IS_PUBLIC
     False
 
 Now you can quickly toggle the public account creation feature by modifying the new setting::
 
-    $ tutor config save --set MYPLUGIN_PLATFORM_IS_PUBLIC=True
-    $ tutor local restart
+    $ lekt config save --set MYPLUGIN_PLATFORM_IS_PUBLIC=True
+    $ lekt local restart
 
 
 Adding new templates
@@ -137,7 +137,7 @@ Adding new templates
 
 If you are adding an extra application to your Open edX platform, there is a good chance that you will create a new Docker image with a custom Dockerfile. This new application will have its own settings and build assets, for instance. This means that you need to add new templates to the Lekt environment. To do that, we will create a new subfolder in our plugins folder::
 
-    $ mkdir -p "$(tutor plugins printroot)/templates/myplugin"
+    $ mkdir -p "$(lekt plugins printroot)/templates/myplugin"
 
 Then we tell Lekt about this new template root thanks to the :py:data:`tutor.hooks.Filters.ENV_TEMPLATE_ROOTS` filter::
 
@@ -148,9 +148,9 @@ Then we tell Lekt about this new template root thanks to the :py:data:`tutor.hoo
 
 We create a "build" subfolder which will contain all assets to build our "myservice" image::
 
-    $ mkdir -p "$(tutor plugins printroot)/templates/myplugin/build/myservice"
+    $ mkdir -p "$(lekt plugins printroot)/templates/myplugin/build/myservice"
 
-Create the following Dockerfile in ``$(tutor plugins printroot)/templates/myplugin/build/myservice/Dockerfile``::
+Create the following Dockerfile in ``$(lekt plugins printroot)/templates/myplugin/build/myservice/Dockerfile``::
 
     FROM docker.io/debian:bullseye-slim
     CMD echo "what an awesome plugin!"
@@ -163,11 +163,11 @@ Tell Lekt that the "build" folder should be recursively rendered to ``env/plugin
 
 At this point you can verify that the Dockerfile template was properly rendered::
 
-    $ cat "$(tutor config printroot)/env/plugins/myplugin/build/myservice/Dockerfile"
+    $ cat "$(lekt config printroot)/env/plugins/myplugin/build/myservice/Dockerfile"
     FROM docker.io/debian:bullseye-slim
     CMD echo "what an awesome plugin!"
 
-We would like to build this image by running ``tutor images build myservice``. For that, we use the :py:data:`tutor.hooks.Filters.IMAGES_BUILD` filter::
+We would like to build this image by running ``lekt images build myservice``. For that, we use the :py:data:`tutor.hooks.Filters.IMAGES_BUILD` filter::
 
     hooks.Filters.IMAGES_BUILD.add_item(
         (
@@ -180,7 +180,7 @@ We would like to build this image by running ``tutor images build myservice``. F
 
 You can now build your image::
 
-    $ tutor images build myservice
+    $ lekt images build myservice
     Building image myservice:latest
     docker build -t myservice:latest /home/yourusername/.local/share/tutor/env/plugins/myplugin/build/myservice
     ...
@@ -193,8 +193,8 @@ Similarly, to push/pull your image to/from a Docker registry, implement the :py:
 
 You can now run::
 
-    $ tutor images push myservice
-    $ tutor images pull myservice
+    $ lekt images push myservice
+    $ lekt images pull myservice
 
 The "myservice" container can be automatically run in local installations by implementing the :patch:`local-docker-compose-services` patch::
 
@@ -210,7 +210,7 @@ The "myservice" container can be automatically run in local installations by imp
 
 You can now run the "myservice" container which will execute the ``CMD`` statement we wrote in the Dockerfile::
 
-    $ tutor config save && tutor local run myservice
+    $ lekt config save && lekt local run myservice
     ...
     Creating tutor_local_myservice_run ... done
     what an awesome plugin!
@@ -232,13 +232,13 @@ Services often need to run specific tasks before they can be started. For instan
 
 The patch above defined the "myservice-job" container which will run our initialisation task. Make sure that it is applied by updating your environment::
 
-    $ tutor config save
+    $ lekt config save
 
 Next, we create the folder which will contain our init task script::
 
-    $ mkdir "$(tutor plugins printroot)/templates/myplugin/tasks"
+    $ mkdir "$(lekt plugins printroot)/templates/myplugin/tasks"
 
-Edit ``$(tutor plugins printroot)/templates/myplugin/tasks/init.sh``::
+Edit ``$(lekt plugins printroot)/templates/myplugin/tasks/init.sh``::
 
     echo "++++++ initialising my plugin..."
     echo "++++++ done!"
@@ -251,7 +251,7 @@ Add our init task script to the :py:data:`tutor.hooks.Filters.COMMANDS_INIT` fil
 
 Run this initialisation task with::
 
-    $ tutor local init --limit=myplugin
+    $ lekt local init --limit=myplugin
     ...
     Running init task: myplugin/tasks/init.sh
     ...
@@ -263,7 +263,7 @@ Run this initialisation task with::
 Tailoring services for development
 ----------------------------------
 
-When you add services via :patch:`local-docker-compose-services`, those services will be available both in local production mode (``tutor local start``) and local development mode (``tutor dev start``). Sometimes, you may wish to further customize a service in ways that would not be suitable for production, but could be helpful for developers. To add in such customizations, implement the :patch:`local-docker-compose-dev-services` patch. For example, we can enable breakpoint debugging on the "myservice" development container by enabling the ``stdin_open`` and ``tty`` options::
+When you add services via :patch:`local-docker-compose-services`, those services will be available both in local production mode (``lekt local start``) and local development mode (``lekt dev start``). Sometimes, you may wish to further customize a service in ways that would not be suitable for production, but could be helpful for developers. To add in such customizations, implement the :patch:`local-docker-compose-dev-services` patch. For example, we can enable breakpoint debugging on the "myservice" development container by enabling the ``stdin_open`` and ``tty`` options::
 
     hooks.Filters.ENV_PATCHES.add_item(
         (
@@ -279,7 +279,7 @@ When you add services via :patch:`local-docker-compose-services`, those services
 Final result
 ------------
 
-Eventually, our plugin is composed of the following files, all stored within the folder indicated by ``tutor plugins printroot`` (on Linux: ``~/.local/share/tutor-plugins``).
+Eventually, our plugin is composed of the following files, all stored within the folder indicated by ``lekt plugins printroot`` (on Linux: ``~/.local/share/tutor-plugins``).
 
 ``myplugin.py``
 ~~~~~~~~~~~~~~~
@@ -287,7 +287,7 @@ Eventually, our plugin is composed of the following files, all stored within the
 ::
 
     import os
-    from tutor import hooks
+    from lekt import hooks
 
     # Define extra folder to look for templates and render the content of the "build" folder
     template_folder = os.path.join(os.path.dirname(__file__), "templates")

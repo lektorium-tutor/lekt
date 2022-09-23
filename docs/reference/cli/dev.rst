@@ -1,3 +1,3 @@
 .. click:: tutor.commands.dev:dev
-   :prog: tutor dev
+   :prog: lekt dev
    :nested: full

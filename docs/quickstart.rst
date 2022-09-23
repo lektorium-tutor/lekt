@@ -11,12 +11,12 @@ Or `download <https://github.com/overhangio/tutor/releases>`_ the pre-compiled b
 
 .. include:: download/binary.rst
 
-2. Run ``tutor local quickstart``
+2. Run ``lekt local quickstart``
 3. You're done!
 
 **That's it?**
 
-Yes :) This is what happens when you run ``tutor local quickstart``:
+Yes :) This is what happens when you run ``lekt local quickstart``:
 
 1. You answer a few questions about the :ref:`configuration` of your Open edX platform.
 2. Configuration files are generated from templates.

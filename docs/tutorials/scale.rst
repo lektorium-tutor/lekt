@@ -25,10 +25,10 @@ Increasing web server capacity
 
 As the server CPU and memory are increased, the request throughput can be increased by adjusting the number of uWSGI workers (see :ref:`configuration docs <openedx_configuration>`). By default, the "lms" and "cms" containers each spawn 2 uWSGI workers. The number of workers should be increased if you observe an increase in the latency of user requests but CPU usage remains below 100%. To increase the number of workers for the LMS and the CMS, run for example::
 
-    tutor config save \
+    lekt config save \
       --set OPENEDX_LMS_UWSGI_WORKERS=8 \
       --set OPENEDX_CMS_UWSGI_WORKERS=4
-    tutor local restart lms cms
+    lekt local restart lms cms
 
 The right values will very much depend on your server's available memory and CPU performance, as well as the maximum number of simultaneous users who use your platform. As an example data point, it was reported that a large Open edX platform can serve up to 500k unique users per week on a virtual server with 8 vCPU and 16 GB memory.
 
@@ -51,11 +51,11 @@ When attempting to scale a single-server deployment, we recommend starting by of
 
 Moving each of the data storage components is a fairly straightforward process, although details vary for every component. For instance, for the MySQL database, start by disabling the locally running MySQL instance::
 
-    tutor config save --set RUN_MYSQL=false
+    lekt config save --set RUN_MYSQL=false
 
-Then, migrate the data located at ``$(tutor config printroot)/data/mysql`` to the new MySQL instance. Configure the Open edX platform to point at the new database::
+Then, migrate the data located at ``$(lekt config printroot)/data/mysql`` to the new MySQL instance. Configure the Open edX platform to point at the new database::
 
-    tutor config save \
+    lekt config save \
       --set MYSQL_HOST=yourdb.com \
       --set MYSQL_PORT=3306 \
       --set MYSQL_ROOT_USERNAME=root \
@@ -71,13 +71,13 @@ Scaling with multiple servers
 Horizontally scaling web services
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As the number of users of a web platform increases, they put increased pressure on the web workers that respond to their requests. Thus, in most cases, web worker performance is the first bottleneck that system administrators have to face when their service becomes more popular. Initially, any given Kubernetes-based Lekt platform ships with one replica for each deployment. To increase (or reduce) the number of replicas for any given service, run ``tutor k8s scale <name> <number of replicas>``. Behind the scenes, this command will trigger a ``kubectl scale --replicas=...`` command that will seamlessly increase the number of pods for that deployment.
+As the number of users of a web platform increases, they put increased pressure on the web workers that respond to their requests. Thus, in most cases, web worker performance is the first bottleneck that system administrators have to face when their service becomes more popular. Initially, any given Kubernetes-based Lekt platform ships with one replica for each deployment. To increase (or reduce) the number of replicas for any given service, run ``lekt k8s scale <name> <number of replicas>``. Behind the scenes, this command will trigger a ``kubectl scale --replicas=...`` command that will seamlessly increase the number of pods for that deployment.
 
 In Open edX multiple web services are exposed to the outside world. The ones that usually receive the most traffic are, in decreasing order, the LMS, the CMS, and the forum (assuming the `tutor-forum <https://github.com/overhangio/tutor-forum>`__ plugin was enabled). As an example, all three deployment replicas can be scaled by running::
 
-    tutor k8s scale lms 8
-    tutor k8s scale cms 4
-    tutor k8s scale forum 2
+    lekt k8s scale lms 8
+    lekt k8s scale cms 4
+    lekt k8s scale forum 2
 
 Highly-available architecture, autoscaling, ...
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

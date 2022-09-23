@@ -1,3 +1,3 @@
 .. click:: tutor.commands.config:config_command
-   :prog: tutor config
+   :prog: lekt config
    :nested: full

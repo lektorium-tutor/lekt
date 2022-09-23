@@ -18,17 +18,17 @@ Start by :ref:`installing <install>` Lekt and its dependencies (e.g. Docker) ont
 
 Next, configure Lekt::
 
-    tutor config save --interactive
+    lekt config save --interactive
 
 Go through the configuration process, answering each question.
 
 Then, build the "openedx" and "permissions" images::
 
-    tutor images build openedx permissions
+    lekt images build openedx permissions
 
 If you want to use Lekt as an Open edX development environment, you should also build the development images::
 
-    tutor dev dc build lms
+    lekt dev dc build lms
 
 Change the database server
 --------------------------
@@ -40,20 +40,20 @@ The version of MySQL that Open edX uses by default does not support the ARM arch
 
 Configure Lekt to use MariaDB::
 
-    tutor config save --set DOCKER_IMAGE_MYSQL=mariadb:10.4
+    lekt config save --set DOCKER_IMAGE_MYSQL=mariadb:10.4
 
 Finish setup and start Lekt
 ----------------------------
 
 From this point on, use Lekt as normal. For example, start Open edX and run migrations with::
 
-    tutor local start -d
-    tutor local init
+    lekt local start -d
+    lekt local init
 
 Or for a development environment::
 
-    tutor dev start -d
-    tutor dev init
+    lekt dev start -d
+    lekt dev init
 
 Using with tutor-mfe
 --------------------

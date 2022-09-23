@@ -45,7 +45,7 @@ Stopping the platform
 
 To bring down your platform's containers, simply run::
 
-  tutor dev stop
+  lekt dev stop
 
 
 Starting the platform back up
@@ -53,32 +53,32 @@ Starting the platform back up
 
 Once you have used ``quickstart`` once, you can start the platform in the future with the lighter-weight ``start`` command, which brings up containers but does not perform any initialization tasks::
 
-  tutor dev start     # Run platform in the same terminal ("attached")
-  tutor dev start -d  # Or, run platform the in the background ("detached")
+  lekt dev start     # Run platform in the same terminal ("attached")
+  lekt dev start -d  # Or, run platform the in the background ("detached")
 
 Nonetheless, ``quickstart`` is idempotent, so it is always safe to run it again in the future without risk to your data. In fact, you may find it useful to use this command as a one-stop-shop for pulling images, running migrations, initializing new plugins you have enabled, and/or executing any new initialization steps that may have been introduced since you set up Lekt::
 
-  tutor dev quickstart --pullimages
+  lekt dev quickstart --pullimages
 
 
 Running arbitrary commands
 --------------------------
 
-To run any command inside one of the containers, run ``tutor dev run [OPTIONS] SERVICE [COMMAND] [ARGS]...``. For instance, to open a bash shell in the LMS or CMS containers::
+To run any command inside one of the containers, run ``lekt dev run [OPTIONS] SERVICE [COMMAND] [ARGS]...``. For instance, to open a bash shell in the LMS or CMS containers::
 
-    tutor dev run lms bash
-    tutor dev run cms bash
+    lekt dev run lms bash
+    lekt dev run cms bash
 
 To open a python shell in the LMS or CMS, run::
 
-    tutor dev run lms ./manage.py lms shell
-    tutor dev run cms ./manage.py cms shell
+    lekt dev run lms ./manage.py lms shell
+    lekt dev run cms ./manage.py cms shell
 
 You can then import edx-platform and django modules and execute python code.
 
 To collect assets, you can use the ``openedx-assets`` command that ships with Lekt::
 
-    tutor dev run lms openedx-assets build --env=dev
+    lekt dev run lms openedx-assets build --env=dev
 
 
 .. _specialized for developer usage: 
@@ -86,7 +86,7 @@ To collect assets, you can use the ``openedx-assets`` command that ships with Le
 Rebuilding the openedx-dev image
 --------------------------------
 
-The ``openedx-dev`` Docker image is based on the same ``openedx`` image used by ``tutor local ...`` to run LMS and CMS. However, it has a few differences to make it more convenient for developers:
+The ``openedx-dev`` Docker image is based on the same ``openedx`` image used by ``lekt local ...`` to run LMS and CMS. However, it has a few differences to make it more convenient for developers:
 
 - The user that runs inside the container has the same UID as the user on the host, to avoid permission problems inside mounted volumes (and in particular in the edx-platform repository).
 
@@ -97,7 +97,7 @@ The ``openedx-dev`` Docker image is based on the same ``openedx`` image used by 
 
 If you are using a custom ``openedx`` image, then you will need to rebuild ``openedx-dev`` every time you modify ``openedx``. To so, run::
 
-    tutor dev dc build lms
+    lekt dev dc build lms
 
 
 .. _bind_mounts:
@@ -112,63 +112,63 @@ It may sometimes be convenient to mount container directories on the host, for i
 Bind-mount volumes with ``--mount``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``quickstart``, ``run``, ``init`` and ``start`` subcommands of ``tutor dev`` and ``tutor local`` support the ``-m/--mount`` option (see :option:`tutor dev start -m`) which can take two different forms. The first is explicit::
+The ``quickstart``, ``run``, ``init`` and ``start`` subcommands of ``lekt dev`` and ``lekt local`` support the ``-m/--mount`` option (see :option:`lekt dev start -m`) which can take two different forms. The first is explicit::
 
-    tutor dev start --mount=lms:/path/to/edx-platform:/openedx/edx-platform lms
+    lekt dev start --mount=lms:/path/to/edx-platform:/openedx/edx-platform lms
 
 And the second is implicit::
 
-    tutor dev start --mount=/path/to/edx-platform lms
+    lekt dev start --mount=/path/to/edx-platform lms
 
 With the explicit form, the ``--mount`` option means "bind-mount the host folder /path/to/edx-platform to /openedx/edx-platform in the lms container".
 
 If you use the explicit format, you will quickly realise that you usually want to bind-mount folders in multiple containers at a time. For instance, you will want to bind-mount the edx-platform repository in the "cms" container. To do that, write instead::
 
-    tutor dev start --mount=lms,cms:/path/to/edx-platform:/openedx/edx-platform lms
+    lekt dev start --mount=lms,cms:/path/to/edx-platform:/openedx/edx-platform lms
 
 This command line can become cumbersome and inconvenient to work with. But Lekt can be smart about bind-mounting folders to the right containers in the right place when you use the implicit form of the ``--mount`` option. For instance, the following commands are equivalent::
 
     # Explicit form
-    tutor dev start --mount=lms,lms-worker,lms-job,cms,cms-worker,cms-job:/path/to/edx-platform:/openedx/edx-platform lms
+    lekt dev start --mount=lms,lms-worker,lms-job,cms,cms-worker,cms-job:/path/to/edx-platform:/openedx/edx-platform lms
     # Implicit form
-    tutor dev start --mount=/path/to/edx-platform lms
+    lekt dev start --mount=/path/to/edx-platform lms
 
 So, when should you *not* be using the implicit form? That would be when Lekt does not know where to bind-mount your host folders. For instance, if you wanted to bind-mount your edx-platform virtual environment located in ``~/venvs/edx-platform``, you should not write ``--mount=~/venvs/edx-platform``, because that folder would be mounted in a way that would override the edx-platform repository in the container. Instead, you should write::
 
-    tutor dev start --mount=lms:~/venvs/edx-platform:/openedx/venv lms
+    lekt dev start --mount=lms:~/venvs/edx-platform:/openedx/venv lms
 
 .. note:: Remember to setup your edx-platform repository for development! See :ref:`edx_platform_dev_env`.
 
 Copy files from containers to the local filesystem
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Sometimes, you may want to modify some of the files inside a container for which you don't have a copy on the host. A typical example is when you want to troubleshoot a Python dependency that is installed inside the application virtual environment. In such cases, you want to first copy the contents of the virtual environment from the container to the local filesystem. To that end, Lekt provides the ``tutor dev copyfrom`` command. First, copy the contents of the container folder to the local filesystem::
+Sometimes, you may want to modify some of the files inside a container for which you don't have a copy on the host. A typical example is when you want to troubleshoot a Python dependency that is installed inside the application virtual environment. In such cases, you want to first copy the contents of the virtual environment from the container to the local filesystem. To that end, Lekt provides the ``lekt dev copyfrom`` command. First, copy the contents of the container folder to the local filesystem::
 
-    tutor dev copyfrom lms /openedx/venv ~
+    lekt dev copyfrom lms /openedx/venv ~
 
 Then, bind-mount that folder back in the container with the ``--mount`` option (described :ref:`above <mount_option>`)::
 
-    tutor dev start --mount lms:~/venv:/openedx/venv lms
+    lekt dev start --mount lms:~/venv:/openedx/venv lms
 
 You can then edit the files in ``~/venv`` on your local filesystem and see the changes live in your container.
 
 Bind-mount from the "volumes/" directory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. warning:: Bind-mounting volumes with the ``bindmount`` command is no longer the default, recommended way of bind-mounting volumes from the host. Instead, see the :ref:`mount option <mount_option>` and the ``tutor dev/local copyfrom`` commands.
+.. warning:: Bind-mounting volumes with the ``bindmount`` command is no longer the default, recommended way of bind-mounting volumes from the host. Instead, see the :ref:`mount option <mount_option>` and the ``lekt dev/local copyfrom`` commands.
 
 Lekt makes it easy to create a bind-mount from an existing container. First, copy the contents of a container directory with the ``bindmount`` command. For instance, to copy the virtual environment of the "lms" container::
 
-    tutor dev bindmount lms /openedx/venv
+    lekt dev bindmount lms /openedx/venv
 
-This command recursively copies the contents of the ``/opendedx/venv`` directory to ``$(tutor config printroot)/volumes/venv``. The code of any Python dependency can then be edited -- for instance, you can then add a ``breakpoint()`` statement for step-by-step debugging, or implement a custom feature.
+This command recursively copies the contents of the ``/opendedx/venv`` directory to ``$(lekt config printroot)/volumes/venv``. The code of any Python dependency can then be edited -- for instance, you can then add a ``breakpoint()`` statement for step-by-step debugging, or implement a custom feature.
 
 Then, bind-mount the directory back in the container with the ``--mount`` option::
 
-		tutor dev start --mount=lms:$(tutor config printroot)/volumes/venv:/openedx/venv lms
+		lekt dev start --mount=lms:$(lekt config printroot)/volumes/venv:/openedx/venv lms
 
 .. note::
-    The ``bindmount`` command and the ``--mount=...`` option syntax are available both for the ``tutor local`` and ``tutor dev`` commands.
+    The ``bindmount`` command and the ``--mount=...`` option syntax are available both for the ``lekt local`` and ``lekt dev`` commands.
 
 Manual bind-mount to any directory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -177,14 +177,14 @@ Manual bind-mount to any directory
 
 The above solution may not work for you if you already have an existing directory, outside of the "volumes/" directory, which you would like mounted in one of your containers. For instance, you may want to mount your copy of the `edx-platform <https://github.com/openedx/edx-platform/>`__ repository. In such cases, you can simply use the ``-v/--volume`` `Docker option <https://docs.docker.com/storage/volumes/#choose-the--v-or---mount-flag>`__::
 
-    tutor dev run --volume=/path/to/edx-platform:/openedx/edx-platform lms bash
+    lekt dev run --volume=/path/to/edx-platform:/openedx/edx-platform lms bash
 
 Override docker-compose volumes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The above solutions require that you explicitly pass the ``-m/--mount`` options to every ``run``, ``start`` or ``init`` command, which may be inconvenient. To address these issues, you can create a ``docker-compose.override.yml`` file that will specify custom volumes to be used with all ``dev`` commands::
 
-    vim "$(tutor config printroot)/env/dev/docker-compose.override.yml"
+    vim "$(lekt config printroot)/env/dev/docker-compose.override.yml"
 
 You are then free to bind-mount any directory to any container. For instance, to mount your own edx-platform fork::
 
@@ -203,10 +203,10 @@ You are then free to bind-mount any directory to any container. For instance, to
         volumes:
           - /path/to/edx-platform:/openedx/edx-platform
 
-This override file will be loaded when running any ``tutor dev ..`` command. The edx-platform repo mounted at the specified path will be automatically mounted inside all LMS and CMS containers. With this file, you should no longer specify the ``-m/--mount`` option from the command line.
+This override file will be loaded when running any ``lekt dev ..`` command. The edx-platform repo mounted at the specified path will be automatically mounted inside all LMS and CMS containers. With this file, you should no longer specify the ``-m/--mount`` option from the command line.
 
 .. note::
-    The ``tutor local`` commands load the ``docker-compose.override.yml`` file from the ``$(tutor config printroot)/env/local/docker-compose.override.yml`` directory. One-time jobs from initialisation commands load the ``local/docker-compose.jobs.override.yml`` and ``dev/docker-compose.jobs.override.yml``.
+    The ``lekt local`` commands load the ``docker-compose.override.yml`` file from the ``$(lekt config printroot)/env/local/docker-compose.override.yml`` directory. One-time jobs from initialisation commands load the ``local/docker-compose.jobs.override.yml`` and ``dev/docker-compose.jobs.override.yml``.
 
 Common tasks
 ------------
@@ -218,7 +218,7 @@ Setting up a development environment for edx-platform
 
 Following the instructions :ref:`above <bind_mounts>` on how to bind-mount directories from the host above, you may mount your own `edx-platform <https://github.com/openedx/edx-platform/>`__ fork in your containers by running::
 
-    tutor dev start -d --mount=/path/to/edx-platform lms
+    lekt dev start -d --mount=/path/to/edx-platform lms
 
 But to achieve that, you will have to make sure that your fork works with Lekt.
 
@@ -227,7 +227,7 @@ First of all, you should make sure that you are working off the latest release t
 Then, you should run the following commands::
 
     # Run bash in the lms container
-    tutor dev run --mount=/path/to/edx-platform lms bash
+    lekt dev run --mount=/path/to/edx-platform lms bash
 
     # Compile local python requirements
     pip install --requirement requirements/edx/development.txt
@@ -240,7 +240,7 @@ Then, you should run the following commands::
 
 After running all these commands, your edx-platform repository will be ready for local development. To debug a local edx-platform repository, you can then add a `python breakpoint <https://docs.python.org/3/library/functions.html#breakpoint>`__ with ``breakpoint()`` anywhere in your code and run::
 
-    tutor dev start --mount=/path/to/edx-platform lms
+    lekt dev start --mount=/path/to/edx-platform lms
 
 The default debugger is ``ipdb.set_trace``. ``PYTHONBREAKPOINT`` can be modified by setting an environment variable in the Docker imamge.
 
@@ -250,9 +250,9 @@ If LMS isn't running, this will start it in your terminal. If an LMS container i
 XBlock and edx-platform plugin development
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In some cases, you will have to develop features for packages that are pip-installed next to the edx-platform. This is quite easy with Lekt. Just add your packages to the ``$(tutor config printroot)/env/build/openedx/requirements/private.txt`` file. To avoid re-building the openedx Docker image at every change, you should add your package in editable mode. For instance::
+In some cases, you will have to develop features for packages that are pip-installed next to the edx-platform. This is quite easy with Lekt. Just add your packages to the ``$(lekt config printroot)/env/build/openedx/requirements/private.txt`` file. To avoid re-building the openedx Docker image at every change, you should add your package in editable mode. For instance::
 
-    echo "-e ./mypackage" >> "$(tutor config printroot)/env/build/openedx/requirements/private.txt"
+    echo "-e ./mypackage" >> "$(lekt config printroot)/env/build/openedx/requirements/private.txt"
 
 The ``requirements`` folder should have the following content::
 
@@ -264,7 +264,7 @@ The ``requirements`` folder should have the following content::
 
 You will have to re-build the openedx Docker image once::
 
-    tutor images build openedx
+    lekt images build openedx
 
 You should then run the development server as usual, with ``start``. Every change made to the ``mypackage`` folder will be picked up and the development server will be automatically reloaded.
 
@@ -273,7 +273,7 @@ Running edx-platform unit tests
 
 It's possible to run the full set of unit tests that ship with `edx-platform <https://github.com/openedx/edx-platform/>`__. To do so, run a shell in the LMS development container::
 
-    tutor dev run lms bash
+    lekt dev run lms bash
 
 Then, run unit tests with ``pytest`` commands::
 

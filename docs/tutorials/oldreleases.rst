@@ -6,7 +6,7 @@ Upgrading from v3+
 
 Just upgrade Lekt using your :ref:`favorite installation method <install>` and run quickstart again::
 
-    tutor local quickstart
+    lekt local quickstart
 
 Upgrading from v1 or v2
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -17,9 +17,9 @@ Versions 1 and 2 of Lekt were organized differently: they relied on many differe
 
 Then, install Lekt using one of the :ref:`installation methods <install>`. Then, create the Lekt project root and move your data::
 
-    mkdir -p "$(tutor config printroot)"
-    mv config.json data/ "$(tutor config printroot)"
+    mkdir -p "$(lekt config printroot)"
+    mv config.json data/ "$(lekt config printroot)"
 
 Finally, launch your platform with::
 
-    tutor local quickstart
+    lekt local quickstart

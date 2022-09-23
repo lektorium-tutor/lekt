@@ -11,7 +11,7 @@ Skip email validation for new users
 
 ::
 
-    from tutor import hooks
+    from lekt import hooks
 
     hooks.Filters.ENV_PATCHES.add_item(
         (
@@ -27,7 +27,7 @@ Enable bulk enrollment view in the LMS
 
 ::
 
-    from tutor import hooks
+    from lekt import hooks
 
     hooks.Filters.ENV_PATCHES.add_item(
         (
@@ -43,7 +43,7 @@ Enable Google Analytics
 
 ::
 
-    from tutor import hooks
+    from lekt import hooks
 
     hooks.Filters.ENV_PATCHES.add_item(
         (
@@ -61,7 +61,7 @@ Enable SAML authentication
 
 ::
 
-    from tutor import hooks
+    from lekt import hooks
 
     hooks.Filters.ENV_PATCHES.add_items([
         (
