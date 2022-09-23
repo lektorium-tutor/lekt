@@ -1,7 +1,7 @@
 import unittest
 
-from tutor import bindmounts
-from tutor.exceptions import TutorError
+from lekt import bindmounts
+from lekt.exceptions import LektError
 
 
 class BindMountsTests(unittest.TestCase):
@@ -10,9 +10,9 @@ class BindMountsTests(unittest.TestCase):
         self.assertEqual("venv", bindmounts.get_name("/openedx/venv/"))
 
     def test_get_name_root_folder(self) -> None:
-        with self.assertRaises(TutorError):
+        with self.assertRaises(LektError):
             bindmounts.get_name("/")
-        with self.assertRaises(TutorError):
+        with self.assertRaises(LektError):
             bindmounts.get_name("")
 
     def test_parse_volumes(self) -> None:

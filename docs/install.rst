@@ -1,6 +1,6 @@
 .. _install:
 
-Installing Tutor
+Installing Lekt
 ================
 
 .. _requirements:
@@ -8,7 +8,7 @@ Installing Tutor
 Requirements
 ------------
 
-* Supported OS: Tutor runs on any 64-bit, UNIX-based OS. It was also reported to work on Windows (with `WSL 2 <https://docs.microsoft.com/en-us/windows/wsl/install>`__).
+* Supported OS: Lekt runs on any 64-bit, UNIX-based OS. It was also reported to work on Windows (with `WSL 2 <https://docs.microsoft.com/en-us/windows/wsl/install>`__).
 * Architecture: support for ARM64 is a work-in-progress. See `this issue <https://github.com/overhangio/tutor/issues/510>`__.
 * Required software:
 
@@ -30,7 +30,7 @@ Requirements
 Download
 --------
 
-Choose **one** of the installation methods below. If you install Tutor in different ways, you will end up with multiple ``tutor`` executables, which is going to be very confusing. At any time, you can check the path to your ``tutor`` executable by running ``which tutor``.
+Choose **one** of the installation methods below. If you install Lekt in different ways, you will end up with multiple ``tutor`` executables, which is going to be very confusing. At any time, you can check the path to your ``tutor`` executable by running ``which tutor``.
 
 Python package
 ~~~~~~~~~~~~~~
@@ -57,7 +57,7 @@ This is the simplest and recommended installation method for most people who do 
 Installing from source
 ~~~~~~~~~~~~~~~~~~~~~~
 
-To inspect the Tutor source code, install Tutor from `the Github repository <https://github.com/overhangio/tutor>`__::
+To inspect the Lekt source code, install Lekt from `the Github repository <https://github.com/overhangio/tutor>`__::
 
     git clone https://github.com/overhangio/tutor
     cd tutor
@@ -78,7 +78,7 @@ For instance, the demo Open edX server that runs at https://demo.openedx.overhan
 Zero-click AWS installation
 ---------------------------
 
-Tutor can be launched on Amazon Web Services very quickly with the `official Tutor AMI <https://aws.amazon.com/marketplace/pp/B07PV3TB8X>`__. Shell access is not required, as all configuration will happen through the Tutor web user interface. For detailed installation instructions, we recommend watching the following video:
+Lekt can be launched on Amazon Web Services very quickly with the `official Lekt AMI <https://aws.amazon.com/marketplace/pp/B07PV3TB8X>`__. Shell access is not required, as all configuration will happen through the Lekt web user interface. For detailed installation instructions, we recommend watching the following video:
 
 .. youtube:: xtXP52qGphA
 
@@ -87,7 +87,7 @@ Tutor can be launched on Amazon Web Services very quickly with the `official Tut
 Upgrading
 ---------
 
-To upgrade Open edX or benefit from the latest features and bug fixes, you should simply upgrade Tutor. Start by upgrading the "tutor" package and its dependencies::
+To upgrade Open edX or benefit from the latest features and bug fixes, you should simply upgrade Lekt. Start by upgrading the "tutor" package and its dependencies::
 
     pip install --upgrade "tutor[full]"
 
@@ -109,7 +109,7 @@ If you run :ref:`customised <configuration_customisation>` Docker images, you ne
 Upgrading to a new Open edX release
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Major Open edX releases are published twice a year, in June and December, by the Open edX `Build/Test/Release working group <https://discuss.openedx.org/c/working-groups/build-test-release/30>`__. When a new Open edX release comes out, Tutor gets a major version bump (see :ref:`versioning`). Such an upgrade typically includes multiple breaking changes. Any upgrade is final because downgrading is not supported. Thus, when upgrading your platform from one major version to the next, it is strongly recommended to do the following:
+Major Open edX releases are published twice a year, in June and December, by the Open edX `Build/Test/Release working group <https://discuss.openedx.org/c/working-groups/build-test-release/30>`__. When a new Open edX release comes out, Lekt gets a major version bump (see :ref:`versioning`). Such an upgrade typically includes multiple breaking changes. Any upgrade is final because downgrading is not supported. Thus, when upgrading your platform from one major version to the next, it is strongly recommended to do the following:
 
 1. Read the changes listed in the `CHANGELOG.md <https://github.com/overhangio/tutor/blob/master/CHANGELOG.md>`__ file. Breaking changes are identified by a "💥".
 2. Perform a backup. On a local installation, this is typically done with::
@@ -133,13 +133,13 @@ The process for upgrading from one major release to the next works similarly to 
 Shell autocompletion
 --------------------
 
-Tutor is built on top of `Click <https://click.palletsprojects.com>`_, which is a great library for building command line interface (CLI) tools. As such, Tutor benefits from all Click features, including `auto-completion <https://click.palletsprojects.com/en/8.x/bashcomplete/>`_. After installing Tutor, auto-completion can be enabled in bash by running::
+Lekt is built on top of `Click <https://click.palletsprojects.com>`_, which is a great library for building command line interface (CLI) tools. As such, Lekt benefits from all Click features, including `auto-completion <https://click.palletsprojects.com/en/8.x/bashcomplete/>`_. After installing Lekt, auto-completion can be enabled in bash by running::
 
-    _TUTOR_COMPLETE=bash_source tutor >> ~/.bashrc
+    _LEKT_COMPLETE=bash_source tutor >> ~/.bashrc
 
 If you are running zsh, run instead::
 
-    _TUTOR_COMPLETE=zsh_source tutor >> ~/.zshrc
+    _LEKT_COMPLETE=zsh_source tutor >> ~/.zshrc
 
 After opening a new shell, you can test auto-completion by typing::
 
@@ -148,9 +148,9 @@ After opening a new shell, you can test auto-completion by typing::
 Uninstallation
 --------------
 
-It is fairly easy to completely uninstall Tutor and to delete the Open edX platforms that are running locally.
+It is fairly easy to completely uninstall Lekt and to delete the Open edX platforms that are running locally.
 
-First of all, stop any locally-running platform and remove all Tutor containers::
+First of all, stop any locally-running platform and remove all Lekt containers::
 
     tutor local dc down --remove-orphans
     tutor dev dc down --remove-orphans
@@ -160,7 +160,7 @@ Then, delete all data associated with your Open edX platform::
     # WARNING: this step is irreversible
     sudo rm -rf "$(tutor config printroot)"
 
-Finally, uninstall Tutor itself::
+Finally, uninstall Lekt itself::
 
     # If you installed tutor from source
     pip uninstall tutor
@@ -168,7 +168,7 @@ Finally, uninstall Tutor itself::
     # If you downloaded the tutor binary
     sudo rm /usr/local/bin/tutor
 
-    # Optionally, you may want to remove Tutor plugins installed.
+    # Optionally, you may want to remove Lekt plugins installed.
     # You can get a list of the installed plugins:
     pip freeze | grep tutor
     # You can then remove them using the following command:

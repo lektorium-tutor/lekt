@@ -1,7 +1,7 @@
 import unittest
 
-from tutor import images
-from tutor.types import Config
+from lekt import images
+from lekt.types import Config
 
 
 class ImagesTests(unittest.TestCase):

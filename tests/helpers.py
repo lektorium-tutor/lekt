@@ -4,10 +4,10 @@ import typing as t
 import unittest
 import unittest.result
 
-from tutor import hooks
-from tutor.commands.context import BaseJobContext
-from tutor.jobs import BaseJobRunner
-from tutor.types import Config
+from lekt import hooks
+from lekt.commands.context import BaseJobContext
+from lekt.jobs import BaseJobRunner
+from lekt.types import Config
 
 
 class TestJobRunner(BaseJobRunner):
@@ -30,10 +30,10 @@ def temporary_root() -> "tempfile.TemporaryDirectory[str]":
     This function can be used as follows:
 
         with temporary_root() as root:
-            config = tutor_config.load_full(root)
+            config = lekt_config.load_full(root)
             ...
     """
-    return tempfile.TemporaryDirectory(prefix="tutor-test-root-")
+    return tempfile.TemporaryDirectory(prefix="lekt-test-root-")
 
 
 class TestContext(BaseJobContext):

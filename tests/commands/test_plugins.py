@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock, patch
 
-from tutor import plugins
+from lekt import plugins
 
 from .base import TestCommandMixin
 

@@ -2,7 +2,7 @@ import unittest
 
 import click
 
-from tutor import serialize
+from lekt import serialize
 
 
 class SerializeTests(unittest.TestCase):

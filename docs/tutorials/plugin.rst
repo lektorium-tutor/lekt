@@ -1,10 +1,10 @@
 .. _plugin_development_tutorial:
 
 =======================
-Creating a Tutor plugin
+Creating a Lekt plugin
 =======================
 
-Tutor plugins are the offically recommended way of customizing the behaviour of Tutor. If Tutor does not do things the way you want, then your first reaction should *not* be to fork Tutor, but instead to figure out whether you can create a plugin that will allow you to achieve what you want.
+Lekt plugins are the offically recommended way of customizing the behaviour of Lekt. If Lekt does not do things the way you want, then your first reaction should *not* be to fork Lekt, but instead to figure out whether you can create a plugin that will allow you to achieve what you want.
 
 You may be thinking that creating a plugin might be overkill for your use case. It's almost certainly not! The stable plugin API guarantees that your changes will keep working even after you upgrade from one major release to the next, with little to no extra work. Also, it allows you to distribute your changes to other users.
 
@@ -43,9 +43,9 @@ At this point you could re-generate your environment with ``tutor config save``,
 Modifying existing files with patches
 -------------------------------------
 
-We'll start by modifying some of our Open edX settings files. It's a frequent requirement to modify the ``FEATURES`` setting from the LMS or the CMS in edx-platform. In the legacy native installation, this was done by modifying the ``lms.env.yml`` and ``cms.env.yml`` files. Here we'll modify the Python setting files that define the edx-platform configuration. To achieve that we'll make use of two concepts from the Tutor API: :ref:`patches` and :ref:`filters`.
+We'll start by modifying some of our Open edX settings files. It's a frequent requirement to modify the ``FEATURES`` setting from the LMS or the CMS in edx-platform. In the legacy native installation, this was done by modifying the ``lms.env.yml`` and ``cms.env.yml`` files. Here we'll modify the Python setting files that define the edx-platform configuration. To achieve that we'll make use of two concepts from the Lekt API: :ref:`patches` and :ref:`filters`.
 
-If you have not already read :ref:`how_does_tutor_work` now would be a good time :-) Tutor uses templates to generate various files, such as settings, Dockerfiles, etc. These templates include ``{{ patch("patch-name") }}`` statements that allow plugins to insert arbitrary content in there. These patches are located at strategic locations. See :ref:`patches` for more information.
+If you have not already read :ref:`how_does_tutor_work` now would be a good time :-) Lekt uses templates to generate various files, such as settings, Dockerfiles, etc. These templates include ``{{ patch("patch-name") }}`` statements that allow plugins to insert arbitrary content in there. These patches are located at strategic locations. See :ref:`patches` for more information.
 
 Let's say that we would like to limit access to our brand new Open edX platform. It is not ready for prime-time yet, so we want to prevent users from registering new accounts. There is a feature flag for that in the LMS: `FEATURES['ALLOW_PUBLIC_ACCOUNT_CREATION'] <https://edx.readthedocs.io/projects/edx-platform-technical/en/latest/featuretoggles.html#featuretoggle-FEATURES['ALLOW_PUBLIC_ACCOUNT_CREATION']>`__. By default this flag is set to a true value, enabling anyone to create an account. In the following we'll set it to false.
 
@@ -64,7 +64,7 @@ Let's go over these changes one by one::
 
     from tutor import hooks
 
-This imports the ``hooks`` module from Tutor, which grants us access to ``hooks.Actions`` and ``hooks.Filters`` (among other things).
+This imports the ``hooks`` module from Lekt, which grants us access to ``hooks.Actions`` and ``hooks.Filters`` (among other things).
 
 ::
 
@@ -98,15 +98,15 @@ Congratulations! You've created your first working plugin. As you can guess, you
 Modifying configuration
 -----------------------
 
-In the previous section you've learned how to add custom content to the Tutor templates. Now we'll see how to modify the Tutor configuration. Configuration settings can be specified in three ways:
+In the previous section you've learned how to add custom content to the Lekt templates. Now we'll see how to modify the Lekt configuration. Configuration settings can be specified in three ways:
 
 1. "unique" settings that need to be generated or user-specified, and then preserved in config.yml: such settings do not have reasonable defaults for all users. Examples of such setttings include passwords and secret keys, which should be different for every user.
 2. "default" settings have static fallback values. They are only stored in config.yml when they are modified by users. Most settings belong in this category.
-3. "override" settings modify configuration from Tutor core or from other plugins. These will be removed and restored to their default values when the plugin is disabled.
+3. "override" settings modify configuration from Lekt core or from other plugins. These will be removed and restored to their default values when the plugin is disabled.
 
 It is very strongly recommended to prefix unique and default settings with the plugin name, in all-caps, such that different plugins with the same configuration do not conflict with one another.
 
-As an example, we'll make it possible to configure public account creation on the LMS via a Tutor setting. In the previous section we achieved that by creating a patch. Let's modify this patch::
+As an example, we'll make it possible to configure public account creation on the LMS via a Lekt setting. In the previous section we achieved that by creating a patch. Let's modify this patch::
 
     hooks.Filters.ENV_PATCHES.add_item(
         (
@@ -135,11 +135,11 @@ Now you can quickly toggle the public account creation feature by modifying the 
 Adding new templates
 --------------------
 
-If you are adding an extra application to your Open edX platform, there is a good chance that you will create a new Docker image with a custom Dockerfile. This new application will have its own settings and build assets, for instance. This means that you need to add new templates to the Tutor environment. To do that, we will create a new subfolder in our plugins folder::
+If you are adding an extra application to your Open edX platform, there is a good chance that you will create a new Docker image with a custom Dockerfile. This new application will have its own settings and build assets, for instance. This means that you need to add new templates to the Lekt environment. To do that, we will create a new subfolder in our plugins folder::
 
     $ mkdir -p "$(tutor plugins printroot)/templates/myplugin"
 
-Then we tell Tutor about this new template root thanks to the :py:data:`tutor.hooks.Filters.ENV_TEMPLATE_ROOTS` filter::
+Then we tell Lekt about this new template root thanks to the :py:data:`tutor.hooks.Filters.ENV_TEMPLATE_ROOTS` filter::
 
     import os
 
@@ -155,7 +155,7 @@ Create the following Dockerfile in ``$(tutor plugins printroot)/templates/myplug
     FROM docker.io/debian:bullseye-slim
     CMD echo "what an awesome plugin!"
 
-Tell Tutor that the "build" folder should be recursively rendered to ``env/plugins/myplugin/build`` with the :py:data:`tutor.hooks.Filters.ENV_TEMPLATE_TARGETS`::
+Tell Lekt that the "build" folder should be recursively rendered to ``env/plugins/myplugin/build`` with the :py:data:`tutor.hooks.Filters.ENV_TEMPLATE_TARGETS`::
 
     hooks.Filters.ENV_TEMPLATE_TARGETS.add_item(
         ("myplugin/build", "plugins")

@@ -1,7 +1,7 @@
 Using Google Mail as an SMTP server
 ===================================
 
-By default, Tutor comes with a simple SMTP server for sending emails. Such a server has an important limitation: it does not implement mailing good practices, such as DKIM or SPF. As a consequence. the emails you send might be flagged as spam by their recipients. Thus, you might want to disable the SMTP server and run your own, for instance using your Google Mail account.
+By default, Lekt comes with a simple SMTP server for sending emails. Such a server has an important limitation: it does not implement mailing good practices, such as DKIM or SPF. As a consequence. the emails you send might be flagged as spam by their recipients. Thus, you might want to disable the SMTP server and run your own, for instance using your Google Mail account.
 
 .. warning::
   Google Mail SMTP servers come with their own set of limitations. For instance, you are limited to sending 500 emails a day. Reference: https://support.google.com/mail/answer/22839
@@ -16,7 +16,7 @@ If you get ``Connected to smtp.gmail.com.`` then it means that you can successfu
 
 To exit the ``telnet`` shell, type ``ctrl+]``, then ``ctrl+d``.
 
-Then, disable the SMTP server that comes with Tutor::
+Then, disable the SMTP server that comes with Lekt::
 
     $ tutor config save --set RUN_SMTP=false
 

@@ -4,7 +4,7 @@
 Template patches
 ================
 
-This is the list of all patches used across Tutor (outside of any plugin). Alternatively, you can search for patches in Tutor templates by grepping the source code::
+This is the list of all patches used across Lekt (outside of any plugin). Alternatively, you can search for patches in Lekt templates by grepping the source code::
 
     git clone https://github.com/overhangio/tutor
     cd tutor
@@ -97,7 +97,7 @@ File: ``k8s/jobs.yml``
 
 File: ``k8s/override.yml``
 
-Any Kubernetes resource definition in this patch will override the resource defined by Tutor, provided that their names match. See :ref:`Customizing Kubernetes resources <customizing_kubernetes_sources>` for an example.
+Any Kubernetes resource definition in this patch will override the resource defined by Lekt, provided that their names match. See :ref:`Customizing Kubernetes resources <customizing_kubernetes_sources>` for an example.
 
 .. patch:: k8s-services
 

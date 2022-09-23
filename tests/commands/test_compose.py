@@ -5,9 +5,9 @@ from unittest.mock import patch
 
 from click.exceptions import ClickException
 
-from tutor import hooks
-from tutor.commands import compose
-from tutor.commands.local import LocalContext
+from lekt import hooks
+from lekt.commands import compose
+from lekt.commands.local import LocalContext
 
 
 class ComposeTests(unittest.TestCase):

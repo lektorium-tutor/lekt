@@ -5,7 +5,7 @@ Kubernetes deployment
 
 With the same docker images we created for :ref:`single server deployment <local>` and :ref:`local development <development>`, we can launch an Open edX platform on Kubernetes. Always in 1 click, of course :)
 
-A word of warning: managing a Kubernetes platform is a fairly advanced endeavour. In this documentation, we assume familiarity with Kubernetes. Running an Open edX platform with Tutor on a single server or in a Kubernetes cluster are two very different things. The local Open edX install was designed such that users with no prior experience with system administration could still launch an Open edX platform. It is *not* the case for the installation method outlined here.
+A word of warning: managing a Kubernetes platform is a fairly advanced endeavour. In this documentation, we assume familiarity with Kubernetes. Running an Open edX platform with Lekt on a single server or in a Kubernetes cluster are two very different things. The local Open edX install was designed such that users with no prior experience with system administration could still launch an Open edX platform. It is *not* the case for the installation method outlined here.
 
 Consider yourself warned :)
 
@@ -15,7 +15,7 @@ Requirements
 Version
 ~~~~~~~
 
-Tutor was tested with server version 1.14.1 and client 1.14.3.
+Lekt was tested with server version 1.14.1 and client 1.14.3.
 
 Memory
 ~~~~~~
@@ -30,7 +30,7 @@ The Kubernetes cluster should have at least 4Gb of RAM on each node. When runnin
 Load Balancer and SSL/TLS certificates
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, Tutor deploys a `LoadBalancer <https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer>`__ service that exposes the Caddy deployment to the outside world. As in the local installation, this service is responsible for transparently generating SSL/TLS certificates at runtime. You will need to point your DNS records to this LoadBalancer object before the platform can work correctly. Thus, you should first start the Caddy load balancer, with::
+By default, Lekt deploys a `LoadBalancer <https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer>`__ service that exposes the Caddy deployment to the outside world. As in the local installation, this service is responsible for transparently generating SSL/TLS certificates at runtime. You will need to point your DNS records to this LoadBalancer object before the platform can work correctly. Thus, you should first start the Caddy load balancer, with::
 
     tutor k8s start caddy
 
@@ -49,7 +49,7 @@ S3-like object storage with `MinIO <https://www.minio.io/>`__
 
 Like many web applications, Open edX needs to persist data. In particular, it needs to persist files uploaded by students and course designers. In the local installation, these files are persisted to disk, on the host filesystem. But on Kubernetes, it is difficult to share a single filesystem between different pods. This would require persistent volume claims with `ReadWriteMany` access mode, and these are difficult to set up.
 
-Luckily, there is another solution: at `edx.org <edx.org>`_, uploaded files are persisted on AWS S3: Open edX is compatible out-of-the-box with the S3 API for storing user-generated files. The problem with S3 is that it introduces a dependency on AWS. To solve this problem, Tutor comes with a plugin that emulates the S3 API but stores files on-premises. This is achieved thanks to `MinIO <https://www.minio.io/>`__. If you want to deploy a production platform to Kubernetes, you will most certainly need to enable the ``minio`` plugin::
+Luckily, there is another solution: at `edx.org <edx.org>`_, uploaded files are persisted on AWS S3: Open edX is compatible out-of-the-box with the S3 API for storing user-generated files. The problem with S3 is that it introduces a dependency on AWS. To solve this problem, Lekt comes with a plugin that emulates the S3 API but stores files on-premises. This is achieved thanks to `MinIO <https://www.minio.io/>`__. If you want to deploy a production platform to Kubernetes, you will most certainly need to enable the ``minio`` plugin::
 
     tutor plugins enable minio
 
@@ -64,18 +64,18 @@ On Minikube, the dashboard is already installed. To access the dashboard, run::
 
     minikube dashboard
 
-Lastly, Tutor itself provides a rudimentary listing of your cluster's nodes, workloads, and services::
+Lastly, Lekt itself provides a rudimentary listing of your cluster's nodes, workloads, and services::
 
     tutor k8s status
 
 Technical details
 -----------------
 
-Under the hood, Tutor wraps ``kubectl`` commands to interact with the cluster. The various commands called by Tutor are printed in the console so that you can reproduce and modify them yourself.
+Under the hood, Lekt wraps ``kubectl`` commands to interact with the cluster. The various commands called by Lekt are printed in the console so that you can reproduce and modify them yourself.
 
 Basically, the whole platform is described in manifest files stored in ``$(tutor config printroot)/env/k8s``. There is also a ``kustomization.yml`` file at the project root for `declarative application management <https://kubectl.docs.kubernetes.io/guides/config_management/introduction/#declarative-application-management>`__. This allows us to start and update resources with commands similar to ``kubectl apply -k $(tutor config printroot) --selector=...`` (see the ``kubectl apply`` `official documentation <https://kubectl.docs.kubernetes.io/references/kubectl/apply/>`__).
 
-The other benefit of ``kubectl apply`` is that it allows you to customise the Kubernetes resources as much as you want. For instance, the default Tutor configuration can be extended by a ``kustomization.yml`` file stored in ``$(tutor config printroot)/env-custom/`` and which would start with::
+The other benefit of ``kubectl apply`` is that it allows you to customise the Kubernetes resources as much as you want. For instance, the default Lekt configuration can be extended by a ``kustomization.yml`` file stored in ``$(tutor config printroot)/env-custom/`` and which would start with::
 
     apiVersion: kustomize.config.k8s.io/v1beta1
     kind: Kustomization
@@ -106,7 +106,7 @@ As with the :ref:`local installation <local>`, there are multiple commands to ru
 
     tutor k8s -h
 
-In particular, the ``tutor k8s start`` command restarts and reconfigures all services by running ``kubectl apply``. That means that you can delete containers, deployments, or just any other kind of resources, and Tutor will re-create them automatically. You should just beware of not deleting any persistent data stored in persistent volume claims. For instance, to restart from a "blank slate", run::
+In particular, the ``tutor k8s start`` command restarts and reconfigures all services by running ``kubectl apply``. That means that you can delete containers, deployments, or just any other kind of resources, and Lekt will re-create them automatically. You should just beware of not deleting any persistent data stored in persistent volume claims. For instance, to restart from a "blank slate", run::
 
     tutor k8s stop
     tutor k8s start
@@ -119,7 +119,7 @@ Common tasks
 Executing commands inside service pods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Tutor and plugin documentation usually often instructions to execute some ``tutor local run ...`` commands. These commands are only valid when running Tutor locally with docker-compose, and will not work on Kubernetes. Instead, you should run ``tutor k8s exec ...`` commands. Arguments and options should be identical.
+The Lekt and plugin documentation usually often instructions to execute some ``tutor local run ...`` commands. These commands are only valid when running Lekt locally with docker-compose, and will not work on Kubernetes. Instead, you should run ``tutor k8s exec ...`` commands. Arguments and options should be identical.
 
 For instance, to run a Python shell in the lms container, run::
 
@@ -128,9 +128,9 @@ For instance, to run a Python shell in the lms container, run::
 Running a custom "openedx" Docker image
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Some Tutor plugins and customization procedures require that the "openedx" image be rebuilt (see :ref:`customization <custom_openedx_docker_image>`). This is for instance the case if you want to :ref:`install a custom XBlock <custom_extra_xblocks>` or :ref:`run an edx-platform fork <edx_platform_fork>`. When running Open edX on Kubernetes, your custom images will have to be downloaded from a custom registry. You should define a custom image name, build the image and then push them to your custom registry. For instance, for the "openedx" image::
+Some Lekt plugins and customization procedures require that the "openedx" image be rebuilt (see :ref:`customization <custom_openedx_docker_image>`). This is for instance the case if you want to :ref:`install a custom XBlock <custom_extra_xblocks>` or :ref:`run an edx-platform fork <edx_platform_fork>`. When running Open edX on Kubernetes, your custom images will have to be downloaded from a custom registry. You should define a custom image name, build the image and then push them to your custom registry. For instance, for the "openedx" image::
 
-    tutor config save --set "DOCKER_IMAGE_OPENEDX=docker.io/myusername/openedx:{{ TUTOR_VERSION }}"
+    tutor config save --set "DOCKER_IMAGE_OPENEDX=docker.io/myusername/openedx:{{ LEKT_VERSION }}"
     tutor images build openedx
     tutor images push openedx
 
@@ -147,7 +147,7 @@ Kubernetes does not provide a single command for updating docker images out of t
 Customizing Kubernetes resources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Plugins can customize any Kubernetes resource in Tutor by overriding the definition of the resource with a :patch:`k8s-override` patch. For example, to change the volume size for MongoDB from ``5Gi`` to ``10Gi``, add the following to the plugin:
+Plugins can customize any Kubernetes resource in Lekt by overriding the definition of the resource with a :patch:`k8s-override` patch. For example, to change the volume size for MongoDB from ``5Gi`` to ``10Gi``, add the following to the plugin:
 
 ::
 

@@ -1,9 +1,9 @@
 from unittest.mock import Mock, patch
 
 from tests.helpers import PluginsTestCase, temporary_root
-from tutor import images, plugins
-from tutor.__about__ import __version__
-from tutor.commands.images import ImageNotFoundError
+from lekt import images, plugins
+from lekt.__about__ import __version__
+from lekt.commands.images import ImageNotFoundError
 
 from .base import TestCommandMixin
 

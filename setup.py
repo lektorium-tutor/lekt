@@ -12,14 +12,14 @@ def load_readme() -> str:
         readme = f.read()
     # Replace img src for publication on pypi
     return readme.replace(
-        "./docs/img/", "https://github.com/overhangio/tutor/raw/master/docs/img/"
+        "./docs/img/", "https://github.com/lektorium-tutor/tutor/raw/master/docs/img/"
     )
 
 
 def load_about() -> Dict[str, str]:
     about: Dict[str, str] = {}
     with io.open(
-        os.path.join(HERE, "lek", "__about__.py"), "rt", encoding="utf-8"
+            os.path.join(HERE, "lekt", "__about__.py"), "rt", encoding="utf-8"
     ) as f:
         exec(f.read(), about)  # pylint: disable=exec-used
     return about
@@ -27,7 +27,7 @@ def load_about() -> Dict[str, str]:
 
 def load_requirements(filename: str) -> List[str]:
     with io.open(
-        os.path.join(HERE, "requirements", filename), "rt", encoding="utf-8"
+            os.path.join(HERE, "requirements", filename), "rt", encoding="utf-8"
     ) as f:
         return [line.strip() for line in f if is_requirement(line)]
 
@@ -39,13 +39,13 @@ def is_requirement(line: str) -> bool:
 ABOUT = load_about()
 
 setup(
-    name="lek",
+    name="lekt",
     version=ABOUT["__package_version__"],
     url="https://docs.tutor.overhang.io/",
     project_urls={
         "Documentation": "https://docs.tutor.overhang.io/",
-        "Code": "https://github.com/overhangio/tutor",
-        "Issue tracker": "https://github.com/overhangio/tutor/issues",
+        "Code": "https://github.com/lektorium-tutor/lekt",
+        "Issue tracker": "https://github.com/lektorium-tutor/lekt/issues",
         "Community": "https://discuss.openedx.org/tag/tutor",
     },
     license="AGPLv3",
@@ -61,7 +61,7 @@ setup(
     extras_require={
         "full": load_requirements("plugins.txt"),
     },
-    entry_points={"console_scripts": ["tutor=tutor.commands.cli:main"]},
+    entry_points={"console_scripts": ["lekt=lekt.commands.cli:main"]},
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",

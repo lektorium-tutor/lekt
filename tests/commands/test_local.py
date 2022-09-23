@@ -27,7 +27,7 @@ class LocalTests(unittest.TestCase, TestCommandMixin):
     def test_copyfrom(self) -> None:
         with temporary_root() as root:
             with tempfile.TemporaryDirectory() as directory:
-                with patch("tutor.utils.docker_compose") as mock_docker_compose:
+                with patch("lekt.utils.docker_compose") as mock_docker_compose:
                     self.invoke_in_root(root, ["config", "save"])
 
                     # Copy to existing directory

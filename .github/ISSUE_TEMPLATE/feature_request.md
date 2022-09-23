@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest or encourage the addition of a new feature to Tutor
+about: Suggest or encourage the addition of a new feature to Lekt
 title: ''
 labels: ''
 assignees: ''

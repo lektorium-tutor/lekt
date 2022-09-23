@@ -1,7 +1,7 @@
 import typing as t
 import unittest
 
-from tutor import hooks
+from lekt import hooks
 
 
 class PluginActionsTests(unittest.TestCase):

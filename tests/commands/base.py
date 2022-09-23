@@ -3,7 +3,7 @@ import typing as t
 import click.testing
 
 from tests.helpers import TestContext, temporary_root
-from tutor.commands.cli import cli
+from lekt.commands.cli import cli
 
 
 class TestCommandMixin:
@@ -27,9 +27,9 @@ class TestCommandMixin:
         """
         runner = click.testing.CliRunner(
             env={
-                "TUTOR_ROOT": root,
-                "TUTOR_IGNORE_ENTRYPOINT_PLUGINS": "1",
-                "TUTOR_IGNORE_DICT_PLUGINS": "1",
+                "LEKT_ROOT": root,
+                "LEKT_IGNORE_ENTRYPOINT_PLUGINS": "1",
+                "LEKT_IGNORE_DICT_PLUGINS": "1",
             }
         )
         return runner.invoke(cli, args, obj=TestContext(root))

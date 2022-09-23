@@ -4,11 +4,11 @@ import unittest
 from unittest.mock import Mock, patch
 
 from tests.helpers import PluginsTestCase, temporary_root
-from tutor import config as tutor_config
-from tutor import env, exceptions, fmt, plugins
-from tutor.__about__ import __version__
-from tutor.plugins.v0 import DictPlugin
-from tutor.types import Config
+from lekt import config as lekt_config
+from lekt import env, exceptions, fmt, plugins
+from lekt.__about__ import __version__
+from lekt.plugins.v0 import DictPlugin
+from lekt.types import Config
 
 
 class EnvTests(PluginsTestCase):
@@ -74,27 +74,27 @@ class EnvTests(PluginsTestCase):
         )
 
     def test_render_str_missing_configuration(self) -> None:
-        self.assertRaises(exceptions.TutorError, env.render_str, {}, "hello {{ name }}")
+        self.assertRaises(exceptions.LektError, env.render_str, {}, "hello {{ name }}")
 
     def test_render_file(self) -> None:
         config: Config = {}
-        tutor_config.update_with_base(config)
-        tutor_config.update_with_defaults(config)
-        tutor_config.render_full(config)
+        lekt_config.update_with_base(config)
+        lekt_config.update_with_defaults(config)
+        lekt_config.render_full(config)
 
         config["MYSQL_ROOT_PASSWORD"] = "testpassword"
         rendered = env.render_file(config, "hooks", "mysql", "init")
         self.assertIn("testpassword", rendered)
 
-    @patch.object(tutor_config.fmt, "echo")
+    @patch.object(lekt_config.fmt, "echo")
     def test_render_file_missing_configuration(self, _: Mock) -> None:
         self.assertRaises(
-            exceptions.TutorError, env.render_file, {}, "local", "docker-compose.yml"
+            exceptions.LektError, env.render_file, {}, "local", "docker-compose.yml"
         )
 
     def test_save_full(self) -> None:
         with temporary_root() as root:
-            config = tutor_config.load_full(root)
+            config = lekt_config.load_full(root)
             with patch.object(fmt, "STDOUT"):
                 env.save(root, config)
             self.assertTrue(
@@ -105,7 +105,7 @@ class EnvTests(PluginsTestCase):
 
     def test_save_full_with_https(self) -> None:
         with temporary_root() as root:
-            config = tutor_config.load_full(root)
+            config = lekt_config.load_full(root)
             config["ENABLE_HTTPS"] = True
             with patch.object(fmt, "STDOUT"):
                 env.save(root, config)
@@ -155,10 +155,10 @@ class EnvTests(PluginsTestCase):
             # Render templates
             with temporary_root() as root:
                 # Create configuration
-                config: Config = tutor_config.load_full(root)
+                config: Config = lekt_config.load_full(root)
                 config["ID"] = "Hector Rumblethorpe"
                 plugins.load("plugin1")
-                tutor_config.save_enabled_plugins(config)
+                lekt_config.save_enabled_plugins(config)
 
                 # Render environment
                 with patch.object(fmt, "STDOUT"):

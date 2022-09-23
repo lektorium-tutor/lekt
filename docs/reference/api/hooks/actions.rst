@@ -4,7 +4,7 @@
 Actions
 =======
 
-Actions are one of the two types of hooks (the other being :ref:`filters`) that can be used to extend Tutor. Each action represents an event that can occur during the application life cycle. Each action has a name, and callback functions can be attached to it. When an action is triggered, these callback functions are called in sequence. Each callback function can trigger side effects, independently from one another.
+Actions are one of the two types of hooks (the other being :ref:`filters`) that can be used to extend Lekt. Each action represents an event that can occur during the application life cycle. Each action has a name, and callback functions can be attached to it. When an action is triggered, these callback functions are called in sequence. Each callback function can trigger side effects, independently from one another.
 
 .. autofunction:: tutor.hooks.actions::get
 .. autofunction:: tutor.hooks.actions::get_template

@@ -1,0 +1,2 @@
+class LektError(Exception):
+    pass

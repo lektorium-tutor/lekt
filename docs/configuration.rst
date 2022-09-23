@@ -3,19 +3,19 @@
 Configuration and customisation
 ===============================
 
-Tutor offers plenty of possibilities for platform customisation out of the box. There are two main ways in which the base Open edX installation can be customised:
+Lekt offers plenty of possibilities for platform customisation out of the box. There are two main ways in which the base Open edX installation can be customised:
 
-a. Modifying the Tutor :ref:`configuration parameters <configuration>`.
+a. Modifying the Lekt :ref:`configuration parameters <configuration>`.
 b. Modifying the :ref:`Open edX docker image <customise>` that runs the Open edX platform.
 
-This section does not cover :ref:`plugin development <plugins>`. For simple changes, such as modifying the ``*.env.yml`` files or the edx-platform settings, *you should not fork edx-platform or tutor*! Instead, you should create a simple :ref:`plugin for Tutor <plugins_yaml>`.
+This section does not cover :ref:`plugin development <plugins>`. For simple changes, such as modifying the ``*.env.yml`` files or the edx-platform settings, *you should not fork edx-platform or lekt*! Instead, you should create a simple :ref:`plugin for Lekt <plugins_yaml>`.
 
 .. _configuration:
 
 Configuration
 -------------
 
-With Tutor, all Open edX deployment parameters are stored in a single ``config.yml`` file. This is the file that is generated when you run ``tutor local quickstart`` or ``tutor config save``. To view the content of this file, run::
+With Lekt, all Open edX deployment parameters are stored in a single ``config.yml`` file. This is the file that is generated when you run ``tutor local quickstart`` or ``tutor config save``. To view the content of this file, run::
 
     cat "$(tutor config printroot)/config.yml"
 
@@ -29,13 +29,13 @@ Alternatively, you can set each parameter from the command line::
 
 Or from the system environment::
 
-    export TUTOR_PARAM1=VALUE1
+    export LEKT_PARAM1=VALUE1
 
 Once the base configuration is created or updated, the environment is automatically re-generated. The environment is the set of all files required to manage an Open edX platform: Dockerfile, ``lms.env.yml``, settings files, etc. You can view the environment files in the ``env`` folder::
 
     ls "$(tutor config printroot)/env"
 
-With an up-to-date environment, Tutor is ready to launch an Open edX platform and perform usual operations. Below, we document some of the configuration parameters.
+With an up-to-date environment, Lekt is ready to launch an Open edX platform and perform usual operations. Below, we document some of the configuration parameters.
 
 Individual service activation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -59,13 +59,13 @@ Docker
 Custom images
 *************
 
-- ``DOCKER_IMAGE_OPENEDX`` (default: ``"{{ DOCKER_REGISTRY }}overhangio/openedx:{{ TUTOR_VERSION }}"``)
+- ``DOCKER_IMAGE_OPENEDX`` (default: ``"{{ DOCKER_REGISTRY }}overhangio/openedx:{{ LEKT_VERSION }}"``)
 
-This configuration parameter defines the name of the Docker image to run for the lms and cms containers. By default, the Docker image tag matches the Tutor version it was built with.
+This configuration parameter defines the name of the Docker image to run for the lms and cms containers. By default, the Docker image tag matches the Lekt version it was built with.
 
 - ``DOCKER_IMAGE_OPENEDX_DEV`` (default: ``"openedx-dev"``)
 
-This configuration paramater defines the name of the Docker image to run the development version of the lms and cms containers.  By default, the Docker image tag matches the Tutor version it was built with.
+This configuration paramater defines the name of the Docker image to run the development version of the lms and cms containers.  By default, the Docker image tag matches the Lekt version it was built with.
 
 - ``DOCKER_IMAGE_CADDY`` (default: ``"docker.io/caddy:2.4.6"``)
 
@@ -91,7 +91,7 @@ This configuration parameter defines which Redis Docker image to use.
 
 This configuration parameter defines which Simple Mail Transfer Protocol (SMTP) Docker image to use.
 
-- ``DOCKER_IMAGE_PERMISSIONS`` (default: ``"{{ DOCKER_REGISTRY }}overhangio/openedx-permissions:{{ TUTOR_VERSION }}"``)
+- ``DOCKER_IMAGE_PERMISSIONS`` (default: ``"{{ DOCKER_REGISTRY }}overhangio/openedx-permissions:{{ LEKT_VERSION }}"``)
 
 This configuration parameter defines the Docker image to be used for setting file permissions. The default image sets all containers to be run as unpriveleged users.
 
@@ -115,11 +115,11 @@ Compose
 
 This configuration parameter sets the version of Docker Compose to be used to build all containers.
 
-- ``DEV_PROJECT_NAME`` (default: ``"{{ TUTOR_APP }}_dev"``)
+- ``DEV_PROJECT_NAME`` (default: ``"{{ LEKT_APP }}_dev"``)
 
 This configuration parameter sets the Development version of the Docker Compose project name.
 
-- ``LOCAL_PROJECT_NAME`` (default: ``"{{ TUTOR_APP }}_local"``)
+- ``LOCAL_PROJECT_NAME`` (default: ``"{{ LEKT_APP }}_local"``)
 
 This configuration parameter sets the Local version of the Docker Compose project name.
 
@@ -209,7 +209,7 @@ Caddy
 - ``CADDY_HTTP_PORT`` (default: ``80``)
 - ``ENABLE_WEB_PROXY`` (default: ``true``)
 
-`Caddy <https://caddyserver.com>`__ is a web server used in Tutor both as a web proxy and for the generation of SSL/TLS certificates at runtime. Port indicated by ``CADDY_HTTP_PORT`` is exposed on the host, in addition to port 443. If ``ENABLE_WEB_PROXY`` is set to ``false`` then we assume that SSL termination does not occur in the Caddy container and only ``CADDY_HTTP_PORT`` is exposed on the host.
+`Caddy <https://caddyserver.com>`__ is a web server used in Lekt both as a web proxy and for the generation of SSL/TLS certificates at runtime. Port indicated by ``CADDY_HTTP_PORT`` is exposed on the host, in addition to port 443. If ``ENABLE_WEB_PROXY`` is set to ``false`` then we assume that SSL termination does not occur in the Caddy container and only ``CADDY_HTTP_PORT`` is exposed on the host.
 
 MySQL
 *****
@@ -220,7 +220,7 @@ MySQL
 - ``MYSQL_ROOT_USERNAME`` (default: ``"root"``)
 - ``MYSQL_ROOT_PASSWORD`` (default: randomly generated) Note that you are responsible for creating the root user if you are using a managed database.
 
-By default, a running Open edX platform deployed with Tutor includes all necessary 3rd-party services, such as MySQL, MongoDb, etc. But it's also possible to store data on a separate database, such as `Amazon RDS <https://aws.amazon.com/rds/>`_. For instance, to store data on an external MySQL database set the following configuration::
+By default, a running Open edX platform deployed with Lekt includes all necessary 3rd-party services, such as MySQL, MongoDb, etc. But it's also possible to store data on a separate database, such as `Amazon RDS <https://aws.amazon.com/rds/>`_. For instance, to store data on an external MySQL database set the following configuration::
 
     RUN_MYSQL: false
     MYSQL_HOST: yourhost
@@ -257,7 +257,7 @@ Redis
 - ``REDIS_USERNAME`` (default: ``""``)
 - ``REDIS_PASSWORD`` (default: ``""``)
 
-Note that Redis has replaced Rabbitmq as the Celery message broker since Tutor v11.0.0.
+Note that Redis has replaced Rabbitmq as the Celery message broker since Lekt v11.0.0.
 
 SMTP
 ****
@@ -270,14 +270,14 @@ SMTP
 - ``SMTP_USE_TLS`` (default: ``false``)
 - ``SMTP_USE_SSL`` (default: ``false``)
 
-Note that the SMTP server shipped with Tutor by default does not implement TLS. With external servers, only one of SSL or TLS should be enabled, at most.
+Note that the SMTP server shipped with Lekt by default does not implement TLS. With external servers, only one of SSL or TLS should be enabled, at most.
 
 SSL/TLS certificates for HTTPS access
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - ``ENABLE_HTTPS`` (default: ``false``)
 
-When ``ENABLE_HTTPS`` is ``true``, the whole Open edX platform will be reconfigured to work with "https" URIs. Calls to "http" URIs will be redirected to "https". By default, SSL/TLS certificates will automatically be generated by Tutor (thanks to `Caddy <https://caddyserver.com/>`__) from the `Let's Encrypt <https://letsencrypt.org/>`_ certificate authority.
+When ``ENABLE_HTTPS`` is ``true``, the whole Open edX platform will be reconfigured to work with "https" URIs. Calls to "http" URIs will be redirected to "https". By default, SSL/TLS certificates will automatically be generated by Lekt (thanks to `Caddy <https://caddyserver.com/>`__) from the `Let's Encrypt <https://letsencrypt.org/>`_ certificate authority.
 
 The following DNS records must exist and point to your server::
 
@@ -316,7 +316,7 @@ Custom Open edX docker image
 
 There are different ways you can customise your Open edX platform. For instance, optional features can be activated during configuration. But if you want to add unique features to your Open edX platform, you are going to have to modify and re-build the ``openedx`` docker image. This is the image that contains the ``edx-platform`` repository: it is in charge of running the web application for the Open edX "core". Both the LMS and the CMS run from the ``openedx`` docker image.
 
-On a vanilla platform deployed by Tutor, the image that is run is downloaded from the `overhangio/openedx repository on Docker Hub <https://hub.docker.com/r/overhangio/openedx/>`_. This is also the image that is downloaded whenever we run ``tutor images pull openedx``. But you can decide to build the image locally instead of downloading it. To do so, build and tag the ``openedx`` image::
+On a vanilla platform deployed by Lekt, the image that is run is downloaded from the `overhangio/openedx repository on Docker Hub <https://hub.docker.com/r/overhangio/openedx/>`_. This is also the image that is downloaded whenever we run ``tutor images pull openedx``. But you can decide to build the image locally instead of downloading it. To do so, build and tag the ``openedx`` image::
 
     tutor images build openedx
 
@@ -402,16 +402,16 @@ If you don't create your fork from this tag, you *will* have important compatibi
 
 - Do not try to run a fork from an older (pre-Nutmeg) version of edx-platform: this will simply not work.
 - Do not try to run a fork from the edx-platform master branch: there is a 99% probability that it will fail.
-- Do not try to run a fork from the open-release/nutmeg.master branch: Tutor will attempt to apply security and bug fix patches that might already be included in the open-release/nutmeg.master but which were not yet applied to the latest release tag. Patch application will thus fail if you base your fork from the open-release/nutmeg.master branch.
+- Do not try to run a fork from the open-release/nutmeg.master branch: Lekt will attempt to apply security and bug fix patches that might already be included in the open-release/nutmeg.master but which were not yet applied to the latest release tag. Patch application will thus fail if you base your fork from the open-release/nutmeg.master branch.
 
 .. _i18n:
 
 Adding custom translations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you are not running Open edX in English (``LANGUAGE_CODE`` default: ``"en"``), chances are that some strings will not be properly translated. In most cases, this is because not enough contributors have helped translate Open edX into your language. It happens! With Tutor, available translated languages include those that come bundled with `edx-platform <https://github.com/openedx/edx-platform/tree/open-release/nutmeg.master/conf/locale>`__ as well as those from `openedx-i18n <https://github.com/openedx/openedx-i18n/tree/master/edx-platform/locale>`__.
+If you are not running Open edX in English (``LANGUAGE_CODE`` default: ``"en"``), chances are that some strings will not be properly translated. In most cases, this is because not enough contributors have helped translate Open edX into your language. It happens! With Lekt, available translated languages include those that come bundled with `edx-platform <https://github.com/openedx/edx-platform/tree/open-release/nutmeg.master/conf/locale>`__ as well as those from `openedx-i18n <https://github.com/openedx/openedx-i18n/tree/master/edx-platform/locale>`__.
 
-Tutor offers a relatively simple mechanism to add custom translations to the openedx Docker image. You should create a folder that corresponds to your language code in the "build/openedx/locale" folder of the Tutor environment. This folder should contain a "LC_MESSAGES" folder. For instance::
+Lekt offers a relatively simple mechanism to add custom translations to the openedx Docker image. You should create a folder that corresponds to your language code in the "build/openedx/locale" folder of the Lekt environment. This folder should contain a "LC_MESSAGES" folder. For instance::
 
     mkdir -p "$(tutor config printroot)/env/build/openedx/locale/fr/LC_MESSAGES"
 
@@ -472,7 +472,7 @@ Beware that this will take a long time! Unfortunately, it's difficult to acceler
 Running a different ``openedx`` Docker image
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, Tutor runs the `overhangio/openedx <https://hub.docker.com/r/overhangio/openedx/>`_ docker image from Docker Hub. If you have an account on `hub.docker.com <https://hub.docker.com>`_ or you have a private image registry, you can build your image and push it to your registry with::
+By default, Lekt runs the `overhangio/openedx <https://hub.docker.com/r/overhangio/openedx/>`_ docker image from Docker Hub. If you have an account on `hub.docker.com <https://hub.docker.com>`_ or you have a private image registry, you can build your image and push it to your registry with::
 
     tutor config save --set DOCKER_IMAGE_OPENEDX=docker.io/myusername/openedx:mytag
     tutor images build openedx
@@ -480,7 +480,7 @@ By default, Tutor runs the `overhangio/openedx <https://hub.docker.com/r/overhan
 
 (See the relevant :ref:`configuration parameters <docker_images>`.)
 
-The customised Docker image tag value will then be used by Tutor to run the platform, for instance when running ``tutor local quickstart``.
+The customised Docker image tag value will then be used by Lekt to run the platform, for instance when running ``tutor local quickstart``.
 
 
 Passing custom docker build options

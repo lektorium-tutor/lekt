@@ -1,7 +1,7 @@
 Making backups and migrating data
 ---------------------------------
 
-With Tutor, all data are stored in a single folder. This means that it's extremely easy to migrate an existing platform to a different server. For instance, it's possible to configure a platform locally on a laptop, and then move this platform to a production server.
+With Lekt, all data are stored in a single folder. This means that it's extremely easy to migrate an existing platform to a different server. For instance, it's possible to configure a platform locally on a laptop, and then move this platform to a production server.
 
 1. Make sure `tutor` is installed on both servers with the same version.
 2. Stop any running platform on server 1::

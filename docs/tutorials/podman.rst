@@ -1,15 +1,15 @@
-Running Tutor with Podman
+Running Lekt with Podman
 -------------------------
 
-You have the option of running Tutor with `Podman <https://podman.io/>`__, instead of the native Docker tools. This has some practical advantages: it does not require a running Docker daemon, and it enables you to run and build Docker images without depending on any system component running ``root``. As such, it is particularly useful for building Tutor images from CI pipelines.
+You have the option of running Lekt with `Podman <https://podman.io/>`__, instead of the native Docker tools. This has some practical advantages: it does not require a running Docker daemon, and it enables you to run and build Docker images without depending on any system component running ``root``. As such, it is particularly useful for building Lekt images from CI pipelines.
 
-The ``podman`` CLI aims to be fully compatible with the ``docker`` CLI and ``podman-compose`` is meant to be a fully-compatible alias of ``docker-compose``. This means that you should be able to use it together with Tutor, without making any changes to Tutor itself.
-
-.. warning::
-   Since this was written, it was discovered that there are major compatibility issues between ``podman-compose`` and ``docker-compose``. Thus, podman cannot be considered a drop-in replacement of Docker in the context of Tutor -- at least for running Open edX locally.
+The ``podman`` CLI aims to be fully compatible with the ``docker`` CLI and ``podman-compose`` is meant to be a fully-compatible alias of ``docker-compose``. This means that you should be able to use it together with Lekt, without making any changes to Lekt itself.
 
 .. warning::
-   You should not attempt to run Tutor with Podman on a system that already has native ``docker`` installed. If you want to switch to ``podman`` using the aliases described here, you should uninstall (or at least stop) the native Docker daemon first.
+   Since this was written, it was discovered that there are major compatibility issues between ``podman-compose`` and ``docker-compose``. Thus, podman cannot be considered a drop-in replacement of Docker in the context of Lekt -- at least for running Open edX locally.
+
+.. warning::
+   You should not attempt to run Lekt with Podman on a system that already has native ``docker`` installed. If you want to switch to ``podman`` using the aliases described here, you should uninstall (or at least stop) the native Docker daemon first.
 
 
 Enabling Podman
@@ -31,11 +31,11 @@ Once you have installed Podman and its dependencies on the platform of your choi
 Enabling podman-compose
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-``podman-compose`` is available as a package from PyPI, and can thus be installed with ``pip``. See `its README <https://github.com/containers/podman-compose/blob/devel/README.md>`_ for installation instructions. Note that if you have installed Tutor in its virtualenv, you'll need to run ``pip install podman-compose`` in that same virtualenv.
+``podman-compose`` is available as a package from PyPI, and can thus be installed with ``pip``. See `its README <https://github.com/containers/podman-compose/blob/devel/README.md>`_ for installation instructions. Note that if you have installed Lekt in its virtualenv, you'll need to run ``pip install podman-compose`` in that same virtualenv.
 
 Once installed, you'll again need to create a symbolic link that aliases ``docker-compose`` to ``podman-compose``.
 
-- If you run Tutor and ``podman-compose`` in a virtualenv, create the symlink in that virtualenv's ``bin`` directory: activate the virtualenv, then run::
+- If you run Lekt and ``podman-compose`` in a virtualenv, create the symlink in that virtualenv's ``bin`` directory: activate the virtualenv, then run::
 
     ln -s $(which podman-compose) $(dirname $(which podman-compose))/docker-compose
 

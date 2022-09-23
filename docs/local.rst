@@ -6,15 +6,15 @@ Local deployment
 This method is for deploying Open edX locally on a single server, where docker images are orchestrated with `docker-compose <https://docs.docker.com/compose/overview/>`_.
 
 .. note::
-    Tutor is compatible with the ``docker compose`` subcommand. However, this support is still in beta and we're not sure it will behave the same as the previous ``docker-compose`` command. So ``docker-compose`` will be preferred, unless you set an environment variable ``TUTOR_USE_COMPOSE_SUBCOMMAND`` to enforce using ``docker compose``.
+    Lekt is compatible with the ``docker compose`` subcommand. However, this support is still in beta and we're not sure it will behave the same as the previous ``docker-compose`` command. So ``docker-compose`` will be preferred, unless you set an environment variable ``LEKT_USE_COMPOSE_SUBCOMMAND`` to enforce using ``docker compose``.
 
 .. _tutor_root:
 
-In the following, environment and data files will be generated in a user-specific project folder which will be referred to as the "**project root**". On Linux, the default project root is ``~/.local/share/tutor``. An alternative project root can be defined by passing the ``--root=...`` option to the ``tutor`` command, or defining the ``TUTOR_ROOT=...`` environment variable::
+In the following, environment and data files will be generated in a user-specific project folder which will be referred to as the "**project root**". On Linux, the default project root is ``~/.local/share/lekt``. An alternative project root can be defined by passing the ``--root=...`` option to the ``tutor`` command, or defining the ``LEKT_ROOT=...`` environment variable::
 
     tutor --root=/path/to/tutorroot run ...
     # Or equivalently:
-    export TUTOR_ROOT=/path/to/tutorroot
+    export LEKT_ROOT=/path/to/tutorroot
     tutor run ...
 
 .. note::
@@ -138,16 +138,16 @@ After a fresh installation, your platform will not have a single course. To impo
 Setting a new theme
 ~~~~~~~~~~~~~~~~~~~
 
-The default Open edX theme is rather bland, so Tutor makes it easy to switch to a different theme::
+The default Open edX theme is rather bland, so Lekt makes it easy to switch to a different theme::
 
     tutor local settheme mytheme
 
-Out of the box, only the default "open-edx" theme is available. We also developed `Indigo, a beautiful, customizable theme <https://github.com/overhangio/indigo>`__ which is easy to install with Tutor.
+Out of the box, only the default "open-edx" theme is available. We also developed `Indigo, a beautiful, customizable theme <https://github.com/overhangio/indigo>`__ which is easy to install with Lekt.
 
 Running arbitrary ``manage.py`` commands
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Any ``./manage.py`` command provided by Open edX can be run in a local platform deployed with Tutor. For instance, to delete a course, run::
+Any ``./manage.py`` command provided by Open edX can be run in a local platform deployed with Lekt. For instance, to delete a course, run::
 
     tutor local run cms ./manage.py cms delete_course <your_course_id>
 

@@ -3,21 +3,21 @@
 Open edX development
 ====================
 
-In addition to running Open edX in production, Tutor can be used for local development of Open edX. This means that it is possible to hack on Open edX without setting up a Virtual Machine. Essentially, this replaces the devstack provided by edX.
+In addition to running Open edX in production, Lekt can be used for local development of Open edX. This means that it is possible to hack on Open edX without setting up a Virtual Machine. Essentially, this replaces the devstack provided by edX.
 
 
 First-time setup
 ----------------
 
-First, ensure you have already :ref:`installed Tutor <install>` (for development against the named releases of Open edX) or :ref:`Tutor Nightly <nightly>` (for development against Open edX's master branches).
+First, ensure you have already :ref:`installed Lekt <install>` (for development against the named releases of Open edX) or :ref:`Lekt Nightly <nightly>` (for development against Open edX's master branches).
 
 Then, launch the developer platform setup process::
 
-    tutor dev quickstart
+    lekt dev quickstart
 
 This will perform several tasks for you. It will:
 
-* stop any existing locally-running Tutor containers,
+* stop any existing locally-running Lekt containers,
 
 * disable HTTPS,
 
@@ -56,7 +56,7 @@ Once you have used ``quickstart`` once, you can start the platform in the future
   tutor dev start     # Run platform in the same terminal ("attached")
   tutor dev start -d  # Or, run platform the in the background ("detached")
 
-Nonetheless, ``quickstart`` is idempotent, so it is always safe to run it again in the future without risk to your data. In fact, you may find it useful to use this command as a one-stop-shop for pulling images, running migrations, initializing new plugins you have enabled, and/or executing any new initialization steps that may have been introduced since you set up Tutor::
+Nonetheless, ``quickstart`` is idempotent, so it is always safe to run it again in the future without risk to your data. In fact, you may find it useful to use this command as a one-stop-shop for pulling images, running migrations, initializing new plugins you have enabled, and/or executing any new initialization steps that may have been introduced since you set up Lekt::
 
   tutor dev quickstart --pullimages
 
@@ -76,7 +76,7 @@ To open a python shell in the LMS or CMS, run::
 
 You can then import edx-platform and django modules and execute python code.
 
-To collect assets, you can use the ``openedx-assets`` command that ships with Tutor::
+To collect assets, you can use the ``openedx-assets`` command that ships with Lekt::
 
     tutor dev run lms openedx-assets build --env=dev
 
@@ -105,7 +105,7 @@ If you are using a custom ``openedx`` image, then you will need to rebuild ``ope
 Sharing directories with containers
 -----------------------------------
 
-It may sometimes be convenient to mount container directories on the host, for instance: for editing and debugging. Tutor provides different solutions to this problem.
+It may sometimes be convenient to mount container directories on the host, for instance: for editing and debugging. Lekt provides different solutions to this problem.
 
 .. _mount_option:
 
@@ -126,14 +126,14 @@ If you use the explicit format, you will quickly realise that you usually want t
 
     tutor dev start --mount=lms,cms:/path/to/edx-platform:/openedx/edx-platform lms
 
-This command line can become cumbersome and inconvenient to work with. But Tutor can be smart about bind-mounting folders to the right containers in the right place when you use the implicit form of the ``--mount`` option. For instance, the following commands are equivalent::
+This command line can become cumbersome and inconvenient to work with. But Lekt can be smart about bind-mounting folders to the right containers in the right place when you use the implicit form of the ``--mount`` option. For instance, the following commands are equivalent::
 
     # Explicit form
     tutor dev start --mount=lms,lms-worker,lms-job,cms,cms-worker,cms-job:/path/to/edx-platform:/openedx/edx-platform lms
     # Implicit form
     tutor dev start --mount=/path/to/edx-platform lms
 
-So, when should you *not* be using the implicit form? That would be when Tutor does not know where to bind-mount your host folders. For instance, if you wanted to bind-mount your edx-platform virtual environment located in ``~/venvs/edx-platform``, you should not write ``--mount=~/venvs/edx-platform``, because that folder would be mounted in a way that would override the edx-platform repository in the container. Instead, you should write::
+So, when should you *not* be using the implicit form? That would be when Lekt does not know where to bind-mount your host folders. For instance, if you wanted to bind-mount your edx-platform virtual environment located in ``~/venvs/edx-platform``, you should not write ``--mount=~/venvs/edx-platform``, because that folder would be mounted in a way that would override the edx-platform repository in the container. Instead, you should write::
 
     tutor dev start --mount=lms:~/venvs/edx-platform:/openedx/venv lms
 
@@ -142,7 +142,7 @@ So, when should you *not* be using the implicit form? That would be when Tutor d
 Copy files from containers to the local filesystem
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Sometimes, you may want to modify some of the files inside a container for which you don't have a copy on the host. A typical example is when you want to troubleshoot a Python dependency that is installed inside the application virtual environment. In such cases, you want to first copy the contents of the virtual environment from the container to the local filesystem. To that end, Tutor provides the ``tutor dev copyfrom`` command. First, copy the contents of the container folder to the local filesystem::
+Sometimes, you may want to modify some of the files inside a container for which you don't have a copy on the host. A typical example is when you want to troubleshoot a Python dependency that is installed inside the application virtual environment. In such cases, you want to first copy the contents of the virtual environment from the container to the local filesystem. To that end, Lekt provides the ``tutor dev copyfrom`` command. First, copy the contents of the container folder to the local filesystem::
 
     tutor dev copyfrom lms /openedx/venv ~
 
@@ -157,7 +157,7 @@ Bind-mount from the "volumes/" directory
 
 .. warning:: Bind-mounting volumes with the ``bindmount`` command is no longer the default, recommended way of bind-mounting volumes from the host. Instead, see the :ref:`mount option <mount_option>` and the ``tutor dev/local copyfrom`` commands.
 
-Tutor makes it easy to create a bind-mount from an existing container. First, copy the contents of a container directory with the ``bindmount`` command. For instance, to copy the virtual environment of the "lms" container::
+Lekt makes it easy to create a bind-mount from an existing container. First, copy the contents of a container directory with the ``bindmount`` command. For instance, to copy the virtual environment of the "lms" container::
 
     tutor dev bindmount lms /openedx/venv
 
@@ -220,9 +220,9 @@ Following the instructions :ref:`above <bind_mounts>` on how to bind-mount direc
 
     tutor dev start -d --mount=/path/to/edx-platform lms
 
-But to achieve that, you will have to make sure that your fork works with Tutor.
+But to achieve that, you will have to make sure that your fork works with Lekt.
 
-First of all, you should make sure that you are working off the latest release tag (unless you are running the Tutor :ref:`nightly <nightly>` branch). See the :ref:`fork edx-platform section <edx_platform_fork>` for more information.
+First of all, you should make sure that you are working off the latest release tag (unless you are running the Lekt :ref:`nightly <nightly>` branch). See the :ref:`fork edx-platform section <edx_platform_fork>` for more information.
 
 Then, you should run the following commands::
 
@@ -250,7 +250,7 @@ If LMS isn't running, this will start it in your terminal. If an LMS container i
 XBlock and edx-platform plugin development
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In some cases, you will have to develop features for packages that are pip-installed next to the edx-platform. This is quite easy with Tutor. Just add your packages to the ``$(tutor config printroot)/env/build/openedx/requirements/private.txt`` file. To avoid re-building the openedx Docker image at every change, you should add your package in editable mode. For instance::
+In some cases, you will have to develop features for packages that are pip-installed next to the edx-platform. This is quite easy with Lekt. Just add your packages to the ``$(tutor config printroot)/env/build/openedx/requirements/private.txt`` file. To avoid re-building the openedx Docker image at every change, you should add your package in editable mode. For instance::
 
     echo "-e ./mypackage" >> "$(tutor config printroot)/env/build/openedx/requirements/private.txt"
 
@@ -293,4 +293,4 @@ Then, run unit tests with ``pytest`` commands::
     pytest cms
 
 .. note::
-    Getting all edx-platform unit tests to pass on Tutor is currently a work-in-progress. Some unit tests are still failing. If you manage to fix some of these, please report your findings in the `Open edX forum <https://discuss.openedx.org/tag/tutor>`__.
+    Getting all edx-platform unit tests to pass on Lekt is currently a work-in-progress. Some unit tests are still failing. If you manage to fix some of these, please report your findings in the `Open edX forum <https://discuss.openedx.org/tag/tutor>`__.

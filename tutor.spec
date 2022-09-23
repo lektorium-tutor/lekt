@@ -5,11 +5,11 @@ import pkg_resources
 
 block_cipher = None
 
-datas = [("./tutor/templates", "./tutor/templates")]
+datas = [("./lekt/templates", "./lekt/templates")]
 hidden_imports = []
 
 # Auto-discover plugins and include patches & templates folders
-for entrypoint_version in ["tutor.plugin.v0", "tutor.plugin.v1"]:
+for entrypoint_version in ["lekt.plugin.v0", "lekt.plugin.v1"]:
     for entrypoint in pkg_resources.iter_entry_points(entrypoint_version):
         plugin_name = entrypoint.name
         try:
@@ -25,7 +25,7 @@ for entrypoint_version in ["tutor.plugin.v0", "tutor.plugin.v1"]:
             if os.path.exists(path):
                 datas.append((path, os.path.join(plugin_root_module_name, folder)))
 # Fix license import: if we don't declare some modules, pyinstaller does not find them
-hidden_imports.append("tutorlts.__about__")
+hidden_imports.append("lektlts.__about__")
 hidden_imports.append("Crypto.Cipher.AES")
 hidden_imports.append("Crypto.Cipher.PKCS1_OAEP")
 hidden_imports.append("Crypto.Hash.SHA256")
@@ -37,7 +37,7 @@ hidden_imports.append("uuid")
 
 
 # The following was initially generated with:
-# pyinstaller --onefile --name=tutor --add-data=./tutor/templates:./tutor/templates ./bin/main.py
+# pyinstaller --onefile --name=lekt --add-data=./lekt/templates:./lekt/templates ./bin/main.py
 
 a = Analysis(
     ["bin/main.py"],
@@ -61,7 +61,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name="tutor",
+    name="lekt",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

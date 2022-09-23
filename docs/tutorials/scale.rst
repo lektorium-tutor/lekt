@@ -3,7 +3,7 @@
 Running Open edX at scale
 =========================
 
-Does Open edX scale? This is the $10⁶ question when it comes to Tutor and Open edX deployments. The short answer is "yes". The longer answer is also "yes", but the details will very much depend on what we mean by "scaling".
+Does Open edX scale? This is the $10⁶ question when it comes to Lekt and Open edX deployments. The short answer is "yes". The longer answer is also "yes", but the details will very much depend on what we mean by "scaling".
 
 Depending on the context, "scaling" can imply different things:
 
@@ -11,7 +11,7 @@ Depending on the context, "scaling" can imply different things:
 2. `Horizontal scaling <https://en.wikipedia.org/wiki/Scalability#HORIZONTAL-SCALING>`__: the ability to serve an infinitely increasing number of users with consistent performance and linear costs.
 3. `High availability (HA) <https://en.wikipedia.org/wiki/High_availability>`__: the ability of the platform to remain fully functional despite one or more components being unavailable.
 
-All of these can be achieved with Tutor and Open edX, but the method to attain either differs greatly. First of all, the range of available solutions will depend on which deployment target is used. Tutor supports installations of Open edX on a single server with the :ref:`"local" <local>` deployment target, where Docker containers are orchestrated by docker-compose. On a single server, by definition, the server is a single point of failure (`SPOF <https://en.wikipedia.org/wiki/Single_point_of_failure>`__). Thus, high availability is out of the question with a single server. To achieve high availability, it is necessary to deploy to a cluster of multiple servers. But while docker-compose is a great tool for managing single-server deployments, it is simply inappropriate for deploying to a cluster. Tutor also supports deploying to a Kubernetes cluster (see :ref:`k8s`). This is the recommended solution to deploy Open edX "at scale".
+All of these can be achieved with Lekt and Open edX, but the method to attain either differs greatly. First of all, the range of available solutions will depend on which deployment target is used. Lekt supports installations of Open edX on a single server with the :ref:`"local" <local>` deployment target, where Docker containers are orchestrated by docker-compose. On a single server, by definition, the server is a single point of failure (`SPOF <https://en.wikipedia.org/wiki/Single_point_of_failure>`__). Thus, high availability is out of the question with a single server. To achieve high availability, it is necessary to deploy to a cluster of multiple servers. But while docker-compose is a great tool for managing single-server deployments, it is simply inappropriate for deploying to a cluster. Lekt also supports deploying to a Kubernetes cluster (see :ref:`k8s`). This is the recommended solution to deploy Open edX "at scale".
 
 Scaling with a single server
 ----------------------------
@@ -71,7 +71,7 @@ Scaling with multiple servers
 Horizontally scaling web services
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As the number of users of a web platform increases, they put increased pressure on the web workers that respond to their requests. Thus, in most cases, web worker performance is the first bottleneck that system administrators have to face when their service becomes more popular. Initially, any given Kubernetes-based Tutor platform ships with one replica for each deployment. To increase (or reduce) the number of replicas for any given service, run ``tutor k8s scale <name> <number of replicas>``. Behind the scenes, this command will trigger a ``kubectl scale --replicas=...`` command that will seamlessly increase the number of pods for that deployment.
+As the number of users of a web platform increases, they put increased pressure on the web workers that respond to their requests. Thus, in most cases, web worker performance is the first bottleneck that system administrators have to face when their service becomes more popular. Initially, any given Kubernetes-based Lekt platform ships with one replica for each deployment. To increase (or reduce) the number of replicas for any given service, run ``tutor k8s scale <name> <number of replicas>``. Behind the scenes, this command will trigger a ``kubectl scale --replicas=...`` command that will seamlessly increase the number of pods for that deployment.
 
 In Open edX multiple web services are exposed to the outside world. The ones that usually receive the most traffic are, in decreasing order, the LMS, the CMS, and the forum (assuming the `tutor-forum <https://github.com/overhangio/tutor-forum>`__ plugin was enabled). As an example, all three deployment replicas can be scaled by running::
 
@@ -82,4 +82,4 @@ In Open edX multiple web services are exposed to the outside world. The ones tha
 Highly-available architecture, autoscaling, ...
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There is only so much that Tutor can do for you, and scaling some components falls beyond the scope of Tutor. For instance, it is your responsibility to make sure that your Kubernetes cluster has a `highly available control plane <https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/high-availability/>`__ and `topology <https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/ha-topology/>`__. Also, it is possible to achieve `autoscaling <https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/>`__; but it is your responsibility to setup latency metrics collection and to configure the scaling policies.
+There is only so much that Lekt can do for you, and scaling some components falls beyond the scope of Lekt. For instance, it is your responsibility to make sure that your Kubernetes cluster has a `highly available control plane <https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/high-availability/>`__ and `topology <https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/ha-topology/>`__. Also, it is possible to achieve `autoscaling <https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/>`__; but it is your responsibility to setup latency metrics collection and to configure the scaling policies.

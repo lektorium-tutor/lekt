@@ -3,7 +3,7 @@
 Running Open edX behind a web proxy
 ===================================
 
-The containerized web server (`Caddy <https://caddyserver.com/>`__) needs to listen to ports 80 and 443 on the host. If there is already a webserver running on the host, such as Apache or Nginx, the caddy container will not be able to start. Tutor supports running behind a web proxy. To do so, add the following configuration::
+The containerized web server (`Caddy <https://caddyserver.com/>`__) needs to listen to ports 80 and 443 on the host. If there is already a webserver running on the host, such as Apache or Nginx, the caddy container will not be able to start. Lekt supports running behind a web proxy. To do so, add the following configuration::
 
        tutor config save --set ENABLE_WEB_PROXY=false --set CADDY_HTTP_PORT=81
 

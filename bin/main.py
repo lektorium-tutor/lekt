@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-from tutor import hooks
-from tutor.commands.cli import main
-from tutor.plugins.v0 import OfficialPlugin
+from lekt import hooks
+from lekt.commands.cli import main
+from lekt.plugins.v0 import OfficialPlugin
 
 
 @hooks.Actions.CORE_READY.add()

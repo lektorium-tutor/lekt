@@ -3,13 +3,13 @@ Plugin API
 
 .. include:: legacy.rst
 
-Plugins can affect the behaviour of Tutor at multiple levels. They can:
+Plugins can affect the behaviour of Lekt at multiple levels. They can:
 
-* Add new settings or modify existing ones in the Tutor configuration (see :ref:`config <v0_plugin_config>`).
-* Add new templates to the Tutor project environment or modify existing ones (see :ref:`patches <v0_plugin_patches>`, :ref:`templates <v0_plugin_templates>` and :ref:`hooks <v0_plugin_hooks>`).
-* Add custom commands to the Tutor CLI (see :ref:`command <v0_plugin_command>`).
+* Add new settings or modify existing ones in the Lekt configuration (see :ref:`config <v0_plugin_config>`).
+* Add new templates to the Lekt project environment or modify existing ones (see :ref:`patches <v0_plugin_patches>`, :ref:`templates <v0_plugin_templates>` and :ref:`hooks <v0_plugin_hooks>`).
+* Add custom commands to the Lekt CLI (see :ref:`command <v0_plugin_command>`).
 
-There exist two different APIs to create Tutor plugins: either with YAML files or Python packages. YAML files are more simple to create but are limited to just configuration and template patches.
+There exist two different APIs to create Lekt plugins: either with YAML files or Python packages. YAML files are more simple to create but are limited to just configuration and template patches.
 
 .. _v0_plugin_config:
 
@@ -49,7 +49,7 @@ This configuration from the "myplugin" plugin will set the following values:
 patches
 ~~~~~~~
 
-Plugin patches affect the rendered environment templates. In many places the Tutor templates include calls to ``{{ patch("patchname") }}``. This grants plugin developers the possibility to modify the content of rendered templates. Plugins can add content in these places by adding values to the ``patches`` attribute. See :ref:`patches` for the complete list available patches.
+Plugin patches affect the rendered environment templates. In many places the Lekt templates include calls to ``{{ patch("patchname") }}``. This grants plugin developers the possibility to modify the content of rendered templates. Plugins can add content in these places by adding values to the ``patches`` attribute. See :ref:`patches` for the complete list available patches.
 
 Example::
 
@@ -85,7 +85,7 @@ Example::
 
 During initialisation, "myservice1" and "myservice2" will be run in sequence with the commands defined in the templates ``myplugin/hooks/myservice1/init`` and ``myplugin/hooks/myservice2/init``.
 
-To initialise a "foo" service, Tutor runs the "foo-job" service that is found in the ``env/local/docker-compose.jobs.yml`` file. By default, Tutor comes with a few services in this file: mysql-job, lms-job, cms-job. If your plugin requires running custom services during initialisation, you will need to add them to the ``docker-compose.jobs.yml`` template. To do so, just use the "local-docker-compose-jobs-services" patch.
+To initialise a "foo" service, Lekt runs the "foo-job" service that is found in the ``env/local/docker-compose.jobs.yml`` file. By default, Lekt comes with a few services in this file: mysql-job, lms-job, cms-job. If your plugin requires running custom services during initialisation, you will need to add them to the ``docker-compose.jobs.yml`` template. To do so, just use the "local-docker-compose-jobs-services" patch.
 
 In Kubernetes, the approach is the same, except that jobs are implemented as actual job objects in the ``k8s/jobs.yml`` template. To add your services there, your plugin should implement the "k8s-jobs" patch.
 
@@ -150,7 +150,7 @@ Example::
 
 With the above declaration, you can store plugin-specific templates in the ``templates/myplugin`` folder next to the ``plugin.py`` file.
 
-In Tutor, templates are `Jinja2 <https://jinja.palletsprojects.com/en/2.11.x/>`__-formatted files that will be rendered in the Tutor environment (the ``$(tutor config printroot)/env`` folder) when running ``tutor config save``. The environment files are overwritten every time the environment is saved. Plugin developers can create templates that make use of the built-in `Jinja2 API <https://jinja.palletsprojects.com/en/2.11.x/api/>`__. In addition, a couple of additional filters are added by Tutor:
+In Lekt, templates are `Jinja2 <https://jinja.palletsprojects.com/en/2.11.x/>`__-formatted files that will be rendered in the Lekt environment (the ``$(tutor config printroot)/env`` folder) when running ``tutor config save``. The environment files are overwritten every time the environment is saved. Plugin developers can create templates that make use of the built-in `Jinja2 API <https://jinja.palletsprojects.com/en/2.11.x/api/>`__. In addition, a couple of additional filters are added by Lekt:
 
 * ``common_domain``: Return the longest common name between two domain names. Example: ``{{ "studio.demo.myopenedx.com"|common_domain("lms.demo.myopenedx.com") }}`` is equal to "demo.myopenedx.com".
 * ``encrypt``: Encrypt an arbitrary string. The encryption process is compatible with `htpasswd <https://httpd.apache.org/docs/2.4/programs/htpasswd.html>`__ verification.
@@ -182,7 +182,7 @@ Python plugins can provide a custom command line interface.
 The ``command`` attribute is assumed to be a `click.Command <https://click.palletsprojects.com/en/8.0.x/api/#commands>`__ object,
 and you typically implement them using the `click.command <https://click.palletsprojects.com/en/8.0.x/api/#click.command>`__ decorator.
 
-You may also use the `click.pass_obj <https://click.palletsprojects.com/en/8.0.x/api/#click.pass_obj>`__ decorator to pass the CLI `context <https://click.palletsprojects.com/en/8.0.x/api/#click.Context>`__, such as when you want to access Tutor configuration settings from your command.
+You may also use the `click.pass_obj <https://click.palletsprojects.com/en/8.0.x/api/#click.pass_obj>`__ decorator to pass the CLI `context <https://click.palletsprojects.com/en/8.0.x/api/#click.Context>`__, such as when you want to access Lekt configuration settings from your command.
 
 Example::
 

@@ -1,5 +1,5 @@
 ---
-name: Question about using Tutor
+name: Question about using Lekt
 about: This is not the appropriate channel
 
 ---

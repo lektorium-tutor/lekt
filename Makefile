@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 .PHONY: docs
-SRC_DIRS = ./tutor ./tests ./bin ./docs
+SRC_DIRS = ./lekt ./tests ./bin ./docs
 BLACK_OPTS = --exclude templates ${SRC_DIRS}
 
 ###### Development
@@ -18,13 +18,13 @@ upgrade-requirements: ## Upgrade requirements files
 	pip-compile --upgrade requirements/dev.in
 	pip-compile --upgrade requirements/docs.in
 
-build-pythonpackage: build-pythonpackage-tutor ## Build Python packages ready to upload to pypi
+build-pythonpackage: build-pythonpackage-lekt ## Build Python packages ready to upload to pypi
 
-build-pythonpackage-tutor: ## Build the "tutor" python package for upload to pypi
+build-pythonpackage-lekt: ## Build the "lekt" python package for upload to pypi
 	python setup.py sdist
 
 push-pythonpackage: ## Push python package to pypi
-	twine upload --skip-existing dist/tutor-$(shell make version).tar.gz
+	twine upload --skip-existing dist/lekt-$(shell make version).tar.gz
 
 test: test-lint test-unit test-types test-format test-pythonpackage ## Run all tests by decreasing order of priority
 
@@ -43,10 +43,10 @@ test-types: ## Check type definitions
 	mypy --exclude=templates --ignore-missing-imports --strict ${SRC_DIRS}
 
 test-pythonpackage: build-pythonpackage ## Test that package can be uploaded to pypi
-	twine check dist/tutor-$(shell make version).tar.gz
+	twine check dist/lekt-$(shell make version).tar.gz
 
 test-k8s: ## Validate the k8s format with kubectl. Not part of the standard test suite.
-	tutor k8s apply --dry-run=client --validate=true
+	lekt k8s apply --dry-run=client --validate=true
 
 format: ## Format code automatically
 	black $(BLACK_OPTS)
@@ -80,8 +80,8 @@ coverage-browse-report: coverage-html ## Open the HTML report in the browser
 
 ###### Deployment
 
-bundle: ## Bundle the tutor package in a single "dist/tutor" executable
-	pyinstaller tutor.spec
+bundle: ## Bundle the lekt package in a single "dist/lekt" executable
+	pyinstaller lekt.spec
 
 release: test release-unsafe ## Create a release tag and push it to origin
 release-unsafe:
@@ -97,7 +97,7 @@ release-push:
 	git push origin $(TAG)
 
 release-description:  ## Write the current release description to a file
-	sed "s/TUTOR_VERSION/v$(shell make version)/g" docs/_release_description.md > release_description.md
+	sed "s/LEKT_VERSION/v$(shell make version)/g" docs/_release_description.md > release_description.md
 	git log -1 --pretty=format:%b >> release_description.md
 
 ###### Continuous integration tasks
@@ -111,24 +111,24 @@ ci-info: ## Print info about environment
 	pip --version
 
 ci-test-bundle: ## Run basic tests on bundle
-	ls -lh ./dist/tutor
-	./dist/tutor --version
-	./dist/tutor config printroot
-	yes "" | ./dist/tutor config save --interactive
-	./dist/tutor config save
-	./dist/tutor plugins list
-	./dist/tutor plugins enable android discovery ecommerce forum license mfe minio notes richie webui xqueue
-	./dist/tutor plugins list
-	./dist/tutor license --help
+	ls -lh ./dist/lekt
+	./dist/lekt --version
+	./dist/lekt config printroot
+	yes "" | ./dist/lekt config save --interactive
+	./dist/lekt config save
+	./dist/lekt plugins list
+	./dist/lekt plugins enable android discovery ecommerce forum license mfe minio notes richie webui xqueue
+	./dist/lekt plugins list
+	./dist/lekt license --help
 
 ci-bootstrap-images:
 	pip install .
-	tutor config save
+	lekt config save
 
 ###### Additional commands
 
-version: ## Print the current tutor version
-	@python -c 'import io, os; about = {}; exec(io.open(os.path.join("tutor", "__about__.py"), "rt", encoding="utf-8").read(), about); print(about["__package_version__"])'
+version: ## Print the current lekt version
+	@python -c 'import io, os; about = {}; exec(io.open(os.path.join("lekt", "__about__.py"), "rt", encoding="utf-8").read(), about); print(about["__package_version__"])'
 
 ESCAPE = 
 help: ## Print this help

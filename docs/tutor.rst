@@ -1,14 +1,14 @@
 .. _tutor:
 
-Tutor development
+Lekt development
 =================
 
 Setting up your development environment
 ---------------------------------------
 
-Start by cloning the Tutor repository::
+Start by cloning the Lekt repository::
 
-    git clone https://github.com/overhangio/tutor.git
+    git clone https://github.com/overhangio/lekt.git
     cd tutor/
 
 Install requirements
@@ -30,7 +30,7 @@ Yes, there are very few unit tests for now, but this is probably going to change
 Code formatting
 ~~~~~~~~~~~~~~~
 
-Tutor code formatting is enforced by `black <https://black.readthedocs.io/en/stable/>`_. To check whether your code changes conform to formatting standards, run::
+Lekt code formatting is enforced by `black <https://black.readthedocs.io/en/stable/>`_. To check whether your code changes conform to formatting standards, run::
 
     make test-format
 
@@ -78,31 +78,31 @@ Releasing a new version
 Versioning
 ----------
 
-The versioning format used in Tutor is the following::
+The versioning format used in Lekt is the following::
 
     RELEASE.MAJOR.MINOR(-BRANCH)
 
-When making a new Tutor release, increment the:
+When making a new Lekt release, increment the:
 
 - RELEASE version when a new Open edX release comes out. The new value should match the ordinal value of the first letter of the release name: Aspen 🡒 1, Birch 🡒 2, ... Zebra 🡒 26.
 - MAJOR version when making a backward-incompatible change (prefixed by "💥" in the changelog, as explained below).
 - MINOR version when making a backward-compatible change.
 
-An optional BRANCH suffix may be appended to the release name to indicate that extra changes were added on top of the latest release. For instance, "x.y.z-nightly" corresponds to release x.y.z on top of which extra changes were added to make it compatible with the Open edX master branches (see the :ref:`tutorial on running Tutor Nightly <nightly>`).
+An optional BRANCH suffix may be appended to the release name to indicate that extra changes were added on top of the latest release. For instance, "x.y.z-nightly" corresponds to release x.y.z on top of which extra changes were added to make it compatible with the Open edX master branches (see the :ref:`tutorial on running Lekt Nightly <nightly>`).
 
 `Officially-supported plugins <https://overhang.io/tutor/plugins>`__ follow the same versioning pattern. As a third-party plugin developer, you are encouraged to use the same pattern to make it immediately clear to your end-users which Open edX versions are supported.
 
 .. _contributing:
 
-Contributing to Tutor
+Contributing to Lekt
 ---------------------
 
-Third-party contributions to Tutor and its plugins are more than welcome! Just make sure to follow these guidelines:
+Third-party contributions to Lekt and its plugins are more than welcome! Just make sure to follow these guidelines:
 
 - Outside of obvious bugs, contributions should be discussed first in the `official Open edX forum <https://discuss.openedx.org>`__.
-- Once we agree on a high-level solution, you should open a pull request on the `Tutor repository <https://github.com/overhangio/tutor/pulls>`__ or the corresponding plugin.
+- Once we agree on a high-level solution, you should open a pull request on the `Lekt repository <https://github.com/overhangio/tutor/pulls>`__ or the corresponding plugin.
 - Make sure that all tests pass by running ``make test`` (see above).
-- If your PR is in the Tutor core repository, add an item to the CHANGELOG file, in the "Unreleased" section. Use the same format as the other items::
+- If your PR is in the Lekt core repository, add an item to the CHANGELOG file, in the "Unreleased" section. Use the same format as the other items::
 
     - [TYPE] DESCRIPTION
 
@@ -114,7 +114,7 @@ Happy hacking! ☘️
 
 .. _maintainers:
 
-Joining the team of Tutor Maintainers
+Joining the team of Lekt Maintainers
 -------------------------------------
 
 We have an open team of volunteers who help support the project. You can read all about it `here <https://discuss.openedx.org/t/tutor-maintainers/7287>`__ -- and we hope that you'll consider joining us 😉

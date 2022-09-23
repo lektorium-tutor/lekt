@@ -29,7 +29,7 @@ Every user-facing change should have an entry in this changelog. Please respect 
 
 - [Feature] Add the `-m/--mount` option to `tutor dev quickstart`.
 - [Bugfix] Fix `tutor dev start -m /path/to/frontend-app-learning` by introducing dev-specific `COMPOSE_DEV_TMP` and `COMPOSE_DEV_JOBS_TMP` filters (by @regisb).
-- [Bugfix] Log the shell commands that Tutor executes more accurately. (by @kdmccormick)
+- [Bugfix] Log the shell commands that Lekt executes more accurately. (by @kdmccormick)
 - [Bugfix] `tutor dev quickstart` would fail under certain versions of docker-compose due to a bug in the logic that handled volume mounting. (by @kdmccormick)
 - [Bugfix] The `tutor k8s start` command will succeed even when `k8s-override` and `kustomization-patches-strategic-merge` are not specified. (by @edazzocaisser)
 - [BugFix] `kubectl wait` checks deployments instead of pods as it could hang indefinitely if there are extra pods in a broken state. (by @keithgg)
@@ -47,7 +47,7 @@ Every user-facing change should have an entry in this changelog. Please respect 
 - [Bugfix] Fix smtp server port in `cms.yml` which was causing email sending failures in the Studio. (by @regisb)
 - [Bugfix] Skip waiting for MongoDB if it is served using SRV records. (by @gabor-boros)
 - [Improvement] Use `git am` instead of `cherry-pick` to simplify patching process.
-- [Improvement] Tutor is now compatible with Docker Compose subcommand.
+- [Improvement] Lekt is now compatible with Docker Compose subcommand.
 
 ## v14.0.1 (2022-06-13)
 
@@ -61,7 +61,7 @@ Every user-facing change should have an entry in this changelog. Please respect 
   - 💥[Improvement] The `lms.env.json` and `cms.env.json` files are moved to `lms.env.yml` and `cms.env.yml`. As a consequence, plugin developers must reformat the following patches to use YAML format, and not JSON: "common-env-features", "lms-env-features", "cms-env-features", "lms-env", "cms-env", "openedx-auth".
   - 💥[Feature] Persistent grades are now enabled by default.
   - [Bugfix] Remove edX references from bulk emails ([issue](https://github.com/openedx/build-test-release-wg/issues/100)).
-  - [Improvement] For Tutor Nightly (and only Nightly), official plugins are now installed from their nightly branches on GitHub instead of a version range on PyPI. This will allow Nightly users to install all official plugins by running ``pip install -e ".[full]"``.
+  - [Improvement] For Lekt Nightly (and only Nightly), official plugins are now installed from their nightly branches on GitHub instead of a version range on PyPI. This will allow Nightly users to install all official plugins by running ``pip install -e ".[full]"``.
   - [Bugfix] Start MongoDB when running migrations, because a new data migration fails if MongoDB is not running
 
 ## v13.3.1 (2022-06-06)
@@ -105,8 +105,8 @@ Every user-facing change should have an entry in this changelog. Please respect 
 - [Feature] Introduce the ``-m/--mount`` option in ``local`` and ``dev`` commands to auto-magically bind-mount folders from the host. (by @regisb)
 - [Feature] Add `tutor dev quickstart` command, which is similar to `tutor local quickstart`, except that it uses dev containers instead of local production ones and includes some other small differences for the convience of Open edX developers. This should remove some friction from the Open edX development setup process, which previously required that users provision using local producation containers (`tutor local quickstart`) but then stop them and switch to dev containers (`tutor local stop && tutor dev start -d`). (by @kdmccormick)
 - 💥[Improvement] Make it possible to run `tutor k8s exec <command with multiple arguments>` (#636). As a consequence, it is no longer possible to run quoted commands: `tutor k8s exec "<some command>"`. Instead, you should remove the quotes: `tutor k8s exec <some command>`. (by @regisb)
-- 💥[Deprecation] Drop support for the `TUTOR_EDX_PLATFORM_SETTINGS` environment variable. It is now recommended to create a plugin instead. (by @regisb)
-- 💥[Improvement] Complete overhaul of the plugin extension mechanism. Tutor now has a hook-based Python API: actions can be triggered at different points of the application life cycle and data can be modified thanks to custom filters. The v0 plugin API is still supported, for backward compatibility, but plugin developers are encouraged to migrate their plugins to the new API. See the new plugin tutorial for more information. (by @regisb)
+- 💥[Deprecation] Drop support for the `LEKT_EDX_PLATFORM_SETTINGS` environment variable. It is now recommended to create a plugin instead. (by @regisb)
+- 💥[Improvement] Complete overhaul of the plugin extension mechanism. Lekt now has a hook-based Python API: actions can be triggered at different points of the application life cycle and data can be modified thanks to custom filters. The v0 plugin API is still supported, for backward compatibility, but plugin developers are encouraged to migrate their plugins to the new API. See the new plugin tutorial for more information. (by @regisb)
 - [Improvement] Improved the output of `tutor plugins list`. (by @regisb)
 - [Feature] Add `tutor [dev|local|k8s] status` command, which provides basic information about the platform's status. (by @kdmccormick)
 
@@ -207,7 +207,7 @@ Every user-facing change should have an entry in this changelog. Please respect 
 - [Security] On Kubernetes, convert all NodePort services to ClusterIP to guarantee network isolation from outside the cluster.
 - 💥[Improvement] Move the Open edX forum to a [dedicated plugin](https://github.com/overhangio/tutor-forum/) (#450).
 - 💥[Improvement] Drop Python 3.5 compatibility.
-- 💥[Bugfix] No longer track the Tutor version number in resource labels (and label selectors, which breaks the update of Deployment resources), but instead do so in resource annotations.
+- 💥[Bugfix] No longer track the Lekt version number in resource labels (and label selectors, which breaks the update of Deployment resources), but instead do so in resource annotations.
 - 💥[Improvement] Get rid of the "tutor-openedx" package, which is no longer supported.
 - 💥[Improvement] Run all services as unprivileged containers, for better security. This has multiple consequences:
   - The "openedx-dev" image is now built with `tutor dev dc build lms`.
@@ -290,7 +290,7 @@ Every user-facing change should have an entry in this changelog. Please respect 
 
 - [Bugfix] Fix "Invalid command argument" during upgrade from Koa to Lilac.
 - [Bugfix] Fix MySQL initialisation in docker-compose==2.0.0beta4.
-- [Improvement] Tutor is now published on PyPI as "tutor".
+- [Improvement] Lekt is now published on PyPI as "tutor".
 
 ## v12.0.1 (2021-06-22)
 
@@ -303,7 +303,7 @@ Every user-facing change should have an entry in this changelog. Please respect 
 ## v12.0.0 (2021-06-09)
 
 - 💥[Improvement] Upgrade all services to open-release/lilac.master.
-- 💥[Feature] Migrate Android app building and the WebUI frontend away from core Tutor and to dedicated plugins (see [TEP](https://discuss.overhang.io/c/community/tep/9)). The `DOCKER_IMAGE_ANDROID` setting is thus renamed to `ANDROID_DOCKER_IMAGE`.
+- 💥[Feature] Migrate Android app building and the WebUI frontend away from core Lekt and to dedicated plugins (see [TEP](https://discuss.overhang.io/c/community/tep/9)). The `DOCKER_IMAGE_ANDROID` setting is thus renamed to `ANDROID_DOCKER_IMAGE`.
 - [Feature] Run `docker-compose build` as part of `tutor local start`.
 
 ## v11.3.1 (2021-06-08)
@@ -356,7 +356,7 @@ Every user-facing change should have an entry in this changelog. Please respect 
 
 - [Bugfix] Fix "Invalid Request" error during SAML authentication (thanks @Ant1x!).
 - [Feature] Add `make pull-base-images` command to update base images.
-- [Improvement] Annotate types all over the Tutor code base.
+- [Improvement] Annotate types all over the Lekt code base.
 - [Bugfix] Fix parsing of YAML CLI arguments that include equal "=" signs.
 - [Bugfix] Fix minor edge case in `long_to_base64` utility function.
 - [Improvement] Add openedx patches to add settings during the build process.
@@ -492,7 +492,7 @@ Every user-facing change should have an entry in this changelog. Please respect 
 
 ## v10.4.0 (2020-10-30)
 
-**Note for users of the [Tutor AMI](https://aws.amazon.com/marketplace/pp/B07PV3TB8X):** To upgrade from a previous v10 release, run:
+**Note for users of the [Lekt AMI](https://aws.amazon.com/marketplace/pp/B07PV3TB8X):** To upgrade from a previous v10 release, run:
 
     curl -fsSL https://overhang.io/tutor/ami/upgrade.sh | sh
 
@@ -728,7 +728,7 @@ Every user-facing change should have an entry in this changelog. Please respect 
 - [Bugfix] Fix OAuth authentication in dev mode.
 - [Improvement] Upgrade to the 3.7 docker-compose syntax.
 - [Improvement] The `dev runserver` command can now be run for just any service.
-- 💥[Feature] `dev run/exec` commands now support generic options which are passed to docker-compose. Consequently, defining the `TUTOR_EDX_PLATFORM_PATH` environment variable no longer works. Instead, users are encouraged to explicitly pass the `-v` option, define a command alias or create a `docker-compose.override.yml` file.
+- 💥[Feature] `dev run/exec` commands now support generic options which are passed to docker-compose. Consequently, defining the `LEKT_EDX_PLATFORM_PATH` environment variable no longer works. Instead, users are encouraged to explicitly pass the `-v` option, define a command alias or create a `docker-compose.override.yml` file.
 
 ## 3.9.1 (2020-01-08)
 
@@ -981,7 +981,7 @@ Every user-facing change should have an entry in this changelog. Please respect 
 
 ## 3.0.0 (2019-02-09)
 
-- [Improvement] Complete rewrite of Tutor: switch from a make-based project to a single binary that runs all commands.
+- [Improvement] Complete rewrite of Lekt: switch from a make-based project to a single binary that runs all commands.
 - [Feature] An web user interface can be created with `tutor webui start`.
 - [Bugfix] Add missing Elasticsearch to Kubernetes deployment (#147).
 - [Improvement] Upload `tutor-openedx` to PyPI .

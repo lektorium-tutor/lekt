@@ -2,10 +2,10 @@ import typing as t
 from unittest.mock import patch
 
 from tests.helpers import PluginsTestCase, temporary_root
-from tutor import config as tutor_config
-from tutor import exceptions, fmt, hooks, plugins
-from tutor.plugins import v0 as plugins_v0
-from tutor.types import Config, get_typed
+from lekt import config as lekt_config
+from lekt import exceptions, fmt, hooks, plugins
+from lekt.plugins import v0 as plugins_v0
+from lekt.types import Config, get_typed
 
 
 class PluginsTests(PluginsTestCase):
@@ -25,26 +25,26 @@ class PluginsTests(PluginsTestCase):
         )
 
     def test_load(self) -> None:
-        config: Config = {tutor_config.PLUGINS_CONFIG_KEY: []}
+        config: Config = {lekt_config.PLUGINS_CONFIG_KEY: []}
         plugins_v0.DictPlugin({"name": "plugin1"})
         plugins_v0.DictPlugin({"name": "plugin2"})
         plugins.load("plugin2")
         plugins.load("plugin1")
-        tutor_config.save_enabled_plugins(config)
+        lekt_config.save_enabled_plugins(config)
         self.assertEqual(
-            ["plugin1", "plugin2"], config[tutor_config.PLUGINS_CONFIG_KEY]
+            ["plugin1", "plugin2"], config[lekt_config.PLUGINS_CONFIG_KEY]
         )
 
     def test_enable_twice(self) -> None:
         plugins_v0.DictPlugin({"name": "plugin1"})
         plugins.load("plugin1")
         plugins.load("plugin1")
-        config: Config = {tutor_config.PLUGINS_CONFIG_KEY: []}
-        tutor_config.save_enabled_plugins(config)
-        self.assertEqual(["plugin1"], config[tutor_config.PLUGINS_CONFIG_KEY])
+        config: Config = {lekt_config.PLUGINS_CONFIG_KEY: []}
+        lekt_config.save_enabled_plugins(config)
+        self.assertEqual(["plugin1"], config[lekt_config.PLUGINS_CONFIG_KEY])
 
     def test_load_not_installed_plugin(self) -> None:
-        self.assertRaises(exceptions.TutorError, plugins.load, "plugin1")
+        self.assertRaises(exceptions.LektError, plugins.load, "plugin1")
 
     def test_disable(self) -> None:
         plugins_v0.DictPlugin(
@@ -61,7 +61,7 @@ class PluginsTests(PluginsTestCase):
             }
         )
         config: Config = {"PLUGINS": ["plugin1", "plugin2"]}
-        tutor_config.enable_plugins(config)
+        lekt_config.enable_plugins(config)
         with patch.object(fmt, "STDOUT"):
             hooks.Actions.PLUGIN_UNLOADED.do("plugin1", "", config)
         self.assertEqual(["plugin2"], config["PLUGINS"])
@@ -75,7 +75,7 @@ class PluginsTests(PluginsTestCase):
             }
         )
         config: Config = {"PLUGINS": ["plugin1"], "KEY": "value"}
-        tutor_config.enable_plugins(config)
+        lekt_config.enable_plugins(config)
         with patch.object(fmt, "STDOUT"):
             hooks.Actions.PLUGIN_UNLOADED.do("plugin1", "", config)
         self.assertEqual([], config["PLUGINS"])
@@ -108,8 +108,8 @@ class PluginsTests(PluginsTestCase):
         )
         plugins.load("plugin1")
 
-        base = tutor_config.get_base()
-        defaults = tutor_config.get_defaults()
+        base = lekt_config.get_base()
+        defaults = lekt_config.get_defaults()
 
         self.assertEqual(base["PARAM3"], "value3")
         self.assertEqual(base["PLUGIN1_PARAM1"], "value1")
@@ -123,7 +123,7 @@ class PluginsTests(PluginsTestCase):
             {"name": "plugin1", "config": {"set": {"ID1": "newid", "ID2": "id2"}}}
         )
         plugins.load("plugin1")
-        tutor_config.update_with_base(config)
+        lekt_config.update_with_base(config)
 
         self.assertEqual("oldid", config["ID1"])
         self.assertEqual("id2", config["ID2"])
@@ -136,8 +136,8 @@ class PluginsTests(PluginsTestCase):
             }
         )
         plugins.load("plugin1")
-        config = tutor_config.get_base()
-        tutor_config.render_full(config)
+        config = lekt_config.get_base()
+        lekt_config.render_full(config)
 
         self.assertEqual(128, len(get_typed(config, "PARAM1", str)))
 
@@ -147,7 +147,7 @@ class PluginsTests(PluginsTestCase):
             {"name": "plugin1", "config": {"defaults": {"PARAM2": "{{ PARAM1 }}"}}}
         )
         plugins.load("plugin1")
-        tutor_config.update_with_defaults(config)
+        lekt_config.update_with_defaults(config)
         self.assertEqual("{{ PARAM1 }}", config["PLUGIN1_PARAM2"])
 
     def test_config_load_from_plugins(self) -> None:
@@ -158,9 +158,9 @@ class PluginsTests(PluginsTestCase):
         )
         plugins.load("plugin1")
 
-        tutor_config.update_with_base(config)
-        tutor_config.update_with_defaults(config)
-        tutor_config.render_full(config)
+        lekt_config.update_with_base(config)
+        lekt_config.update_with_defaults(config)
+        lekt_config.render_full(config)
         value1 = get_typed(config, "PLUGIN1_PARAM1", str)
 
         self.assertEqual(10, len(value1))
@@ -176,10 +176,10 @@ class PluginsTests(PluginsTestCase):
     def test_plugins_are_updated_on_config_change(self) -> None:
         config: Config = {}
         plugins_v0.DictPlugin({"name": "plugin1"})
-        tutor_config.enable_plugins(config)
+        lekt_config.enable_plugins(config)
         plugins1 = list(plugins.iter_loaded())
         config["PLUGINS"] = ["plugin1"]
-        tutor_config.enable_plugins(config)
+        lekt_config.enable_plugins(config)
         plugins2 = list(plugins.iter_loaded())
 
         self.assertEqual([], plugins1)
@@ -209,11 +209,11 @@ class PluginsTests(PluginsTestCase):
         plugins.load("plugin2")
 
         with temporary_root() as root:
-            config = tutor_config.load_minimal(root)
+            config = lekt_config.load_minimal(root)
             config_pre = config.copy()
             with patch.object(fmt, "STDOUT"):
                 hooks.Actions.PLUGIN_UNLOADED.do("plugin1", "", config)
-            config_post = tutor_config.load_minimal(root)
+            config_post = lekt_config.load_minimal(root)
 
         self.assertEqual("value1", config_pre["KEY1"])
         self.assertEqual("value2", config_pre["KEY2"])

@@ -8,32 +8,32 @@ You have gone through the :ref:`Quickstart installation <quickstart>`: at this p
 Logging-in as administrator
 ---------------------------
 
-Out of the box, Tutor does not create any user for you. You will want to create a user yourself with staff and administrator privileges to access the studio. There is a :ref:`simple command for that <createuser>`.
+Out of the box, Lekt does not create any user for you. You will want to create a user yourself with staff and administrator privileges to access the studio. There is a :ref:`simple command for that <createuser>`.
 
 Importing a demo course
 -----------------------
 
-To get a glimpse of the possibilities of Open edX, we recommend you import the `official demo test course <https://github.com/openedx/edx-demo-course>`__. Tutor provides a :ref:`simple command for that <democourse>`.
+To get a glimpse of the possibilities of Open edX, we recommend you import the `official demo test course <https://github.com/openedx/edx-demo-course>`__. Lekt provides a :ref:`simple command for that <democourse>`.
 
 Making Open edX look better
 ---------------------------
 
-Tutor makes it easy to :ref:`install <theming>` and :ref:`develop <theme_development>` your own themes. We also provide `Indigo <https://github.com/overhangio/indigo>`__: a free, customizable theme that you can install today.
+Lekt makes it easy to :ref:`install <theming>` and :ref:`develop <theme_development>` your own themes. We also provide `Indigo <https://github.com/overhangio/indigo>`__: a free, customizable theme that you can install today.
 
 Adding features
 ---------------
 
-Check out the Tutor :ref:`plugins <plugins>` and :ref:`configuration/customization options <configuration_customisation>`.
+Check out the Lekt :ref:`plugins <plugins>` and :ref:`configuration/customization options <configuration_customisation>`.
 
 Hacking into Open edX
 ---------------------
 
-Tutor works great as a development environment for Open edX developers, both for debugging and developing new features. Please check out the :ref:`development documentation <development>`.
+Lekt works great as a development environment for Open edX developers, both for debugging and developing new features. Please check out the :ref:`development documentation <development>`.
 
 Deploying to Kubernetes
 -----------------------
 
-Yes, Tutor comes with Kubernetes deployment support :ref:`out of the box <k8s>`.
+Yes, Lekt comes with Kubernetes deployment support :ref:`out of the box <k8s>`.
 
 Gathering insights and analytics about Open edX
 -----------------------------------------------
@@ -43,4 +43,4 @@ Check out `Cairn <https://overhang.io/tutor/plugin/cairn>`__, the next-generatio
 Meeting the community
 ---------------------
 
-Ask your questions and chat with the Tutor community on the official Open edX community forum: https://discuss.openedx.org
+Ask your questions and chat with the Lekt community on the official Open edX community forum: https://discuss.openedx.org

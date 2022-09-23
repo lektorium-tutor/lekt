@@ -69,6 +69,3 @@ urllib3==1.26.7
     #   requests
 websocket-client==1.2.1
     # via kubernetes
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools

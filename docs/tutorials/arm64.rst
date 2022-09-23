@@ -1,22 +1,22 @@
 .. _arm64:
 
-Running Tutor on ARM-based systems
+Running Lekt on ARM-based systems
 ==================================
 
-Tutor can be used on ARM64 systems, although support for that platform is currently experimental.
+Lekt can be used on ARM64 systems, although support for that platform is currently experimental.
 
-There are generally two ways to run Tutor on an ARM system - using qemu to run x86_64 images using emulation or running native ARM images. Since emulation can be quite slow, this Tutorial will focus on using native images where possible.
+There are generally two ways to run Lekt on an ARM system - using qemu to run x86_64 images using emulation or running native ARM images. Since emulation can be quite slow, this Lektial will focus on using native images where possible.
 
-There are currently no official ARM64 images provided for Tutor, but Tutor makes it easy to build them yourself.
+There are currently no official ARM64 images provided for Lekt, but Lekt makes it easy to build them yourself.
 
 Building the images
 -------------------
 
-Start by :ref:`installing <install>` Tutor and its dependencies (e.g. Docker) onto your system.
+Start by :ref:`installing <install>` Lekt and its dependencies (e.g. Docker) onto your system.
 
-.. note:: For Open edX developers, if you want to use the :ref:`nightly <nightly>` version of Tutor to "run master", install Tutor using git and check out the ``nightly`` branch of Tutor at this point. See the :ref:`nightly documentation <nightly>` for details.
+.. note:: For Open edX developers, if you want to use the :ref:`nightly <nightly>` version of Lekt to "run master", install Lekt using git and check out the ``nightly`` branch of Lekt at this point. See the :ref:`nightly documentation <nightly>` for details.
 
-Next, configure Tutor::
+Next, configure Lekt::
 
     tutor config save --interactive
 
@@ -26,7 +26,7 @@ Then, build the "openedx" and "permissions" images::
 
     tutor images build openedx permissions
 
-If you want to use Tutor as an Open edX development environment, you should also build the development images::
+If you want to use Lekt as an Open edX development environment, you should also build the development images::
 
     tutor dev dc build lms
 
@@ -38,14 +38,14 @@ The version of MySQL that Open edX uses by default does not support the ARM arch
 .. warning::
     Note that using MariaDB is experimental and incompatibilities may exist, so this should only be used for local development - not for production instances.
 
-Configure Tutor to use MariaDB::
+Configure Lekt to use MariaDB::
 
     tutor config save --set DOCKER_IMAGE_MYSQL=mariadb:10.4
 
-Finish setup and start Tutor
+Finish setup and start Lekt
 ----------------------------
 
-From this point on, use Tutor as normal. For example, start Open edX and run migrations with::
+From this point on, use Lekt as normal. For example, start Open edX and run migrations with::
 
     tutor local start -d
     tutor local init
