@@ -104,7 +104,7 @@ services:
     image: {{ DOCKER_IMAGE_OPENEDX }}
     environment:
       SERVICE_VARIANT: lms
-      DJANGO_SETTINGS_MODULE: lms.envs.tutor.production
+      DJANGO_SETTINGS_MODULE: lms.envs.lekt.production
       UWSGI_WORKERS: {{ OPENEDX_LMS_UWSGI_WORKERS }}
     restart: unless-stopped
     volumes:
@@ -135,7 +135,7 @@ services:
     image: {{ DOCKER_IMAGE_OPENEDX }}
     environment:
       SERVICE_VARIANT: cms
-      DJANGO_SETTINGS_MODULE: cms.envs.tutor.production
+      DJANGO_SETTINGS_MODULE: cms.envs.lekt.production
       UWSGI_WORKERS: {{ OPENEDX_CMS_UWSGI_WORKERS }}
     restart: unless-stopped
     volumes:
@@ -169,7 +169,7 @@ services:
     image: {{ DOCKER_IMAGE_OPENEDX }}
     environment:
       SERVICE_VARIANT: lms
-      DJANGO_SETTINGS_MODULE: lms.envs.tutor.production
+      DJANGO_SETTINGS_MODULE: lms.envs.lekt.production
     command: celery --app=lms.celery worker --loglevel=info --hostname=edx.lms.core.default.%%h --max-tasks-per-child=100 --exclude-queues=edx.cms.core.default
     restart: unless-stopped
     volumes:
@@ -187,7 +187,7 @@ services:
     image: {{ DOCKER_IMAGE_OPENEDX }}
     environment:
       SERVICE_VARIANT: cms
-      DJANGO_SETTINGS_MODULE: cms.envs.tutor.production
+      DJANGO_SETTINGS_MODULE: cms.envs.lekt.production
     command: celery --app=cms.celery worker --loglevel=info --hostname=edx.cms.core.default.%%h --max-tasks-per-child 100 --exclude-queues=edx.lms.core.default
     restart: unless-stopped
     volumes:

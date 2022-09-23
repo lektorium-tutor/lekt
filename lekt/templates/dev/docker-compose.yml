@@ -32,7 +32,7 @@ services:
     <<: *openedx-service
     command: ./manage.py lms runserver 0.0.0.0:8000
     environment:
-        DJANGO_SETTINGS_MODULE: lms.envs.tutor.development
+        DJANGO_SETTINGS_MODULE: lms.envs.lekt.development
     ports:
         - "8000:8000"
     networks:
@@ -44,7 +44,7 @@ services:
     <<: *openedx-service
     command: ./manage.py cms runserver 0.0.0.0:8000
     environment:
-        DJANGO_SETTINGS_MODULE: cms.envs.tutor.development
+        DJANGO_SETTINGS_MODULE: cms.envs.lekt.development
     ports:
         - "8001:8000"
 

@@ -21,7 +21,7 @@ This will perform several tasks for you. It will:
 
 * disable HTTPS,
 
-* set your ``LMS_HOST`` to `local.overhang.io <http://local.overhang.io>`_ (a convenience domain that simply `points at 127.0.0.1 <https://dnschecker.org/#A/local.overhang.io>`_),
+* set your ``LMS_HOST`` to `local.lektorium.tv <http://local.lektorium.tv>`_ (a convenience domain that simply `points at 127.0.0.1 <https://dnschecker.org/#A/local.lektorium.tv>`_),
 
 * prompt for a platform details (with suitable defaults),
 
@@ -35,8 +35,8 @@ This will perform several tasks for you. It will:
 
 Once setup is complete, the platform will be running in the background:
 
-* LMS will be accessible at `http://local.overhang.io:8000 <http://local.overhang.io:8000>`_.
-* CMS will be accessible at `http://studio.local.overhang.io:8001 <http://studio.local.overhang.io:8001>`_.
+* LMS will be accessible at `http://local.lektorium.tv:8000 <http://local.lektorium.tv:8000>`_.
+* CMS will be accessible at `http://studio.local.lektorium.tv:8001 <http://studio.local.lektorium.tv:8001>`_.
 * Plugged-in services should be accessible at their documented URLs.
 
 
@@ -285,11 +285,11 @@ Then, run unit tests with ``pytest`` commands::
     pytest openedx
 
     # Run tests on LMS
-    export DJANGO_SETTINGS_MODULE=lms.envs.tutor.test
+    export DJANGO_SETTINGS_MODULE=lms.envs.lekt.test
     pytest lms
 
     # Run tests on CMS
-    export DJANGO_SETTINGS_MODULE=cms.envs.tutor.test
+    export DJANGO_SETTINGS_MODULE=cms.envs.lekt.test
     pytest cms
 
 .. note::
