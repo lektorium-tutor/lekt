@@ -9,7 +9,7 @@ Requirements
 ------------
 
 * Supported OS: Lekt runs on any 64-bit, UNIX-based OS. It was also reported to work on Windows (with `WSL 2 <https://docs.microsoft.com/en-us/windows/wsl/install>`__).
-* Architecture: support for ARM64 is a work-in-progress. See `this issue <https://github.com/overhangio/tutor/issues/510>`__.
+* Architecture: support for ARM64 is a work-in-progress. See `this issue <https://github.com/lektorium-tutor/tutor/issues/510>`__.
 * Required software:
 
     - `Docker <https://docs.docker.com/engine/installation/>`__: v18.06.0+
@@ -46,7 +46,7 @@ Check the "tutor" package on Pypi: https://pypi.org/project/tutor. You will need
 Binary release
 ~~~~~~~~~~~~~~
 
-The latest binaries can be downloaded from https://github.com/overhangio/tutor/releases. From the command line:
+The latest binaries can be downloaded from https://github.com/lektorium-tutor/tutor/releases. From the command line:
 
 .. include:: download/binary.rst
 
@@ -57,9 +57,9 @@ This is the simplest and recommended installation method for most people who do 
 Installing from source
 ~~~~~~~~~~~~~~~~~~~~~~
 
-To inspect the Lekt source code, install Lekt from `the Github repository <https://github.com/overhangio/tutor>`__::
+To inspect the Lekt source code, install Lekt from `the Github repository <https://github.com/lektorium-tutor/tutor>`__::
 
-    git clone https://github.com/overhangio/tutor
+    git clone https://github.com/lektorium-tutor/tutor
     cd tutor
     pip install -e .
 
@@ -111,7 +111,7 @@ Upgrading to a new Open edX release
 
 Major Open edX releases are published twice a year, in June and December, by the Open edX `Build/Test/Release working group <https://discuss.openedx.org/c/working-groups/build-test-release/30>`__. When a new Open edX release comes out, Lekt gets a major version bump (see :ref:`versioning`). Such an upgrade typically includes multiple breaking changes. Any upgrade is final because downgrading is not supported. Thus, when upgrading your platform from one major version to the next, it is strongly recommended to do the following:
 
-1. Read the changes listed in the `CHANGELOG.md <https://github.com/overhangio/tutor/blob/master/CHANGELOG.md>`__ file. Breaking changes are identified by a "💥".
+1. Read the changes listed in the `CHANGELOG.md <https://github.com/lektorium-tutor/tutor/blob/master/CHANGELOG.md>`__ file. Breaking changes are identified by a "💥".
 2. Perform a backup. On a local installation, this is typically done with::
 
     lekt local stop

@@ -28,7 +28,7 @@ The `native installation <https://openedx.atlassian.net/wiki/spaces/OpenOPS/page
 4. Security: because you are no longer bound to a single OS, with Lekt you are now free to install security-related upgrades as soon as they become available.
 5. Portability: Lekt makes it easy to move your platform from one server to another. Just zip-compress your Lekt project root, send it to another server and you're done.
 
-Many features that are not included in the native installation, such as a `web user interface <https://github.com/overhangio/tutor-webui>`__ for remotely installing the platform, :ref:`Kubernetes deployment <k8s>`, additional languages, etc. You'll discover these differences as you explore Lekt :)
+Many features that are not included in the native installation, such as a `web user interface <https://github.com/lektorium-tutor/tutor-webui>`__ for remotely installing the platform, :ref:`Kubernetes deployment <k8s>`, additional languages, etc. You'll discover these differences as you explore Lekt :)
 
 What's the difference with the official devstack?
 -------------------------------------------------

@@ -54,7 +54,7 @@ Update docker images
 
     lekt local dc pull
 
-This downloads the latest version of the Docker images from `Docker Hub <https://hub.docker.com/r/overhangio/openedx/>`_. Depending on your bandwidth, this might take a long time. Minor image updates will be incremental, and thus much faster.
+This downloads the latest version of the Docker images from `Docker Hub <https://hub.docker.com/r/lektorium-tutor/openedx/>`_. Depending on your bandwidth, this might take a long time. Minor image updates will be incremental, and thus much faster.
 
 Running Open edX
 ~~~~~~~~~~~~~~~~
@@ -142,7 +142,7 @@ The default Open edX theme is rather bland, so Lekt makes it easy to switch to a
 
     lekt local settheme mytheme
 
-Out of the box, only the default "open-edx" theme is available. We also developed `Indigo, a beautiful, customizable theme <https://github.com/overhangio/indigo>`__ which is easy to install with Lekt.
+Out of the box, only the default "open-edx" theme is available. We also developed `Indigo, a beautiful, customizable theme <https://github.com/lektorium-tutor/indigo>`__ which is easy to install with Lekt.
 
 Running arbitrary ``manage.py`` commands
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

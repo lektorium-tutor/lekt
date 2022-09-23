@@ -6,11 +6,11 @@ Template patches
 
 This is the list of all patches used across Lekt (outside of any plugin). Alternatively, you can search for patches in Lekt templates by grepping the source code::
 
-    git clone https://github.com/overhangio/tutor
+    git clone https://github.com/lektorium-tutor/tutor
     cd tutor
-    git grep "{{ patch" -- tutor/templates
+    git grep "{{ patch" -- lekt/templates
 
-See also `this GitHub search <https://github.com/search?utf8=✓&q={{+patch+repo%3Aoverhangio%2Ftutor+path%3A%2Ftutor%2Ftemplates&type=Code&ref=advsearch&l=&l= 8>`__.
+See also `this GitHub search <https://github.com/search?utf8=✓&q={{+patch+repo%3Alektorium-tutor%2Ftutor+path%3A%2Ftutor%2Ftemplates&type=Code&ref=advsearch&l=&l= 8>`__.
 
 .. patch:: caddyfile
 

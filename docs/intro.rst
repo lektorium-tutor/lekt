@@ -56,7 +56,7 @@ Because Docker containers are becoming an industry-wide standard, that means tha
 Where can I try Open edX and Lekt?
 -----------------------------------
 
-A demo Open edX platform is available at https://demo.openedx.overhang.io. This platform was deployed using Lekt and the `Indigo theme <https://github.com/overhangio/indigo>`__. Feel free to play around with the following credentials:
+A demo Open edX platform is available at https://demo.openedx.overhang.io. This platform was deployed using Lekt and the `Indigo theme <https://github.com/lektorium-tutor/indigo>`__. Feel free to play around with the following credentials:
 
 * Admin user: username=admin email=admin@overhang.io password=admin
 * Student user: username=student email=student@overhang.io password=student

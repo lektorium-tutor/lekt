@@ -8,8 +8,8 @@ Setting up your development environment
 
 Start by cloning the Lekt repository::
 
-    git clone https://github.com/overhangio/lekt.git
-    cd tutor/
+    git clone https://github.com/lektorium-tutor/lekt.git
+    cd lekt/
 
 Install requirements
 ~~~~~~~~~~~~~~~~~~~~
@@ -100,7 +100,7 @@ Contributing to Lekt
 Third-party contributions to Lekt and its plugins are more than welcome! Just make sure to follow these guidelines:
 
 - Outside of obvious bugs, contributions should be discussed first in the `official Open edX forum <https://discuss.openedx.org>`__.
-- Once we agree on a high-level solution, you should open a pull request on the `Lekt repository <https://github.com/overhangio/tutor/pulls>`__ or the corresponding plugin.
+- Once we agree on a high-level solution, you should open a pull request on the `Lekt repository <https://github.com/lektorium-tutor/tutor/pulls>`__ or the corresponding plugin.
 - Make sure that all tests pass by running ``make test`` (see above).
 - If your PR is in the Lekt core repository, add an item to the CHANGELOG file, in the "Unreleased" section. Use the same format as the other items::
 

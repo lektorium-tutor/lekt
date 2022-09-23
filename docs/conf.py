@@ -60,7 +60,7 @@ html_favicon = "./img/favicon.png"
 html_show_sourcelink = False
 html_display_github = True
 html_show_sphinx = False
-html_github_user = "overhangio"
+html_github_user = "lektorium-tutor"
 html_github_repo = "lekt"
 # Images do not link to themselves
 html_scaled_image_link = False

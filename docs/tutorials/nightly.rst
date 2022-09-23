@@ -10,12 +10,12 @@ Installing Lekt Nightly
 
 Running Lekt Nightly requires more than setting a few configuration variables: because there are so many Open edX settings, version numbers, etc. which may change between the latest release and the current master branch, Lekt Nightly is actually maintained as a separate branch of the Lekt repository. To install Lekt Nightly, you should install Lekt from the "nightly" branch of the source repository. To do so, run::
 
-    git clone --branch=nightly https://github.com/overhangio/tutor.git
+    git clone --branch=nightly https://github.com/lektorium-tutor/tutor.git
     pip install -e "./tutor[full]"
 
 As usual, it is strongly recommended to run the command above in a `Python virtual environment <https://docs.python.org/3/tutorial/venv.html>`__.
 
-In addition to installing Lekt Nightly itself, this will install automatically the nightly versions of all official Lekt plugins (which are enumerated in `plugins.txt <https://github.com/overhangio/tutor/tree/nightly/requirements/plugins.txt>`_). Alternatively, if you wish to hack on an official plugin or install a custom plugin, you can clone that plugin's repository and install it. For instance::
+In addition to installing Lekt Nightly itself, this will install automatically the nightly versions of all official Lekt plugins (which are enumerated in `plugins.txt <https://github.com/lektorium-tutor/tutor/tree/nightly/requirements/plugins.txt>`_). Alternatively, if you wish to hack on an official plugin or install a custom plugin, you can clone that plugin's repository and install it. For instance::
 
     git clone --branch=nightly https://github.com/myorganization/tutor-contrib-myplugin.git
     pip install -e ./tutor-contrib-myplugin
@@ -34,7 +34,7 @@ To pull the latest upstream changes, you should first upgrade Lekt Nightly::
     cd ./tutor
     git pull
 
-Then, you will have to generate a more recent version of the nightly Docker images. Images for running Lekt Nightly are published daily to docker.io (see `here <https://hub.docker.com/r/overhangio/openedx/tags?page=1&ordering=last_updated&name=nightly>`__). You can fetch the latest images with::
+Then, you will have to generate a more recent version of the nightly Docker images. Images for running Lekt Nightly are published daily to docker.io (see `here <https://hub.docker.com/r/lektorium-tutor/openedx/tags?page=1&ordering=last_updated&name=nightly>`__). You can fetch the latest images with::
 
     lekt images pull all
 

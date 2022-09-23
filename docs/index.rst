@@ -34,15 +34,15 @@
    :maxdepth: 2
    :caption: Project links
 
-   Source code <https://github.com/overhangio/tutor>
+   Source code <https://github.com/lektorium-tutor/tutor>
    Community forums <https://discuss.openedx.org/tag/tutor>
    Pypi releases <https://pypi.org/project/tutor>
-   Changelog <https://github.com/overhangio/tutor/blob/master/CHANGELOG.md>
+   Changelog <https://github.com/lektorium-tutor/tutor/blob/master/CHANGELOG.md>
 
 Source code
 -----------
 
-The complete source code for Lekt is available on Github: https://github.com/overhangio/tutor
+The complete source code for Lekt is available on Github: https://github.com/lektorium-tutor/tutor
 
 .. include:: ../README.rst
     :start-after: _readme_support_start:
@@ -55,7 +55,7 @@ The complete source code for Lekt is available on Github: https://github.com/ove
 License
 -------
 
-This work is licensed under the terms of the `GNU Affero General Public License (AGPL) <https://github.com/overhangio/tutor/blob/master/LICENSE.txt>`_.
+This work is licensed under the terms of the `GNU Affero General Public License (AGPL) <https://github.com/lektorium-tutor/tutor/blob/master/LICENSE.txt>`_.
 
 The AGPL license covers the Lekt code, including the Dockerfiles, but not the content of the Docker images which can be downloaded from https://hub.docker.com. Software other than Lekt provided with the docker images retain their original license.
 

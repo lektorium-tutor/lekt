@@ -89,10 +89,10 @@ Example::
   def command():
     ...
 
-To get started on the right foot, it is strongly recommended to create your first plugin with the `lekt plugin cookiecutter <https://github.com/overhangio/cookiecutter-tutor-plugin>`__::
+To get started on the right foot, it is strongly recommended to create your first plugin with the `lekt plugin cookiecutter <https://github.com/lektorium-tutor/cookiecutter-tutor-plugin>`__::
 
     pip install cookiecutter
-    cookiecutter https://github.com/overhangio/cookiecutter-tutor-plugin.git
+    cookiecutter https://github.com/lektorium-tutor/cookiecutter-tutor-plugin.git
     pip install -e ./tutor-myplugin
     lekt plugins list # your plugin should appear here
     lekt plugins enable myplugin # hack at it!

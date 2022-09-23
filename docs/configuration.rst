@@ -59,7 +59,7 @@ Docker
 Custom images
 *************
 
-- ``DOCKER_IMAGE_OPENEDX`` (default: ``"{{ DOCKER_REGISTRY }}overhangio/openedx:{{ LEKT_VERSION }}"``)
+- ``DOCKER_IMAGE_OPENEDX`` (default: ``"{{ DOCKER_REGISTRY }}lektorium-tutor/openedx:{{ LEKT_VERSION }}"``)
 
 This configuration parameter defines the name of the Docker image to run for the lms and cms containers. By default, the Docker image tag matches the Lekt version it was built with.
 
@@ -91,7 +91,7 @@ This configuration parameter defines which Redis Docker image to use.
 
 This configuration parameter defines which Simple Mail Transfer Protocol (SMTP) Docker image to use.
 
-- ``DOCKER_IMAGE_PERMISSIONS`` (default: ``"{{ DOCKER_REGISTRY }}overhangio/openedx-permissions:{{ LEKT_VERSION }}"``)
+- ``DOCKER_IMAGE_PERMISSIONS`` (default: ``"{{ DOCKER_REGISTRY }}lektorium-tutor/openedx-permissions:{{ LEKT_VERSION }}"``)
 
 This configuration parameter defines the Docker image to be used for setting file permissions. The default image sets all containers to be run as unpriveleged users.
 
@@ -316,7 +316,7 @@ Custom Open edX docker image
 
 There are different ways you can customise your Open edX platform. For instance, optional features can be activated during configuration. But if you want to add unique features to your Open edX platform, you are going to have to modify and re-build the ``openedx`` docker image. This is the image that contains the ``edx-platform`` repository: it is in charge of running the web application for the Open edX "core". Both the LMS and the CMS run from the ``openedx`` docker image.
 
-On a vanilla platform deployed by Lekt, the image that is run is downloaded from the `overhangio/openedx repository on Docker Hub <https://hub.docker.com/r/overhangio/openedx/>`_. This is also the image that is downloaded whenever we run ``lekt images pull openedx``. But you can decide to build the image locally instead of downloading it. To do so, build and tag the ``openedx`` image::
+On a vanilla platform deployed by Lekt, the image that is run is downloaded from the `lektorium-tutor/openedx repository on Docker Hub <https://hub.docker.com/r/lektorium-tutor/openedx/>`_. This is also the image that is downloaded whenever we run ``lekt images pull openedx``. But you can decide to build the image locally instead of downloading it. To do so, build and tag the ``openedx`` image::
 
     lekt images build openedx
 
@@ -472,7 +472,7 @@ Beware that this will take a long time! Unfortunately, it's difficult to acceler
 Running a different ``openedx`` Docker image
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, Lekt runs the `overhangio/openedx <https://hub.docker.com/r/overhangio/openedx/>`_ docker image from Docker Hub. If you have an account on `hub.docker.com <https://hub.docker.com>`_ or you have a private image registry, you can build your image and push it to your registry with::
+By default, Lekt runs the `lektorium-tutor/openedx <https://hub.docker.com/r/lektorium-tutor/openedx/>`_ docker image from Docker Hub. If you have an account on `hub.docker.com <https://hub.docker.com>`_ or you have a private image registry, you can build your image and push it to your registry with::
 
     lekt config save --set DOCKER_IMAGE_OPENEDX=docker.io/myusername/openedx:mytag
     lekt images build openedx

@@ -58,4 +58,4 @@ Or for a development environment::
 Using with tutor-mfe
 --------------------
 
-You may wish to use `tutor-mfe <https://github.com/overhangio/tutor-mfe>`_ to run the Open edX microfrontends. If so, be aware that there is a known issue with ``tutor-mfe`` on ARM systems. See `this GitHub issue <https://github.com/overhangio/tutor-mfe/issues/31>`_ for details and known workarounds.
+You may wish to use `tutor-mfe <https://github.com/lektorium-tutor/tutor-mfe>`_ to run the Open edX microfrontends. If so, be aware that there is a known issue with ``tutor-mfe`` on ARM systems. See `this GitHub issue <https://github.com/lektorium-tutor/tutor-mfe/issues/31>`_ for details and known workarounds.

@@ -12,7 +12,7 @@ Lekt: the Docker-based Open edX distribution designed for peace of mind
 
 .. image:: https://img.shields.io/static/v1?logo=github&label=Git&style=flat-square&color=brightgreen&message=Source%20code
   :alt: Source code
-  :target: https://github.com/overhangio/tutor
+  :target: https://github.com/lektorium-tutor/tutor
 
 .. image:: https://img.shields.io/static/v1?logo=discourse&label=Forums&style=flat-square&color=ff0080&message=discuss.openedx.org
   :alt: Forums
@@ -26,17 +26,17 @@ Lekt: the Docker-based Open edX distribution designed for peace of mind
   :alt: PyPI releases
   :target: https://pypi.org/project/tutor
 
-.. image:: https://img.shields.io/github/license/overhangio/tutor.svg?style=flat-square
+.. image:: https://img.shields.io/github/license/lektorium-tutor/tutor.svg?style=flat-square
   :alt: AGPL License
   :target: https://www.gnu.org/licenses/agpl-3.0.en.html
 
-.. image:: https://img.shields.io/static/v1?logo=twitter&label=Twitter&style=flat-square&color=1d9bf0&message=@overhangio
+.. image:: https://img.shields.io/static/v1?logo=twitter&label=Twitter&style=flat-square&color=1d9bf0&message=@lektorium-tutor
   :alt: Follow us on Twitter
-  :target: https://twitter.com/overhangio/
+  :target: https://twitter.com/lektorium-tutor/
 
-.. image:: https://img.shields.io/static/v1?logo=youtube&label=YouTube&style=flat-square&color=ff0000&message=@overhangio
+.. image:: https://img.shields.io/static/v1?logo=youtube&label=YouTube&style=flat-square&color=ff0000&message=@lektorium-tutor
     :alt: Follow us on Youtube
-    :target: https://www.youtube.com/c/OverhangIO
+    :target: https://www.youtube.com/c/lektorium-tutor
 
 **Lekt** is the official Docker-based `Open edX <https://openedx.org>`_ distribution, both for production and local development. The goal of Lekt is to make it easy to deploy, customise, upgrade and scale Open edX. Lekt is reliable, fast, extensible, and it is already used to deploy hundreds of Open edX platforms around the world.
 
@@ -45,10 +45,10 @@ Do you need professional assistance setting up or managing your Open edX platfor
 Features
 --------
 
-* 100% `open source <https://github.com/overhangio/tutor>`__
+* 100% `open source <https://github.com/lektorium-tutor/tutor>`__
 * Runs entirely on Docker
 * World-famous 1-click `installation and upgrades <https://docs.tutor.overhang.io/install.html>`__
-* Comes with batteries included: `theming <https://github.com/overhangio/indigo>`__, `SCORM <https://github.com/overhangio/openedx-scorm-xblock>`__, `HTTPS <https://docs.tutor.overhang.io/configuration.html#ssl-tls-certificates-for-https-access>`__, `web-based administration interface <https://github.com/overhangio/tutor-webui>`__, `mobile app <https://github.com/overhangio/tutor-android>`__, `custom translations <https://docs.tutor.overhang.io/configuration.html#adding-custom-translations>`__...
+* Comes with batteries included: `theming <https://github.com/lektorium-tutor/indigo>`__, `SCORM <https://github.com/lektorium-tutor/openedx-scorm-xblock>`__, `HTTPS <https://docs.tutor.overhang.io/configuration.html#ssl-tls-certificates-for-https-access>`__, `web-based administration interface <https://github.com/lektorium-tutor/tutor-webui>`__, `mobile app <https://github.com/lektorium-tutor/tutor-android>`__, `custom translations <https://docs.tutor.overhang.io/configuration.html#adding-custom-translations>`__...
 * Extensible architecture with `plugins <https://docs.tutor.overhang.io/plugins/index.html>`__
 * Works with `Kubernetes <https://docs.tutor.overhang.io/k8s.html>`__
 * Amazing premium plugins available in the `Lekt Wizard Edition <https://overhang.io/tutor/wizardedition>`__, including `Cairn <https://overhang.io/tutor/plugin/cairn>`__ the next-generation analytics solution for Open edX.
@@ -63,7 +63,7 @@ Features
 Quickstart
 ----------
 
-1. Install the `latest stable release <https://github.com/overhangio/tutor/releases>`_ of Lekt
+1. Install the `latest stable release <https://github.com/lektorium-tutor/tutor/releases>`_ of Lekt
 2. Run ``lekt local quickstart``
 3. You're done!
 
