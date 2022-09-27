@@ -108,8 +108,8 @@ services:
       UWSGI_WORKERS: {{ OPENEDX_LMS_UWSGI_WORKERS }}
     restart: unless-stopped
     volumes:
-      - ../apps/openedx/settings/lms:/openedx/edx-platform/lms/envs/tutor:ro
-      - ../apps/openedx/settings/cms:/openedx/edx-platform/cms/envs/tutor:ro
+      - ../apps/openedx/settings/lms:/openedx/edx-platform/lms/envs/lekt:ro
+      - ../apps/openedx/settings/cms:/openedx/edx-platform/cms/envs/lekt:ro
       - ../apps/openedx/config:/openedx/config:ro
       - ../../data/lms:/openedx/data
       - ../../data/openedx-media:/openedx/media
@@ -139,8 +139,8 @@ services:
       UWSGI_WORKERS: {{ OPENEDX_CMS_UWSGI_WORKERS }}
     restart: unless-stopped
     volumes:
-      - ../apps/openedx/settings/lms:/openedx/edx-platform/lms/envs/tutor:ro
-      - ../apps/openedx/settings/cms:/openedx/edx-platform/cms/envs/tutor:ro
+      - ../apps/openedx/settings/lms:/openedx/edx-platform/lms/envs/lekt:ro
+      - ../apps/openedx/settings/cms:/openedx/edx-platform/cms/envs/lekt:ro
       - ../apps/openedx/config:/openedx/config:ro
       - ../../data/cms:/openedx/data
       - ../../data/openedx-media:/openedx/media
@@ -173,8 +173,8 @@ services:
     command: celery --app=lms.celery worker --loglevel=info --hostname=edx.lms.core.default.%%h --max-tasks-per-child=100 --exclude-queues=edx.cms.core.default
     restart: unless-stopped
     volumes:
-      - ../apps/openedx/settings/lms:/openedx/edx-platform/lms/envs/tutor:ro
-      - ../apps/openedx/settings/cms:/openedx/edx-platform/cms/envs/tutor:ro
+      - ../apps/openedx/settings/lms:/openedx/edx-platform/lms/envs/lekt:ro
+      - ../apps/openedx/settings/cms:/openedx/edx-platform/cms/envs/lekt:ro
       - ../apps/openedx/config:/openedx/config:ro
       - ../../data/lms:/openedx/data
       - ../../data/openedx-media:/openedx/media
@@ -191,8 +191,8 @@ services:
     command: celery --app=cms.celery worker --loglevel=info --hostname=edx.cms.core.default.%%h --max-tasks-per-child 100 --exclude-queues=edx.lms.core.default
     restart: unless-stopped
     volumes:
-      - ../apps/openedx/settings/lms:/openedx/edx-platform/lms/envs/tutor:ro
-      - ../apps/openedx/settings/cms:/openedx/edx-platform/cms/envs/tutor:ro
+      - ../apps/openedx/settings/lms:/openedx/edx-platform/lms/envs/lekt:ro
+      - ../apps/openedx/settings/cms:/openedx/edx-platform/cms/envs/lekt:ro
       - ../apps/openedx/config:/openedx/config:ro
       - ../../data/cms:/openedx/data
       - ../../data/openedx-media:/openedx/media

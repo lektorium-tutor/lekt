@@ -233,10 +233,10 @@ class EntrypointPlugin(BasePlugin):
     Entrypoint plugins are regular python packages that have a 'lekt.plugin.v0' entrypoint.
 
     The API for Lekt plugins is currently in development. The entrypoint will switch to
-    'tutor.plugin.v1' once it is stabilised.
+    'lekt.plugin.v1' once it is stabilised.
     """
 
-    ENTRYPOINT = "tutor.plugin.v0"
+    ENTRYPOINT = "lekt.plugin.v0"
 
     def __init__(self, entrypoint: pkg_resources.EntryPoint) -> None:
         self.loader: pkg_resources.EntryPoint
@@ -287,11 +287,11 @@ class OfficialPlugin(BasePlugin):
     ]
 
     def _load_obj(self) -> None:
-        self.obj = importlib.import_module(f"tutor{self.name}.plugin")
+        self.obj = importlib.import_module(f"lekt{self.name}.plugin")
 
     def _version(self) -> t.Optional[str]:
         try:
-            module = importlib.import_module(f"tutor{self.name}.__about__")
+            module = importlib.import_module(f"lekt{self.name}.__about__")
         except ModuleNotFoundError:
             return None
         version = getattr(module, "__version__")
@@ -309,7 +309,7 @@ class OfficialPlugin(BasePlugin):
         the binary, official plugins are treated as regular entrypoint plugins.
         """
         for plugin_name in cls.NAMES:
-            if importlib.util.find_spec(f"tutor{plugin_name}") is not None:
+            if importlib.util.find_spec(f"lekt{plugin_name}") is not None:
                 OfficialPlugin(plugin_name)
 
 
@@ -367,7 +367,7 @@ def _discover_v0_plugins() -> None:
     them in tests.
 
     Note that official plugins are not discovered here. That's because they are expected
-    to be discovered manually from within the tutor binary.
+    to be discovered manually from within the lekt binary.
 
     Installing entrypoint or dict plugins can be disabled by defining the
     ``LEKT_IGNORE_DICT_PLUGINS`` and ``LEKT_IGNORE_ENTRYPOINT_PLUGINS``
