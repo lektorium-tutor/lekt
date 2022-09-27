@@ -3,7 +3,7 @@ from time import sleep
 import click
 
 from lekt import config as lekt_config
-from lekt import env as tutor_env
+from lekt import env as lekt_env
 from lekt import fmt
 from lekt.commands import compose
 from lekt.types import Config
@@ -38,7 +38,7 @@ def upgrade_from(context: click.Context, from_release: str) -> None:
 
 def upgrade_from_ironwood(context: click.Context, config: Config) -> None:
     click.echo(fmt.title("Upgrading from Ironwood"))
-    tutor_env.save(context.obj.root, config)
+    lekt_env.save(context.obj.root, config)
 
     click.echo(fmt.title("Stopping any existing platform"))
     context.invoke(compose.stop)
@@ -59,7 +59,7 @@ def upgrade_from_ironwood(context: click.Context, config: Config) -> None:
 
 def upgrade_from_juniper(context: click.Context, config: Config) -> None:
     click.echo(fmt.title("Upgrading from Juniper"))
-    tutor_env.save(context.obj.root, config)
+    lekt_env.save(context.obj.root, config)
 
     click.echo(fmt.title("Stopping any existing platform"))
     context.invoke(compose.stop)
@@ -102,7 +102,7 @@ def upgrade_from_koa(context: click.Context, config: Config) -> None:
 def upgrade_from_maple(context: click.Context, config: Config) -> None:
     click.echo(fmt.title("Upgrading from Maple"))
     # The environment needs to be updated because the management commands are from Nutmeg
-    tutor_env.save(context.obj.root, config)
+    lekt_env.save(context.obj.root, config)
     # Command backpopulate_user_tours
     context.invoke(
         compose.run,
@@ -152,7 +152,7 @@ def upgrade_mongodb(
     # Note that the DOCKER_IMAGE_MONGODB value is never saved, because we only save the
     # environment, not the configuration.
     config["DOCKER_IMAGE_MONGODB"] = f"mongo:{to_docker_version}"
-    tutor_env.save(context.obj.root, config)
+    lekt_env.save(context.obj.root, config)
     context.invoke(compose.start, detach=True, services=["mongodb"])
     fmt.echo_info("Waiting for mongodb to boot...")
     sleep(10)

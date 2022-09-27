@@ -175,7 +175,7 @@ def upgrade(context: click.Context, from_release: t.Optional[str]) -> None:
         "To perform a full upgrade, you should run `tutor local quickstart`."
     )
     if from_release is None:
-        from_release = tutor_env.get_env_release(context.obj.root)
+        from_release = lekt_env.get_env_release(context.obj.root)
     if from_release is None:
         fmt.echo_info("Your environment is already up-to-date")
     else:

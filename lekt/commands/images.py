@@ -122,7 +122,7 @@ def build(
     for image in image_names:
         for _name, path, tag, custom_args in find_images_to_build(config, image):
             images.build(
-                tutor_env.pathjoin(context.root, *path),
+                lekt_env.pathjoin(context.root, *path),
                 tag,
                 *command_args,
                 *custom_args,
@@ -176,7 +176,7 @@ def find_images_to_build(
     for name, path, tag, args in all_images_to_build:
         if image in [name, "all"]:
             found = True
-            tag = tutor_env.render_str(config, tag)
+            tag = lekt_env.render_str(config, tag)
             yield (name, path, tag, args)
 
     if not found:
@@ -198,7 +198,7 @@ def find_remote_image_tags(
     for name, tag in all_remote_images:
         if image in [name, "all"]:
             found = True
-            yield tutor_env.render_str(config, tag)
+            yield lekt_env.render_str(config, tag)
     if not found:
         raise ImageNotFoundError(image)
 

@@ -112,7 +112,7 @@ def upgrade_from_lilac(config: Config) -> None:
 def upgrade_from_maple(context: Context, config: Config) -> None:
     fmt.echo_info("Upgrading from Maple")
     # The environment needs to be updated because the backpopulate/backfill commands are from Nutmeg
-    tutor_env.save(context.root, config)
+    lekt_env.save(context.root, config)
 
     # Start mysql
     k8s.kubectl_apply(

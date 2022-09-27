@@ -473,7 +473,7 @@ def wait(context: K8sContext, name: str) -> None:
 @click.pass_context
 def upgrade(context: click.Context, from_release: Optional[str]) -> None:
     if from_release is None:
-        from_release = tutor_env.get_env_release(context.obj.root)
+        from_release = lekt_env.get_env_release(context.obj.root)
     if from_release is None:
         fmt.echo_info("Your environment is already up-to-date")
     else:
@@ -502,7 +502,7 @@ def apply_command(context: K8sContext, args: List[str]) -> None:
 
 
 def kubectl_apply(root: str, *args: str) -> None:
-    utils.kubectl("apply", "--kustomize", tutor_env.pathjoin(root), *args)
+    utils.kubectl("apply", "--kustomize", lekt_env.pathjoin(root), *args)
 
 
 @click.command(help="Print status information for all k8s resources")
