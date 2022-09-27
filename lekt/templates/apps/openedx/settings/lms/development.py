@@ -25,6 +25,7 @@ SESSION_COOKIE_SAMESITE = "Lax"
 IDA_LOGOUT_URI_LIST.append("http://{{ CMS_HOST }}:8001/logout/")
 
 FEATURES['ENABLE_COURSEWARE_MICROFRONTEND'] = False
+FEATURES["ENABLE_COURSEWARE_SEARCH"] = False
 
 LOGGING["loggers"]["oauth2_provider"] = {
     "handlers": ["console"],
