@@ -52,6 +52,7 @@ def _prepare_environment() -> None:
             ("HOST_USER_ID", utils.get_user_id()),
             ("LEKT_APP", __app__.replace("-", "_")),
             ("LEKT_VERSION", __version__),
+            ("IMAGES_BASE_VERSION", "14.0.5"),
         ],
     )
 
