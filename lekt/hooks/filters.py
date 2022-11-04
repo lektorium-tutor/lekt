@@ -27,7 +27,7 @@ class FilterCallback(contexts.Contextualized):
         self.func = func
 
     def apply(
-            self, value: T, *args: t.Any, context: t.Optional[str] = None, **kwargs: t.Any
+        self, value: T, *args: t.Any, context: t.Optional[str] = None, **kwargs: t.Any
     ) -> T:
         if self.is_in_context(context):
             value = self.func(value, *args, **kwargs)

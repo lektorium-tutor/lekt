@@ -1,11 +1,11 @@
 import typing as t
 from unittest.mock import patch
 
-from tests.helpers import PluginsTestCase, temporary_root
 from lekt import config as lekt_config
 from lekt import exceptions, fmt, hooks, plugins
 from lekt.plugins import v0 as plugins_v0
 from lekt.types import Config, get_typed
+from tests.helpers import PluginsTestCase, temporary_root
 
 
 class PluginsTests(PluginsTestCase):
@@ -31,9 +31,7 @@ class PluginsTests(PluginsTestCase):
         plugins.load("plugin2")
         plugins.load("plugin1")
         lekt_config.save_enabled_plugins(config)
-        self.assertEqual(
-            ["plugin1", "plugin2"], config[lekt_config.PLUGINS_CONFIG_KEY]
-        )
+        self.assertEqual(["plugin1", "plugin2"], config[lekt_config.PLUGINS_CONFIG_KEY])
 
     def test_enable_twice(self) -> None:
         plugins_v0.DictPlugin({"name": "plugin1"})

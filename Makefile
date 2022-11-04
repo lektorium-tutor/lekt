@@ -26,7 +26,7 @@ build-pythonpackage-lekt: ## Build the "lekt" python package for upload to pypi
 push-pythonpackage: ## Push python package to pypi
 	twine upload --skip-existing dist/lekt-$(shell make version).tar.gz
 
-test: test-lint test-unit test-types test-format test-pythonpackage ## Run all tests by decreasing order of priority
+test: test-lint test-unit test-types test-pythonpackage  # test-format  ## Run all tests by decreasing order of priority
 
 test-static: test-lint test-types test-format  ## Run only static tests
 
@@ -85,7 +85,7 @@ bundle: ## Bundle the lekt package in a single "dist/lekt" executable
 
 release: test release-unsafe ## Create a release tag and push it to origin
 release-unsafe:
-	$(MAKE) release-tag release-push TAG=v$(shell make version)
+	$(MAKE) release-tag release-push release-publish TAG=v$(shell make version)
 release-tag:
 	@echo "=== Creating tag $(TAG)"
 	git tag -d $(TAG) || true
@@ -95,6 +95,10 @@ release-push:
 	git push origin
 	git push origin :$(TAG) || true
 	git push origin $(TAG)
+
+release-publish:
+	@echo "=== Publishing release $(TAG)"
+	twine upload --skip-existing dist/*.tar.gz
 
 release-description:  ## Write the current release description to a file
 	sed "s/LEKT_VERSION/v$(shell make version)/g" docs/_release_description.md > release_description.md

@@ -2,7 +2,7 @@ from unittest.mock import Mock, patch
 
 from tests.helpers import PluginsTestCase, temporary_root
 from lekt import images, plugins
-from lekt.__about__ import __version__
+from lekt.__about__ import __images_version__
 from lekt.commands.images import ImageNotFoundError
 
 from .base import TestCommandMixin
@@ -56,7 +56,7 @@ class ImagesTests(PluginsTestCase, TestCommandMixin):
         self.assertIsNone(result.exception)
         self.assertEqual(0, result.exit_code)
         self.assertRegex(
-            result.output, rf"docker.io/lektorium-tutor/openedx:{__version__}\n"
+            result.output, rf"docker.io/overhangio/openedx:{__images_version__}\n"
         )
 
     def test_images_printtag_plugin(self) -> None:
