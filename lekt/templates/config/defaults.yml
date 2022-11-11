@@ -32,7 +32,7 @@ JWT_COMMON_ISSUER: "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ LMS
 JWT_COMMON_SECRET_KEY: "{{ OPENEDX_SECRET_KEY }}"
 K8S_NAMESPACE: "openedx"
 LANGUAGE_CODE: "ru"
-LMS_HOST: "www.myopenedx.com"
+LMS_HOST: "local.lektorium.tv"
 LOCAL_PROJECT_NAME: "{{ LEKT_APP }}_local"
 MONGODB_HOST: "mongodb"
 MONGODB_DATABASE: "openedx"
@@ -48,14 +48,14 @@ OPENEDX_LMS_UWSGI_WORKERS: 1
 OPENEDX_MYSQL_DATABASE: "openedx"
 OPENEDX_CSMH_MYSQL_DATABASE: "{{ OPENEDX_MYSQL_DATABASE }}_csmh"
 OPENEDX_MYSQL_USERNAME: "openedx"
-OPENEDX_COMMON_VERSION: "open-release/nutmeg.2"
+OPENEDX_COMMON_VERSION: "lekt"
 OPENEDX_EXTRA_PIP_REQUIREMENTS:
   - "openedx-scorm-xblock<14.0.0,>=13.0.0"
 MYSQL_HOST: "mysql"
 MYSQL_PORT: 3306
 MYSQL_ROOT_USERNAME: "root"
 NPM_REGISTRY: "https://registry.npmjs.org/"
-PLATFORM_NAME: "Lektorium Open edX"
+PLATFORM_NAME: "Лекториум"
 PREVIEW_LMS_HOST: "preview.{{ LMS_HOST }}"
 REDIS_HOST: "redis"
 REDIS_PORT: 6379
