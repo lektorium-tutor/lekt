@@ -43,10 +43,8 @@ setup(
     version=ABOUT["__package_version__"],
     url="https://docs.tutor.overhang.io/",
     project_urls={
-        "Documentation": "https://docs.tutor.overhang.io/",
         "Code": "https://github.com/lektorium-tutor/lekt",
         "Issue tracker": "https://github.com/lektorium-tutor/lekt/issues",
-        "Community": "https://discuss.openedx.org/tag/tutor",
     },
     license="AGPLv3",
     author="Overhang.io",

@@ -35,11 +35,11 @@ FROM minimal as code
 ARG EDX_PLATFORM_REPOSITORY={{ EDX_PLATFORM_REPOSITORY }}
 ARG EDX_PLATFORM_VERSION={{ EDX_PLATFORM_VERSION }}
 RUN mkdir -p /openedx/edx-platform && \
-    git clone $EDX_PLATFORM_REPOSITORY --branch $EDX_PLATFORM_VERSION --depth 1 /openedx/edx-platform
+    git clone $EDX_PLATFORM_REPOSITORY --branch $EDX_PLATFORM_VERSION /openedx/edx-platform
 WORKDIR /openedx/edx-platform
 
 # Identify lekt user to apply patches using git
-RUN git config --global user.email "tutor@overhang.io" \
+RUN git config --global user.email "class@lektorium.tv" \
   && git config --global user.name "Lekt"
 
 {%- if patch("openedx-dockerfile-git-patches-default") %}
@@ -57,7 +57,7 @@ RUN curl -fsSL https://github.com/open-craft/edx-platform/commit/3d54f284f82b61e
 
 ###### Download extra locales to /openedx/locale/contrib/locale
 FROM minimal as locales
-ARG OPENEDX_I18N_VERSION={{ OPENEDX_COMMON_VERSION }}
+ARG OPENEDX_I18N_VERSION={{ OPENEDX_I18N_VERSION }}
 RUN cd /tmp \
     && curl -L -o openedx-i18n.tar.gz https://github.com/openedx/openedx-i18n/archive/$OPENEDX_I18N_VERSION.tar.gz \
     && tar xzf /tmp/openedx-i18n.tar.gz \
