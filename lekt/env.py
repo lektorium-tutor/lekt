@@ -8,7 +8,12 @@ import jinja2
 import pkg_resources
 
 from lekt import exceptions, fmt, hooks, plugins, utils
-from lekt.__about__ import __app__, __version__
+from lekt.__about__ import (
+    __app__,
+    __version__,
+    __images_version__,
+    __lekt_openedx_version__
+)
 from lekt.types import Config, ConfigValue
 
 TEMPLATES_ROOT = pkg_resources.resource_filename("lekt", "templates")
@@ -52,7 +57,8 @@ def _prepare_environment() -> None:
             ("HOST_USER_ID", utils.get_user_id()),
             ("LEKT_APP", __app__.replace("-", "_")),
             ("LEKT_VERSION", __version__),
-            ("IMAGES_BASE_VERSION", "14.0.5"),
+            ("IMAGES_BASE_VERSION", __images_version__),
+            ("LEKT_OPENEDX_VERSION", __lekt_openedx_version__)
         ],
     )
 
@@ -112,10 +118,10 @@ class Renderer:
                     yield template
 
     def iter_values_named(
-        self,
-        prefix: t.Optional[str] = None,
-        suffix: t.Optional[str] = None,
-        allow_empty: bool = False,
+            self,
+            prefix: t.Optional[str] = None,
+            suffix: t.Optional[str] = None,
+            allow_empty: bool = False,
     ) -> t.Iterable[ConfigValue]:
         """
         Iterate on all config values for which the name match the given pattern.
