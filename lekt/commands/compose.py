@@ -4,6 +4,8 @@ import typing as t
 from copy import deepcopy
 
 import click
+from click.shell_completion import CompletionItem
+from typing_extensions import TypeAlias
 
 from lekt import bindmounts
 from lekt import config as lekt_config
@@ -12,6 +14,8 @@ from lekt import fmt, hooks, jobs, serialize, utils
 from lekt.commands.context import BaseJobContext
 from lekt.exceptions import LektError
 from lekt.types import Config
+
+COMPOSE_FILTER_TYPE: TypeAlias = "hooks.filters.Filter[t.Dict[str, t.Any], []]"
 
 
 class ComposeJobRunner(jobs.BaseComposeJobRunner):
@@ -41,8 +45,8 @@ class ComposeJobRunner(jobs.BaseComposeJobRunner):
 
     def update_docker_compose_tmp(
         self,
-        compose_tmp_filter: hooks.filters.Filter,
-        compose_jobs_tmp_filter: hooks.filters.Filter,
+        compose_tmp_filter: COMPOSE_FILTER_TYPE,
+        compose_jobs_tmp_filter: COMPOSE_FILTER_TYPE,
         docker_compose_tmp_path: str,
         docker_compose_jobs_tmp_path: str,
     ) -> None:
@@ -50,7 +54,7 @@ class ComposeJobRunner(jobs.BaseComposeJobRunner):
         Update the contents of the docker-compose.tmp.yml and
         docker-compose.jobs.tmp.yml files, which are generated at runtime.
         """
-        compose_base = {
+        compose_base: t.Dict[str, t.Any] = {
             "version": "{{ DOCKER_COMPOSE_VERSION }}",
             "services": {},
         }
@@ -105,8 +109,8 @@ class ComposeJobRunner(jobs.BaseComposeJobRunner):
 
 
 class BaseComposeContext(BaseJobContext):
-    COMPOSE_TMP_FILTER: hooks.filters.Filter = NotImplemented
-    COMPOSE_JOBS_TMP_FILTER: hooks.filters.Filter = NotImplemented
+    COMPOSE_TMP_FILTER: COMPOSE_FILTER_TYPE = NotImplemented
+    COMPOSE_JOBS_TMP_FILTER: COMPOSE_FILTER_TYPE = NotImplemented
 
     def job_runner(self, config: Config) -> ComposeJobRunner:
         raise NotImplementedError
@@ -160,14 +164,25 @@ class MountParam(click.ParamType):
         """
         mounts: t.List["MountParam.MountType"] = []
         host_path = os.path.abspath(os.path.expanduser(value))
-        volumes: t.Iterator[t.Tuple[str, str]] = hooks.Filters.COMPOSE_MOUNTS.iterate(
+        for service, container_path in hooks.Filters.COMPOSE_MOUNTS.iterate(
             os.path.basename(host_path)
-        )
-        for service, container_path in volumes:
+        ):
             mounts.append((service, host_path, container_path))
         if not mounts:
             raise self.fail(f"no mount found for {value}")
         return mounts
+
+    def shell_complete(
+        self, ctx: click.Context, param: click.Parameter, incomplete: str
+    ) -> t.List[CompletionItem]:
+        """
+        Mount argument completion works only for the single path (implicit) form. The
+        reason is that colons break words in bash completion:
+        http://tiswww.case.edu/php/chet/bash/FAQ (E13)
+        Thus, we do not even attempt to auto-complete mount arguments that include
+        colons: such arguments will not even reach this method.
+        """
+        return [CompletionItem(incomplete, type="file")]
 
 
 mount_option = click.option(
@@ -206,7 +221,7 @@ def mount_tmp_volume(
     docker-compose jobs file.
     """
     fmt.echo_info(f"Bind-mount: {host_path} -> {container_path} in {service}")
-    compose_tmp_filter: hooks.filters.Filter = (
+    compose_tmp_filter: COMPOSE_FILTER_TYPE = (
         context.COMPOSE_JOBS_TMP_FILTER
         if service.endswith("-job")
         else context.COMPOSE_TMP_FILTER

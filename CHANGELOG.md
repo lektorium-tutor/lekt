@@ -1,33 +1,61 @@
 # Changelog
 
+This file includes a history of past releases. Changes that were not yet added to a release are in the [changelog.d/](./changelog.d) folder.
+
 <!--
-Every user-facing change should have an entry in this changelog. Please respect the following instructions:
-- Add your changes right below the "Unreleased" section title. If there are other unreleased changes,
-  add your own on top of them, as the first line in that section.
-- Indicate breaking changes by prepending an explosion 💥 character.
-- You may optionally append "(by <author>)" at the end of the line, where "<author>" is either one (just one)
-  of your GitHub username, real name or affiliated organization. These affiliations will be displayed in
-  he release notes for every release.
-- If you need to create a new release, create a separate commit just for that. It is important to respect these
-  instructions, because git commits are used to generate release notes:
-    - Add a "## vX.Y.Z (year-month-day)" line just below "## Unreleased", such that the new changes are now listed as part of release.
-    - The title of the commit should be the same as the section title: "vX.Y.Z (year-month-day)".
-    - The commit message should be copy-pasted from the release section.
-    - Have a look at other release commits for reference.
+⚠️ DO NOT ADD YOUR CHANGES TO THIS FILE! (unless you want to modify existing changelog entries in this file)
+Changelog entries are managed by scriv. After you have made some changes to Tutor, create a changelog entry with:
+
+    make changelog-entry
+
+Edit and commit the newly-created file in changelog.d.
+
+If you need to create a new release, create a separate commit just for that. It is important to respect these
+instructions, because git commits are used to generate release notes:
+  - Collect changelog entries with `make changelog`
+  - The title of the commit should be the same as the CHANGELOG.md file section title: "vX.Y.Z (year-month-day)".
+  - The commit message should be copy-pasted from the release section.
+  - Have a look at other release commits for reference.
 -->
 
-## Unreleased
+<!-- scriv-insert-here -->
 
-- [Feature] Upgrade edx-platform i18n strings to nutmeg.2 (by @regisb).
+<a id='changelog-14.2.0'></a>
+## v14.2.1 (2022-11-24)
+
+- [Improvement] Auto-completion of `plugins` and `config` arguments: `plugins enable/disable NAME`, `plugins install PATH`, `config save --set KEY=VAL`, `config save --unset KEY`, `config printvalue KEY`. (by @regisb)
+- [Bugfix] Fix minimum click version (>= 8.0.0) when installing tutor from pip.
+- [Improvement] Enable CORS by default for both LMS and CMS by moving those settings to the `common_all` partial. (by @arbrandes)
+
+## v14.2.0 (2022-11-21)
+
+- [Improvement] Auto-complete implicit `local/dev --mount /path/to/...` options. (by @regisb)
+- 💥[Feature] Strong typing of action and filter hooks: this allows us to detect incorrect calls to `actions.add` or `filters.add` early. Strong typing forces us to break the `do` and `apply` API by removing the `context` named argument. Developers should replace `do(context=...)` by `do_from_context(..., )` (and similar for `apply`).
+
+## v14.1.2 (2022-11-02)
+
+- [Security] Fix edx-platform XSS vulnerability on "next" parameter. (by @regisb)
+
+## v14.1.1 (2022-10-25)
+
+- [Deprecation] Tutor is no longer compatible with Python 3.6. (by @regisb)
+- [Security] Fix xblock ajax handler vulnerability. (by @regisb)
+- [Improvement] Use web proxy gzip encoding to improve bandwidth. We observe a 75% size reduction on the LMS dashboard. (by @ghassanmas)
+
+## v14.1.0 (2022-10-10)
+
+- [Improvement] Upgrade Scorm XBlock to v14.0.0. (by @regisb)
+- 💥[Improvement] The Richie plugin was transferred to the Openfun organization; thus, it is no longer officially supported and it is removed from the default set of plugins that ships with `pip install tutor[full]` or the Tutor pre-compiled binary. Users are encouraged to uninstall the `tutor-richie` Python package and install the `tutor-contrib-richie` package instead.
+- [Feature] Upgrade edx-platform i18n strings to nutmeg.2. (by @regisb)
 
 ## v14.0.5 (2022-08-29)
 
-- [Bugfix] Fix MongoDB replica set connection error resulting from edx-platform's pymongo (3.10.1 -> 3.12.3) upgrade ([edx-platform#30569](https://github.com/openedx/edx-platform/pull/30569)) (by @ormsbee).
-- [Feature] Upgrade all applications to open-release/nutmeg.2 (@BbrSofiane).
+- [Bugfix] Fix MongoDB replica set connection error resulting from edx-platform's pymongo (3.10.1 -> 3.12.3) upgrade ([edx-platform#30569](https://github.com/openedx/edx-platform/pull/30569)). (by @ormsbee)
+- [Feature] Upgrade all applications to open-release/nutmeg.2. (by @BbrSofiane)
 
 ## v14.0.4 (2022-07-29)
 
-- [Feature] Add the `-m/--mount` option to `tutor dev quickstart`.
+- [Feature] Add the `-m/--mount` option to `tutor dev quickstart`. (by @regisb)
 - [Bugfix] Fix `tutor dev start -m /path/to/frontend-app-learning` by introducing dev-specific `COMPOSE_DEV_TMP` and `COMPOSE_DEV_JOBS_TMP` filters (by @regisb).
 - [Bugfix] Log the shell commands that Lekt executes more accurately. (by @kdmccormick)
 - [Bugfix] `tutor dev quickstart` would fail under certain versions of docker-compose due to a bug in the logic that handled volume mounting. (by @kdmccormick)

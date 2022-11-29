@@ -55,7 +55,7 @@ Or for a development environment::
     lekt dev start -d
     lekt dev init
 
-Using with tutor-mfe
+Using with lekt-mfe
 --------------------
 
-You may wish to use `tutor-mfe <https://github.com/lektorium-tutor/tutor-mfe>`_ to run the Open edX microfrontends. If so, be aware that there is a known issue with ``tutor-mfe`` on ARM systems. See `this GitHub issue <https://github.com/lektorium-tutor/tutor-mfe/issues/31>`_ for details and known workarounds.
+You may wish to use `lekt-mfe <https://github.com/lektorium-tutor/lekt-mfe>`_ to run the Open edX microfrontends. If so, be aware that there is a known issue with ``lekt-mfe`` on ARM systems. See `this GitHub issue <https://github.com/overhangio/tutor/issues/31>`_ for details and known workarounds.

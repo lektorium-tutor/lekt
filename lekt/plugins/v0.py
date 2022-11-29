@@ -57,7 +57,7 @@ class BasePlugin:
         hooks.Filters.PLUGINS_INSTALLED.add_item(self.name)
 
         # Add plugin version
-        hooks.Filters.PLUGINS_INFO.add_item((self.name, self._version()))
+        hooks.Filters.PLUGINS_INFO.add_item((self.name, self._version() or ""))
 
         # Create actions and filters on load
         hooks.Actions.PLUGIN_LOADED(self.name).add()(self.__load)
@@ -167,7 +167,7 @@ class BasePlugin:
         # We assume that the dockerfile is in the build/myimage folder.
         for img, tag in build_image_tasks.items():
             hooks.Filters.IMAGES_BUILD.add_item(
-                (img, ("plugins", self.name, "build", img), tag, []),
+                (img, ("plugins", self.name, "build", img), tag, ()),
             )
         # Remote images: hooks = {"remote-image": {"myimage": "myimage:latest"}}
         for img, tag in remote_image_tasks.items():
@@ -198,8 +198,7 @@ class BasePlugin:
         hooks.Filters.ENV_TEMPLATE_ROOTS.add_item(templates_root)
         # We only add the "apps" and "build" folders and we render them in the
         # "plugins/<plugin name>" folder.
-        hooks.filters.add_items(
-            "env:templates:targets",
+        hooks.Filters.ENV_TEMPLATE_TARGETS.add_items(
             [
                 (
                     os.path.join(self.name, "apps"),
@@ -209,7 +208,7 @@ class BasePlugin:
                     os.path.join(self.name, "build"),
                     "plugins",
                 ),
-            ],
+            ]
         )
 
     def _load_command(self) -> None:
@@ -281,7 +280,6 @@ class OfficialPlugin(BasePlugin):
         "mfe",
         "minio",
         "notes",
-        "richie",
         "webui",
         "xqueue",
     ]

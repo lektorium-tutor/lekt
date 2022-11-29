@@ -16,7 +16,7 @@ charset-normalizer==2.1.1
     # via requests
 click==8.1.3
     # via -r requirements/base.in
-google-auth==2.14.0
+google-auth==2.14.1
     # via kubernetes
 idna==3.4
     # via requests
@@ -26,7 +26,7 @@ kubernetes==25.3.0
     # via -r requirements/base.in
 markupsafe==2.1.1
     # via jinja2
-mypy==0.982
+mypy==0.991
     # via -r requirements/base.in
 mypy-extensions==0.4.3
     # via mypy

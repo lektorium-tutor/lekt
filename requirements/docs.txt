@@ -32,7 +32,7 @@ docutils==0.17.1
     #   sphinx
     #   sphinx-click
     #   sphinx-rtd-theme
-google-auth==2.14.0
+google-auth==2.14.1
     # via
     #   -r requirements/base.txt
     #   kubernetes
@@ -54,7 +54,7 @@ markupsafe==2.1.1
     # via
     #   -r requirements/base.txt
     #   jinja2
-mypy==0.982
+mypy==0.991
     # via -r requirements/base.txt
 mypy-extensions==0.4.3
     # via
@@ -120,7 +120,7 @@ sphinx==5.3.0
     #   sphinx-rtd-theme
 sphinx-click==4.3.0
     # via -r requirements/docs.in
-sphinx-rtd-theme==1.1.0
+sphinx-rtd-theme==1.1.1
     # via -r requirements/docs.in
 sphinxcontrib-applehelp==1.0.2
     # via sphinx
