@@ -94,7 +94,7 @@ class LektCli(click.MultiCommand):
     "-r",
     "--root",
     envvar="LEKT_ROOT",
-    default=appdirs.user_data_dir(appname=__app__),
+    default="/app/lekt",  #appdirs.user_data_dir(appname=__app__),
     show_default=True,
     type=click.Path(resolve_path=True),
     help="Root project directory (environment variable: LEKT_ROOT)",
