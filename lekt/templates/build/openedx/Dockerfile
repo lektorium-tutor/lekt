@@ -49,13 +49,13 @@ RUN git config --global user.email "class@lektorium.tv" \
 # Patch edx-platform
 # Fix broken "Pages" view in Studio
 # https://github.com/openedx/edx-platform/pull/30550
-RUN curl -fsSL https://github.com/open-craft/edx-platform/commit/3d54f284f82b61e693ad652d8d6e46a226fcb36d.patch | git am
+#RUN curl -fsSL https://github.com/open-craft/edx-platform/commit/3d54f284f82b61e693ad652d8d6e46a226fcb36d.patch | git am
 # Fix xblock ajax handler vulnerability
 # https://github.com/overhangio/edx-platform/tree/overhangio/sec-xblock-ajax
-RUN curl -fsSL https://github.com/overhangio/edx-platform/commit/3f0f9eed42.patch | git am
+#RUN curl -fsSL https://github.com/overhangio/edx-platform/commit/3f0f9eed42.patch | git am
 # Fix XSS vulnerability on "next" parameter
 # https://github.com/overhangio/edx-platform/tree/overhangio/sec-redirect-xss
-RUN curl -fsSL https://github.com/overhangio/edx-platform/commit/e16f8c0986.patch | git am
+#RUN curl -fsSL https://github.com/overhangio/edx-platform/commit/e16f8c0986.patch | git am
 {%- endif %}
 
 {# Example: RUN curl -fsSL https://github.com/openedx/edx-platform/commit/<GITSHA1> | git am #}
