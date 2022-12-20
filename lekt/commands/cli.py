@@ -99,6 +99,16 @@ class LektCli(click.MultiCommand):
     type=click.Path(resolve_path=True),
     help="Root project directory (environment variable: LEKT_ROOT)",
 )
+
+@click.option(
+    "-p",
+    "--plugins_root",
+    envvar="LEKT_PLUGINS_ROOT",
+    default="/app/lekt-plugins",  #appdirs.user_data_dir(appname=__app__),
+    show_default=True,
+    type=click.Path(resolve_path=True),
+    help="Plugins root directory (environment variable: LEKT_PLUGINS_ROOT)",
+)
 @click.option(
     "-h",
     "--help",
@@ -107,14 +117,14 @@ class LektCli(click.MultiCommand):
     help="Print this help",
 )
 @click.pass_context
-def cli(context: click.Context, root: str, show_help: bool) -> None:
+def cli(context: click.Context, root: str, plugins_root: str, show_help: bool) -> None:
     if utils.is_root():
         fmt.echo_alert(
             "You are running Lekt as root. This is strongly not recommended. If you are doing this in order to access"
             " the Docker daemon, you should instead add your user to the 'docker' group. (see https://docs.docker.com"
             "/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user)"
         )
-    context.obj = Context(root)
+    context.obj = Context(root, plugins_root)
     if context.invoked_subcommand is None or show_help:
         click.echo(context.get_help())
 

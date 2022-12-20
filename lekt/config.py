@@ -25,7 +25,7 @@ def load(root: str) -> Config:
     return load_full(root)
 
 
-def load_minimal(root: str) -> Config:
+def load_minimal(root: str, plugins_root=None) -> Config:
     """
     Load a minimal configuration composed of the user and the base config.
 
@@ -37,7 +37,7 @@ def load_minimal(root: str) -> Config:
     return config
 
 
-def load_full(root: str) -> Config:
+def load_full(root: str, plugins_root=None) -> Config:
     """
     Load a full configuration, with user, base and defaults.
 

@@ -157,27 +157,27 @@ class K8sContext(BaseJobContext):
 @click.group(help="Run Open edX on Kubernetes")
 @click.pass_context
 def k8s(context: click.Context) -> None:
-    context.obj = K8sContext(context.obj.root)
+    context.obj = K8sContext(context.obj.root, context.obj.plugins_root)
 
 
 @click.command(help="Configure and run Open edX from scratch")
 @click.option("-I", "--non-interactive", is_flag=True, help="Run non-interactively")
 @click.pass_context
 def quickstart(context: click.Context, non_interactive: bool) -> None:
-    run_upgrade_from_release = lekt_env.should_upgrade_from_release(context.obj.root)
+    run_upgrade_from_release = lekt_env.should_upgrade_from_release(context.obj.root, context.obj.plugins_root)
     if run_upgrade_from_release is not None:
         click.echo(fmt.title("Upgrading from an older release"))
         context.invoke(
             upgrade,
-            from_release=lekt_env.get_env_release(context.obj.root),
+            from_release=lekt_env.get_env_release(context.obj.root, context.obj.plugins_root),
         )
 
     click.echo(fmt.title("Interactive platform configuration"))
-    config = lekt_config.load_minimal(context.obj.root)
+    config = lekt_config.load_minimal(context.obj.root, context.obj.plugins_root)
     if not non_interactive:
         interactive_config.ask_questions(config, run_for_prod=True)
     lekt_config.save_config_file(context.obj.root, config)
-    config = lekt_config.load_full(context.obj.root)
+    config = lekt_config.load_full(context.obj.root, context.obj.plugins_root)
     lekt_env.save(context.obj.root, config)
 
     if run_upgrade_from_release and not non_interactive:
@@ -200,7 +200,7 @@ Press enter when you are ready to continue"""
     click.echo(fmt.title("Database creation and migrations"))
     context.invoke(init, limit=None)
 
-    config = lekt_config.load(context.obj.root)
+    config = lekt_config.load(context.obj.root, context.obj.plugins_root)
     fmt.echo_info(
         """Your Open edX platform is ready and can be accessed at the following urls:
 
@@ -473,7 +473,7 @@ def wait(context: K8sContext, name: str) -> None:
 @click.pass_context
 def upgrade(context: click.Context, from_release: Optional[str]) -> None:
     if from_release is None:
-        from_release = lekt_env.get_env_release(context.obj.root)
+        from_release = lekt_env.get_env_release(context.obj.root, context.obj.plugins_root)
     if from_release is None:
         fmt.echo_info("Your environment is already up-to-date")
     else:

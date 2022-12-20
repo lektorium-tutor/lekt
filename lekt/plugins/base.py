@@ -1,7 +1,6 @@
 import os
 
 import appdirs
-
 from lekt.__about__ import __app__
 
 PLUGINS_ROOT_ENV_VAR_NAME = "LEKT_PLUGINS_ROOT"
@@ -11,6 +10,10 @@ PLUGINS_ROOT_ENV_VAR_NAME = "LEKT_PLUGINS_ROOT"
 # this will be ``~/.local/share/lekt-plugins-nightly``.
 # The path can be overridden by defining the ``LEKT_PLUGINS_ROOT`` environment
 # variable.
+
+
 PLUGINS_ROOT = os.path.expanduser(
     os.environ.get(PLUGINS_ROOT_ENV_VAR_NAME, "")
-) or appdirs.user_data_dir(appname=__app__ + "-plugins")
+) or '/app/lekt-plugins'  # TODO: get from context
+
+#appdirs.user_data_dir(appname=__app__ + "-plugins")

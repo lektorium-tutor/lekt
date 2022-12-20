@@ -45,7 +45,7 @@ class ConfigKeyParamType(click.ParamType):
         root = getattr(
             getattr(getattr(ctx, "parent", None), "parent", None), "params", {}
         ).get("root", "")
-        config = tutor_config.load_full(root)
+        config = lekt_config.load_full(root)
         return [
             (key, value) for key, value in config.items() if key.startswith(incomplete)
         ]

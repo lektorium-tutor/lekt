@@ -13,7 +13,7 @@ from . import common as common_upgrade
 
 def upgrade_from(context: click.Context, from_release: str) -> None:
     # Make sure to bypass current version check
-    config = lekt_config.load_full(context.obj.root)
+    config = lekt_config.load_full(context.obj.root, context.obj.plugins_root)
     running_release = from_release
     if running_release == "ironwood":
         upgrade_from_ironwood(context, config)

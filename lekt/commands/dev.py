@@ -58,7 +58,7 @@ class DevContext(compose.BaseComposeContext):
 @click.group(help="Run Open edX locally with development settings")
 @click.pass_context
 def dev(context: click.Context) -> None:
-    context.obj = DevContext(context.obj.root)
+    context.obj = DevContext(context.obj.root, context.obj.plugins_root)
 
 
 @click.command(help="Configure and run Open edX from scratch, for development")

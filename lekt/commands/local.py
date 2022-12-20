@@ -59,7 +59,7 @@ class LocalContext(compose.BaseComposeContext):
 @click.group(help="Run Open edX locally with docker-compose")
 @click.pass_context
 def local(context: click.Context) -> None:
-    context.obj = LocalContext(context.obj.root)
+    context.obj = LocalContext(context.obj.root, context.obj.plugins_root)
 
 
 @click.command(help="Configure and run Open edX from scratch")

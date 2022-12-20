@@ -12,8 +12,9 @@ class Context:
         $ lekt --root=... local run ...
     """
 
-    def __init__(self, root: str) -> None:
+    def __init__(self, root: str, plugins_root: str) -> None:
         self.root = root
+        self.plugins_root = plugins_root
 
 
 class BaseJobContext(Context):
