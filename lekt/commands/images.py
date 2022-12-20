@@ -21,8 +21,8 @@ VENDOR_IMAGES = [
 
 @hooks.Filters.IMAGES_BUILD.add()
 def _add_core_images_to_build(
-    build_images: t.List[t.Tuple[str, t.Tuple[str, ...], str, t.Tuple[str, ...]]],
-    config: Config,
+        build_images: t.List[t.Tuple[str, t.Tuple[str, ...], str, t.Tuple[str, ...]]],
+        config: Config,
 ) -> t.List[t.Tuple[str, t.Tuple[str, ...], str, t.Tuple[str, ...]]]:
     """
     Add base images to the list of Docker images to build on `lekt build all`.
@@ -35,7 +35,7 @@ def _add_core_images_to_build(
 
 @hooks.Filters.IMAGES_PULL.add()
 def _add_images_to_pull(
-    remote_images: t.List[t.Tuple[str, str]], config: Config
+        remote_images: t.List[t.Tuple[str, str]], config: Config
 ) -> t.List[t.Tuple[str, str]]:
     """
     Add base and vendor images to the list of Docker images to pull on `lekt pull all`.
@@ -50,7 +50,7 @@ def _add_images_to_pull(
 
 @hooks.Filters.IMAGES_PUSH.add()
 def _add_core_images_to_push(
-    remote_images: t.List[t.Tuple[str, str]], config: Config
+        remote_images: t.List[t.Tuple[str, str]], config: Config
 ) -> t.List[t.Tuple[str, str]]:
     """
     Add base images to the list of Docker images to push on `lekt push all`.
@@ -99,13 +99,13 @@ def images_command() -> None:
 )
 @click.pass_obj
 def build(
-    context: Context,
-    image_names: t.List[str],
-    no_cache: bool,
-    build_args: t.List[str],
-    add_hosts: t.List[str],
-    target: str,
-    docker_args: t.List[str],
+        context: Context,
+        image_names: t.List[str],
+        no_cache: bool,
+        build_args: t.List[str],
+        add_hosts: t.List[str],
+        target: str,
+        docker_args: t.List[str],
 ) -> None:
     config = lekt_config.load(context.root)
     command_args = []
@@ -160,7 +160,7 @@ def printtag(context: Context, image_names: t.List[str]) -> None:
 
 
 def find_images_to_build(
-    config: Config, image: str
+        config: Config, image: str
 ) -> t.Iterator[t.Tuple[str, t.Tuple[str, ...], str, t.Tuple[str, ...]]]:
     """
     Iterate over all images to build.
@@ -181,9 +181,9 @@ def find_images_to_build(
 
 
 def find_remote_image_tags(
-    config: Config,
-    filtre: "hooks.filters.Filter[t.List[t.Tuple[str, str]], [Config]]",
-    image: str,
+        config: Config,
+        filtre: "hooks.filters.Filter[t.List[t.Tuple[str, str]], [Config]]",
+        image: str,
 ) -> t.Iterator[str]:
     """
     Iterate over all images to push or pull.

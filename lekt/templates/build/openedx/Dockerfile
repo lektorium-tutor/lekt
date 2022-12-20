@@ -35,17 +35,17 @@ FROM minimal as code
 ARG EDX_PLATFORM_REPOSITORY={{ EDX_PLATFORM_REPOSITORY }}
 ARG EDX_PLATFORM_VERSION={{ EDX_PLATFORM_VERSION }}
 RUN mkdir -p /openedx/edx-platform && \
-    git clone $EDX_PLATFORM_REPOSITORY --branch $EDX_PLATFORM_VERSION /openedx/edx-platform
+    git clone $EDX_PLATFORM_REPOSITORY --branch $EDX_PLATFORM_VERSION --single-branch /openedx/edx-platform
 WORKDIR /openedx/edx-platform
 
 # Identify lekt user to apply patches using git
-RUN git config --global user.email "class@lektorium.tv" \
-  && git config --global user.name "Lekt"
+#RUN git config --global user.email "class@lektorium.tv" \
+#  && git config --global user.name "Lekt"
 
-{%- if patch("openedx-dockerfile-git-patches-default") %}
+#{%- if patch("openedx-dockerfile-git-patches-default") %}
 # Custom edx-platform patches
-{{ patch("openedx-dockerfile-git-patches-default") }}
-{%- else %}
+#{{ patch("openedx-dockerfile-git-patches-default") }}
+#{%- else %}
 # Patch edx-platform
 # Fix broken "Pages" view in Studio
 # https://github.com/openedx/edx-platform/pull/30550
@@ -56,9 +56,9 @@ RUN git config --global user.email "class@lektorium.tv" \
 # Fix XSS vulnerability on "next" parameter
 # https://github.com/overhangio/edx-platform/tree/overhangio/sec-redirect-xss
 #RUN curl -fsSL https://github.com/overhangio/edx-platform/commit/e16f8c0986.patch | git am
-{%- endif %}
+#{%- endif %}
 
-{# Example: RUN curl -fsSL https://github.com/openedx/edx-platform/commit/<GITSHA1> | git am #}
+#{# Example: RUN curl -fsSL https://github.com/openedx/edx-platform/commit/<GITSHA1> | git am #}
 {{ patch("openedx-dockerfile-post-git-checkout") }}
 
 ###### Download extra locales to /openedx/locale/contrib/locale
@@ -105,9 +105,6 @@ RUN pip install uwsgi==2.0.20
 
 # Install private requirements: this is useful for installing custom xblocks.
 COPY ./requirements/ /openedx/requirements
-RUN cd /openedx/requirements/ \
-  && touch ./private.txt \
-  && pip install -r ./private.txt
 
 {% for extra_requirements in OPENEDX_EXTRA_PIP_REQUIREMENTS %}RUN pip install '{{ extra_requirements }}'
 {% endfor %}
@@ -221,7 +218,7 @@ ENV DJANGO_SETTINGS_MODULE lms.envs.lekt.production
 EXPOSE 8000
 
 ###### Intermediate image with dev/test dependencies
-FROM production as development
+FROM production as development_base
 
 # Install useful system requirements (as root)
 USER root
@@ -246,13 +243,25 @@ RUN rm -r /openedx/staticfiles && \
 
 {{ patch("openedx-dev-dockerfile-post-python-requirements") }}
 
-# Default django settings
+CMD ./manage.py $SERVICE_VARIANT runserver 0.0.0.0:8000
+
+###### Intermediate image with private dependencies
+FROM development_base as development
 ENV DJANGO_SETTINGS_MODULE lms.envs.lekt.development
+RUN cd /openedx/requirements/ \
+  && touch ./private.txt \
+  && pip install -r ./private.txt
 
 CMD ./manage.py $SERVICE_VARIANT runserver 0.0.0.0:8000
 
+###### Intermediate image with private dependencies
+FROM production as private
+RUN cd /openedx/requirements/ \
+  && touch ./private.txt \
+  && pip install -r ./private.txt
+
 ###### Final image with production cmd
-FROM production as final
+FROM private as final
 
 # Run server
 CMD uwsgi \
