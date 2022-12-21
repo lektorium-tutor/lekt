@@ -256,6 +256,8 @@ CMD ./manage.py $SERVICE_VARIANT runserver 0.0.0.0:8000
 
 ###### Intermediate image with private dependencies
 FROM production as private
+{% for extra_requirements in OPENEDX_CLOSING_PIP_REQUIREMENTS %}RUN pip install '{{ extra_requirements }}'
+{% endfor %}
 RUN cd /openedx/requirements/ \
   && touch ./private.txt \
   && pip install -r ./private.txt
