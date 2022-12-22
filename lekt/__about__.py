@@ -2,7 +2,7 @@ import os
 
 # Increment this version number to trigger a new release. See
 # docs/lekt.html#versioning for information on the versioning scheme.
-__version__ = "14.0.25"
+__version__ = "14.0.26"
 __images_version__ = "14.2.3"
 __lekt_openedx_version__ = "latest"
 __mfe_version__ = "latest"
