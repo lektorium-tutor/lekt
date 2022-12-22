@@ -106,8 +106,10 @@ RUN pip install uwsgi==2.0.20
 # Install private requirements: this is useful for installing custom xblocks.
 COPY ./requirements/ /openedx/requirements
 
+{% if OPENEDX_EXTRA_PIP_REQUIREMENTS %}
 {% for extra_requirements in OPENEDX_EXTRA_PIP_REQUIREMENTS %}RUN pip install '{{ extra_requirements }}'
 {% endfor %}
+{% endif %}
 
 ###### Install nodejs with nodeenv in /openedx/nodeenv
 FROM python as nodejs-requirements
@@ -256,8 +258,10 @@ CMD ./manage.py $SERVICE_VARIANT runserver 0.0.0.0:8000
 
 ###### Intermediate image with private dependencies
 FROM production as private
+{% if OPENEDX_CLOSING_PIP_REQUIREMENTS %}
 {% for extra_requirements in OPENEDX_CLOSING_PIP_REQUIREMENTS %}RUN pip install '{{ extra_requirements }}'
 {% endfor %}
+{% endif %}
 RUN cd /openedx/requirements/ \
   && touch ./private.txt \
   && pip install -r ./private.txt

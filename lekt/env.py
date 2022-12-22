@@ -12,7 +12,9 @@ from lekt.__about__ import (
     __app__,
     __version__,
     __images_version__,
-    __lekt_openedx_version__
+    __lekt_openedx_version__,
+    __mfe_version__
+
 )
 from lekt.types import Config, ConfigValue
 
@@ -58,7 +60,8 @@ def _prepare_environment() -> None:
             ("LEKT_APP", __app__.replace("-", "_")),
             ("LEKT_VERSION", __version__),
             ("IMAGES_BASE_VERSION", __images_version__),
-            ("LEKT_OPENEDX_VERSION", __lekt_openedx_version__)
+            ("LEKT_OPENEDX_VERSION", __lekt_openedx_version__),
+            ("MFE_VERSION", __mfe_version__)
         ],
     )
 
