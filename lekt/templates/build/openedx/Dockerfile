@@ -250,6 +250,7 @@ CMD ./manage.py $SERVICE_VARIANT runserver 0.0.0.0:8000
 ###### Intermediate image with private dependencies
 FROM development_base as development
 ENV DJANGO_SETTINGS_MODULE lms.envs.lekt.development
+ADD "https://api.github.com/repos/lektorium-tutor/lektorium_main/commits?per_page=1" /openedx/requirements/latest_commit
 RUN cd /openedx/requirements/ \
   && touch ./private.txt \
   && pip install -r ./private.txt
