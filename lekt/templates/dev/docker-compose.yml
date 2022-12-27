@@ -60,4 +60,9 @@ services:
     command: openedx-assets watch-themes --env dev
     restart: unless-stopped
 
+  sseker:
+    environment:
+      EDUCONT_BASE_URL: "https://api.dev.educont.ru"
+      LMS_BASE_URL: "http://lms:8000"
+
   {{ patch("local-docker-compose-dev-services")|indent(2) }}

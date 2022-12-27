@@ -203,7 +203,9 @@ services:
   {% if RUN_SSEKER %}
   sseker:
     image: {{ DOCKER_IMAGE_SSEKER }}
-    command: python main.py
+    environment:
+      EDUCONT_BASE_URL: "https://api.dev.educont.ru"
+      LMS_BASE_URL: "http://lms:8000"
     restart: unless-stopped
     depends_on:
       - lms

@@ -17,3 +17,4 @@ WORKDIR /app/sseker
 RUN pip install -r requirements.txt
 
 CMD [ "python", "main.py"]
+#CMD ["tail", "-f", "/dev/null"]
