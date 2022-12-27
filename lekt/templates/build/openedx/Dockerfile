@@ -267,6 +267,8 @@ RUN cd /openedx/requirements/ \
   && touch ./private.txt \
   && pip install -r ./private.txt
 
+RUN cd /openedx/edx-platform && git pull
+
 ###### Final image with production cmd
 FROM private as final
 
