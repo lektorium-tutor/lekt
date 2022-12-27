@@ -200,4 +200,13 @@ services:
       - cms
   {% endif %}
 
+  {% if RUN_SSEKER %}
+  sseker:
+    image: {{ DOCKER_IMAGE_SSEKER }}
+    command: python main.py
+    restart: unless-stopped
+    depends_on:
+      - lms
+  {% endif %}
+
   {{ patch("local-docker-compose-services")|indent(2) }}

@@ -8,7 +8,7 @@ from lekt import exceptions, hooks, images
 from lekt.commands.context import Context
 from lekt.types import Config
 
-BASE_IMAGE_NAMES = ["openedx", "permissions"]
+BASE_IMAGE_NAMES = ["openedx", "permissions", "sseker"]
 VENDOR_IMAGES = [
     "caddy",
     "elasticsearch",
