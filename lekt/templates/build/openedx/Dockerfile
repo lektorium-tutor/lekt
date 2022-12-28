@@ -260,12 +260,13 @@ CMD ./manage.py $SERVICE_VARIANT runserver 0.0.0.0:8000
 ###### Intermediate image with private dependencies
 FROM production as private
 {% if OPENEDX_CLOSING_PIP_REQUIREMENTS %}
+ADD "https://api.github.com/repos/lektorium-tutor/lektorium_main/commits?per_page=1" /openedx/requirements/latest_commit
 {% for extra_requirements in OPENEDX_CLOSING_PIP_REQUIREMENTS %}RUN pip install '{{ extra_requirements }}'
 {% endfor %}
 {% endif %}
-RUN cd /openedx/requirements/ \
-  && touch ./private.txt \
-  && pip install -r ./private.txt
+#RUN cd /openedx/requirements/ \
+#  && touch ./private.txt \
+#  && pip install -r ./private.txt
 
 
 ###### Final image with production cmd
