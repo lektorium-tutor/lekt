@@ -99,7 +99,7 @@ Because the Lekt environment is generated entirely from the values in ``config.y
 
 You can now take advantage of the Lekt-powered CLI (item #3) to bootstrap your Open edX platform::
 
-    lekt local quickstart
+    lekt local launch
 
 Under the hood, Lekt simply runs ``docker-compose`` and ``docker`` commands to launch your platform. These commands are printed in the standard output, such that you are free to replicate the same behaviour by simply copying/pasting the same commands.
 
@@ -117,7 +117,7 @@ as well as command trees for each mode in which Lekt can run::
     lekt k8s ...    # Commands for managing a Kubernetes Open edX deployment.
     lekt dev ...    # Commands for hacking on Open edX in development mode.
 
-Within each mode, Lekt has subcommands for managing that type of Open edX instance. Many of them are common between modes, such as ``quickstart``, ``start``, ``stop``, ``exec``, and ``logs``. For example::
+Within each mode, Lekt has subcommands for managing that type of Open edX instance. Many of them are common between modes, such as ``launch``, ``start``, ``stop``, ``exec``, and ``logs``. For example::
 
     lekt local logs  # View logs of a local deployment.
     lekt k8s logs    # View logs of a Kubernetes-managed deployment.

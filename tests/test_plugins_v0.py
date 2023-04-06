@@ -1,4 +1,5 @@
-import typing as t
+from __future__ import annotations
+
 from unittest.mock import patch
 
 from lekt import config as lekt_config
@@ -83,7 +84,7 @@ class PluginsTests(PluginsTestCase):
         plugins_v0.DictPlugin(
             {"name": "plugin1", "patches": {"patch1": "Hello {{ ID }}"}}
         )
-        plugins.load("plugin1")
+        plugins.load_all(["plugin1"])
         patches = list(plugins.iter_patches("patch1"))
         self.assertEqual(["Hello {{ ID }}"], patches)
 
@@ -165,10 +166,17 @@ class PluginsTests(PluginsTestCase):
 
     def test_init_tasks(self) -> None:
         plugins_v0.DictPlugin({"name": "plugin1", "hooks": {"init": ["myclient"]}})
-        plugins.load("plugin1")
+        with patch.object(
+            plugins_v0.env, "read_template_file", return_value="echo hello"
+        ) as mock_read_template:
+            plugins.load("plugin1")
+            mock_read_template.assert_called_once_with(
+                "plugin1", "hooks", "myclient", "init"
+            )
+
         self.assertIn(
-            ("myclient", ("plugin1", "hooks", "myclient", "init")),
-            list(hooks.Filters.COMMANDS_INIT.iterate()),
+            ("myclient", "echo hello"),
+            list(hooks.Filters.CLI_DO_INIT_TASKS.iterate()),
         )
 
     def test_plugins_are_updated_on_config_change(self) -> None:
@@ -188,9 +196,7 @@ class PluginsTests(PluginsTestCase):
             {"name": "myplugin", "config": {"set": {"KEY": "value"}}, "version": "0.1"}
         )
         plugins.load("myplugin")
-        overriden_items: t.List[
-            t.Tuple[str, t.Any]
-        ] = hooks.Filters.CONFIG_OVERRIDES.apply([])
+        overriden_items = hooks.Filters.CONFIG_OVERRIDES.apply([])
         versions = list(plugins.iter_info())
         self.assertEqual("myplugin", plugin.name)
         self.assertEqual([("myplugin", "0.1")], versions)

@@ -22,7 +22,7 @@ In addition to installing Lekt Nightly itself, this will install automatically t
 
 Once Lekt Nightly is installed, you can run the usual ``tutor`` commands::
 
-    lekt dev quickstart
+    lekt dev launch
     lekt dev run lms bash
     # ... and so on
 

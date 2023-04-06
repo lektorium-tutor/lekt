@@ -40,7 +40,7 @@ test-unit: ## Run unit tests
 	python -m unittest discover tests
 
 test-types: ## Check type definitions
-	mypy --exclude=templates --ignore-missing-imports --strict ${SRC_DIRS}
+	mypy --exclude=templates --ignore-missing-imports --implicit-reexport --strict ${SRC_DIRS}
 
 test-pythonpackage: build-pythonpackage ## Test that package can be uploaded to pypi
 	twine check dist/lekt-$(shell make version).tar.gz
@@ -54,12 +54,11 @@ format: ## Format code automatically
 isort: ##  Sort imports. This target is not mandatory because the output may be incompatible with black formatting. Provided for convenience purposes.
 	isort --skip=templates ${SRC_DIRS}
 
-bootstrap-dev: ## Install dev requirements
-	pip install .
-	pip install -r requirements/dev.txt
+changelog-entry: ## Create a new changelog entry
+	scriv create
 
-bootstrap-dev-plugins: bootstrap-dev ## Install dev requirements and all supported plugins
-	pip install -r requirements/plugins.txt
+changelog: ## Collect changelog entries in the CHANGELOG.md file
+	scriv collect
 
 ###### Code coverage
 
@@ -78,11 +77,14 @@ coverage-html: coverage-report ## Generate HTML report for the code coverage
 coverage-browse-report: coverage-html ## Open the HTML report in the browser
 	sensible-browser htmlcov/index.html
 
-###### Deployment
+###### Continuous integration tasks
 
 bundle: ## Bundle the lekt package in a single "dist/lekt" executable
 	pyinstaller lekt.spec
 
+bootstrap-dev: ## Install dev requirements
+	pip install .
+	pip install -r requirements/dev.txt
 
 changelog-entry: ## Create a new changelog entry
 	scriv create
@@ -112,6 +114,8 @@ release-description:  ## Write the current release description to a file
 	git log -1 --pretty=format:%b >> release_description.md
 
 ###### Continuous integration tasks
+bootstrap-dev-plugins: bootstrap-dev ## Install dev requirements and all supported plugins
+	pip install -r requirements/plugins.txt
 
 pull-base-images: # Manually pull base images
 	docker image pull docker.io/ubuntu:20.04

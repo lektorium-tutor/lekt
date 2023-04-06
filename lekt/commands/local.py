@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing as t
 
 import click
@@ -9,11 +11,12 @@ from lekt import interactive as interactive_config
 from lekt import utils
 from lekt.commands import compose
 from lekt.commands.config import save as config_save_command
+from lekt.commands.upgrade import OPENEDX_RELEASE_NAMES
 from lekt.commands.upgrade.local import upgrade_from
 from lekt.types import Config, get_typed
 
 
-class LocalJobRunner(compose.ComposeJobRunner):
+class LocalTaskRunner(compose.ComposeTaskRunner):
     def __init__(self, root: str, config: Config):
         """
         Load docker-compose files from local/.
@@ -52,8 +55,8 @@ class LocalContext(compose.BaseComposeContext):
     COMPOSE_TMP_FILTER = hooks.Filters.COMPOSE_LOCAL_TMP
     COMPOSE_JOBS_TMP_FILTER = hooks.Filters.COMPOSE_LOCAL_JOBS_TMP
 
-    def job_runner(self, config: Config) -> LocalJobRunner:
-        return LocalJobRunner(self.root, config)
+    def job_runner(self, config: Config) -> LocalTaskRunner:
+        return LocalTaskRunner(self.root, config)
 
 
 @click.group(help="Run Open edX locally with docker-compose")
@@ -67,9 +70,9 @@ def local(context: click.Context) -> None:
 @click.option("-I", "--non-interactive", is_flag=True, help="Run non-interactively")
 @click.option("-p", "--pullimages", is_flag=True, help="Update docker images")
 @click.pass_context
-def quickstart(
+def launch(
     context: click.Context,
-    mounts: t.Tuple[t.List[compose.MountParam.MountType]],
+    mounts: tuple[list[compose.MountParam.MountType]],
     non_interactive: bool,
     pullimages: bool,
 ) -> None:
@@ -91,7 +94,7 @@ Lekt may not work if Docker is configured with < 4 GB RAM. Please follow instruc
     if run_upgrade_from_release is not None:
         click.echo(fmt.title("Upgrading from an older release"))
         if not non_interactive:
-            to_release = lekt_env.get_package_release()
+            to_release = lekt_env.get_current_open_edx_release_name()
             question = f"""You are about to upgrade your Open edX platform from {run_upgrade_from_release.capitalize()} to {to_release.capitalize()}
 
 It is strongly recommended to make a backup before upgrading. To do so, run:
@@ -142,7 +145,7 @@ Press enter when you are ready to continue"""
     click.echo(fmt.title("Starting the platform in detached mode"))
     context.invoke(compose.start, detach=True)
     click.echo(fmt.title("Database creation and migrations"))
-    context.invoke(compose.init)
+    context.invoke(compose.do.commands["init"])
 
     config = lekt_config.load(context.obj.root)
     fmt.echo_info(
@@ -161,18 +164,18 @@ Your Open edX platform is ready and can be accessed at the following urls:
 
 @click.command(
     short_help="Perform release-specific upgrade tasks",
-    help="Perform release-specific upgrade tasks. To perform a full upgrade remember to run `quickstart`.",
+    help="Perform release-specific upgrade tasks. To perform a full upgrade remember to run `launch`.",
 )
 @click.option(
     "--from",
     "from_release",
-    type=click.Choice(["ironwood", "juniper", "koa", "lilac", "maple"]),
+    type=click.Choice(OPENEDX_RELEASE_NAMES),
 )
 @click.pass_context
 def upgrade(context: click.Context, from_release: t.Optional[str]) -> None:
     fmt.echo_alert(
         "This command only performs a partial upgrade of your Open edX platform. "
-        "To perform a full upgrade, you should run `tutor local quickstart`."
+        "To perform a full upgrade, you should run `tutor local launch`."
     )
     if from_release is None:
         from_release = lekt_env.get_env_release(context.obj.root)
@@ -190,11 +193,11 @@ def _stop_on_dev_start(root: str, config: Config, project_name: str) -> None:
     Stop the local platform as soon as a platform with a different project name is
     started.
     """
-    runner = LocalJobRunner(root, config)
+    runner = LocalTaskRunner(root, config)
     if project_name != runner.project_name:
         runner.docker_compose("stop")
 
 
-local.add_command(quickstart)
+local.add_command(launch)
 local.add_command(upgrade)
 compose.add_commands(local)

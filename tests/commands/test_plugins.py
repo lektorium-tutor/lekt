@@ -1,3 +1,4 @@
+import typing as t
 import unittest
 from unittest.mock import Mock, patch
 
@@ -24,7 +25,7 @@ class PluginsTests(unittest.TestCase, TestCommandMixin):
         result = self.invoke(["plugins", "list"])
         self.assertIsNone(result.exception)
         self.assertEqual(0, result.exit_code)
-        self.assertFalse(result.output)
+        self.assertEqual("NAME\tSTATUS\tVERSION\n", result.output)
         _iter_info.assert_called()
 
     def test_plugins_install_not_found_plugin(self) -> None:

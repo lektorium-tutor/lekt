@@ -1,4 +1,4 @@
-import typing as t
+from __future__ import annotations
 
 import click
 
@@ -11,7 +11,7 @@ from lekt.commands import compose
 from lekt.types import Config, get_typed
 
 
-class DevJobRunner(compose.ComposeJobRunner):
+class DevTaskRunner(compose.ComposeTaskRunner):
     def __init__(self, root: str, config: Config):
         """
         Load docker-compose files from dev/ and local/
@@ -51,8 +51,8 @@ class DevContext(compose.BaseComposeContext):
     COMPOSE_TMP_FILTER = hooks.Filters.COMPOSE_DEV_TMP
     COMPOSE_JOBS_TMP_FILTER = hooks.Filters.COMPOSE_DEV_JOBS_TMP
 
-    def job_runner(self, config: Config) -> DevJobRunner:
-        return DevJobRunner(self.root, config)
+    def job_runner(self, config: Config) -> DevTaskRunner:
+        return DevTaskRunner(self.root, config)
 
 
 @click.group(help="Run Open edX locally with development settings")
@@ -66,11 +66,11 @@ def dev(context: click.Context) -> None:
 @click.option("-p", "--pullimages", is_flag=True, help="Update docker images")
 @compose.mount_option
 @click.pass_context
-def quickstart(
+def launch(
     context: click.Context,
     non_interactive: bool,
     pullimages: bool,
-    mounts: t.Tuple[t.List[compose.MountParam.MountType]],
+    mounts: tuple[list[compose.MountParam.MountType]],
 ) -> None:
     compose.mount_tmp_volumes(mounts, context.obj)
     try:
@@ -98,14 +98,11 @@ Lekt may not work if Docker is configured with < 4 GB RAM. Please follow instruc
         click.echo(fmt.title("Docker image updates"))
         context.invoke(compose.dc_command, command="pull")
 
-    click.echo(fmt.title("Building Docker image for LMS and CMS development"))
-    context.invoke(compose.dc_command, command="build", args=["lms"])
-
     click.echo(fmt.title("Starting the platform in detached mode"))
     context.invoke(compose.start, detach=True)
 
     click.echo(fmt.title("Database creation and migrations"))
-    context.invoke(compose.init)
+    context.invoke(compose.do.commands["init"])
 
     fmt.echo_info(
         """The Open edX platform is now running in detached mode
@@ -120,48 +117,16 @@ Your Open edX platform is ready and can be accessed at the following urls:
     )
 
 
-@click.command(
-    help="DEPRECATED: Use 'lekt dev start ...' instead!",
-    context_settings={"ignore_unknown_options": True},
-)
-@compose.mount_option
-@click.argument("options", nargs=-1, required=False)
-@click.argument("service")
-@click.pass_context
-def runserver(
-    context: click.Context,
-    mounts: t.Tuple[t.List[compose.MountParam.MountType]],
-    options: t.List[str],
-    service: str,
-) -> None:
-    depr_warning = "'runserver' is deprecated and will be removed in a future release. Use 'start' instead."
-    for option in options:
-        if option.startswith("-v") or option.startswith("--volume"):
-            depr_warning += " Bind-mounts can be specified using '-m/--mount'."
-            break
-    fmt.echo_alert(depr_warning)
-    config = lekt_config.load(context.obj.root)
-    if service in ["lms", "cms"]:
-        port = 8000 if service == "lms" else 8001
-        host = config["LMS_HOST"] if service == "lms" else config["CMS_HOST"]
-        fmt.echo_info(
-            f"The {service} service will be available at http://{host}:{port}"
-        )
-    args = ["--service-ports", *options, service]
-    context.invoke(compose.run, mounts=mounts, args=args)
-
-
 @hooks.Actions.COMPOSE_PROJECT_STARTED.add()
 def _stop_on_local_start(root: str, config: Config, project_name: str) -> None:
     """
     Stop the dev platform as soon as a platform with a different project name is
     started.
     """
-    runner = DevJobRunner(root, config)
+    runner = DevTaskRunner(root, config)
     if project_name != runner.project_name:
         runner.docker_compose("stop")
 
 
-dev.add_command(quickstart)
-dev.add_command(runserver)
+dev.add_command(launch)
 compose.add_commands(dev)

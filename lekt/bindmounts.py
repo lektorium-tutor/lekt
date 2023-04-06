@@ -1,5 +1,4 @@
 import os
-from typing import List, Tuple
 
 import click
 
@@ -9,7 +8,7 @@ from .utils import get_user_id
 
 
 def create(
-    runner: BaseComposeJobRunner,
+    runner: BaseComposeTaskRunner,
     service: str,
     path: str,
 ) -> str:
@@ -62,22 +61,3 @@ def get_name(container_bind_path: str) -> str:
 
 def get_root_path(root: str) -> str:
     return os.path.join(root, "volumes")
-
-
-def parse_volumes(docker_compose_args: List[str]) -> Tuple[List[str], List[str]]:
-    """
-    Parse `-v/--volume` options from an arbitrary list of arguments.
-    """
-
-    @click.command(context_settings={"ignore_unknown_options": True})
-    @click.option("-v", "--volume", "volumes", multiple=True)
-    @click.argument("args", nargs=-1)
-    def custom_docker_compose(
-        volumes: List[str], args: List[str]  # pylint: disable=unused-argument
-    ) -> None:
-        pass
-
-    if isinstance(docker_compose_args, tuple):
-        docker_compose_args = list(docker_compose_args)
-    context = custom_docker_compose.make_context("custom", docker_compose_args)
-    return context.params["volumes"], context.params["args"]

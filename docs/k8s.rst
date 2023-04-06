@@ -90,14 +90,14 @@ Quickstart
 
 Launch the platform on Kubernetes in one command::
 
-    lekt k8s quickstart
+    lekt k8s launch
 
 All Kubernetes resources are associated with the "openedx" namespace. If you don't see anything in the Kubernetes dashboard, you are probably looking at the wrong namespace... 😉
 
 .. image:: img/k8s-dashboard.png
     :alt: Kubernetes dashboard ("openedx" namespace)
 
-The same ``lekt k8s quickstart`` command can be used to upgrade the cluster to the latest version.
+The same ``lekt k8s launch`` command can be used to upgrade the cluster to the latest version.
 
 Other commands
 --------------

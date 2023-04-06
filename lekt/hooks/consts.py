@@ -7,39 +7,73 @@ from __future__ import annotations
 # The Tutor plugin system is licensed under the terms of the Apache 2.0 license.
 __license__ = "Apache 2.0"
 
-from typing import Any, Callable
+from typing import Any, Callable, Iterable
 
 import click
 
+<<<<<<< HEAD:lekt/hooks/consts.py
 from lekt.types import Config
-
-from . import actions, contexts, filters
-from .actions import Action, ActionTemplate
-from .filters import Filter, FilterTemplate
+=======
+from tutor.core.hooks import (
+    Action,
+    ActionTemplate,
+    Context,
+    ContextTemplate,
+    Filter,
+    FilterTemplate,
+    actions,
+    filters,
+)
+from tutor.types import Config
+>>>>>>> upstream/master:lekt/hooks/catalog.py
 
 __all__ = ["Actions", "Filters", "Contexts"]
 
 
 class Actions:
     """
+<<<<<<< HEAD:lekt/hooks/consts.py
     This class is a container for the names of all actions used across Lekt
     (see :py:mod:`lekt.hooks.actions.do`). For each action, we describe the
     arguments that are passed to the callback functions.
+=======
+    This class is a container for all actions used across Tutor (see
+    :py:class:`tutor.core.hooks.Action`). Actions are used to trigger callback functions at
+    specific moments in the Tutor life cycle.
+>>>>>>> upstream/master:lekt/hooks/catalog.py
 
-    To create a new callback for an existing action, write the following::
+    To create a new callback for an existing action, start by importing the hooks
+    module::
 
         from lekt import hooks
 
-        @hooks.Actions.YOUR_ACTION.add()
+    Then create your callback function and decorate it with the :py:meth:`add <tutor.core.hooks.Action.add>` method of the
+    action you're interested in::
+
+        @hooks.Actions.SOME_ACTION.add()
         def your_action():
             # Do stuff here
+
+    Your callback function should have the same signature as the original action. For
+    instance, to add a callback to the :py:data:`COMPOSE_PROJECT_STARTED` action::
+
+        @hooks.Actions.COMPOSE_PROJECT_STARTED.add():
+        def run_this_on_start(root, config, name):
+            print(root, config["LMS_HOST", name])
+
+    Your callback function will then be called whenever the ``COMPOSE_PROJECT_STARTED.do`` method
+    is called, i.e: when ``tutor local start`` or ``tutor dev start`` is run.
+
+    Note that action callbacks do not return anything.
+
+    For more information about how actions work, check out the :py:class:`tutor.core.hooks.Action` API.
     """
 
     #: Triggered whenever a "docker-compose start", "up" or "restart" command is executed.
     #:
-    #: :parameter: str root: project root.
-    #: :parameter: dict config: project configuration.
-    #: :parameter: str name: docker-compose project name.
+    #: :parameter str root: project root.
+    #: :parameter dict config: project configuration.
+    #: :parameter str name: docker-compose project name.
     COMPOSE_PROJECT_STARTED: Action[[str, Config, str]] = actions.get(
         "compose:project:started"
     )
@@ -59,17 +93,23 @@ class Actions:
     #: This action does not have any parameter.
     CORE_READY: Action[[]] = actions.get("core:ready")
 
+<<<<<<< HEAD:lekt/hooks/consts.py
     #: Called as soon as we have access to the Lekt project root.
+=======
+    #: Called just before triggering the job tasks of any ``... do <job>`` command.
+>>>>>>> upstream/master:lekt/hooks/catalog.py
     #:
-    #: :parameter str root: absolute path to the project root.
-    PROJECT_ROOT_READY: Action[str] = actions.get("project:root:ready")
+    #: :parameter str job: job name.
+    #: :parameter args: job positional arguments.
+    #: :parameter kwargs: job named arguments.
+    DO_JOB: Action[[str, Any]] = actions.get("do:job")
 
     #: Triggered when a single plugin needs to be loaded. Only plugins that have previously been
     #: discovered can be loaded (see :py:data:`CORE_READY`).
     #:
     #: Plugins are typically loaded because they were enabled by the user; the list of
     #: plugins to enable is found in the project root (see
-    #: :py:data:``PROJECT_ROOT_READY``).
+    #: :py:data:`PROJECT_ROOT_READY`).
     #:
     #: Most plugin developers will not have to implement this action themselves, unless
     #: they want to perform a specific action at the moment the plugin is enabled.
@@ -78,7 +118,7 @@ class Actions:
     PLUGIN_LOADED: ActionTemplate[[]] = actions.get_template("plugins:loaded:{0}")
 
     #: Triggered after all plugins have been loaded. At this point the list of loaded
-    #: plugins may be obtained from the :py:data:``Filters.PLUGINS_LOADED`` filter.
+    #: plugins may be obtained from the :py:data:`Filters.PLUGINS_LOADED` filter.
     #:
     #: This action does not have any parameter.
     PLUGINS_LOADED: Action[[]] = actions.get("plugins:loaded")
@@ -96,26 +136,92 @@ class Actions:
     #: :parameter config: full project configuration
     PLUGIN_UNLOADED: Action[str, str, Config] = actions.get("plugins:unloaded")
 
+    #: Called as soon as we have access to the Tutor project root.
+    #:
+    #: :parameter str root: absolute path to the project root.
+    PROJECT_ROOT_READY: Action[str] = actions.get("project:root:ready")
+
 
 class Filters:
     """
+<<<<<<< HEAD:lekt/hooks/consts.py
     Here are the names of all filters used across Lekt. For each filter, the
     type of the first argument also indicates the type of the expected returned value.
+=======
+    Here are the names of all filters used across Tutor. (see
+    :py:class:`tutor.core.hooks.Filter`) Filters are used to modify some data at
+    specific points during the Tutor life cycle.
+>>>>>>> upstream/master:lekt/hooks/catalog.py
 
-    Filter names are all namespaced with domains separated by colons (":").
-
-    To add custom data to any filter, write the following in your plugin::
+    To add a callback to an existing filter, start by importing the hooks module::
 
         from lekt import hooks
 
-        @hooks.Filters.YOUR_FILTER.add()
-        def your_filter(items):
-            # do stuff with items
+    Then create your callback function and decorate it with :py:meth:`add
+    <tutor.core.hooks.Filter.add>` method of the filter instance you need::
+
+        @hooks.Filters.SOME_FILTER.add()
+        def your_filter_callback(some_data):
+            # Do stuff here with the data
             ...
-            # return the modified list of items
-            return items
+            # return the modified data
+            return some_data
+
+    Note that your filter callback should have the same signature as the original
+    filter. The return value should also have the same type as the first argument of the
+    callback function.
+
+    Many filters have a list of items as the first argument. Quite often, plugin
+    developers just want to add a new item at the end of that list. In such cases there
+    is no need for a callback function. Instead, you can use the `add_item` method. For
+    instance, you can add a "hello" to the init task of the lms container by modifying
+    the :py:data:`CLI_DO_INIT_TASKS` filter::
+
+        hooks.CLI_DO_INIT_TASKS.add_item(("lms", "echo hello"))
+
+    To add multiple items at a time, use `add_items`::
+
+        hooks.CLI_DO_INIT_TASKS.add_items(
+            ("lms", "echo 'hello from lms'"),
+            ("cms", "echo 'hello from cms'"),
+        )
+
+    The ``echo`` commands will then be run every time the "init" tasks are run, for
+    instance during `tutor local launch`.
+
+    For more information about how filters work, check out the
+    :py:class:`tutor.core.hooks.Filter` API.
     """
 
+    #: List of command line interface (CLI) commands.
+    #:
+    #: :parameter list commands: commands are instances of ``click.Command``. They will
+    #:   all be added as subcommands of the main ``tutor`` command.
+    CLI_COMMANDS: Filter[list[click.Command], []] = filters.get("cli:commands")
+
+    #: List of `do ...` commands.
+    #:
+    #: :parameter list commands: see :py:data:`CLI_COMMANDS`. These commands will be
+    #:   added as subcommands to the `local/dev/k8s do` commands. They must return a list of
+    #:   ("service name", "service command") tuples. Each "service command" will be executed
+    #:   in the "service" container, both in local, dev and k8s mode.
+    CLI_DO_COMMANDS: Filter[
+        list[Callable[[Any], Iterable[tuple[str, str]]]], []
+    ] = filters.get("cli:commands:do")
+
+    #: List of initialization tasks (scripts) to be run in the `init` job. This job
+    #: includes all database migrations, setting up, etc. To run some tasks before or
+    #: after others, they should be assigned a different priority.
+    #:
+    #: :parameter list[tuple[str, str]] tasks: list of ``(service, task)`` tuples. Each
+    #:   task is essentially a bash script to be run in the "service" container. Scripts
+    #:   may contain Jinja markup, similar to templates.
+    CLI_DO_INIT_TASKS: Filter[list[tuple[str, str]], []] = filters.get(
+        "cli:commands:do:init"
+    )
+
+    #: DEPRECATED use :py:data:`CLI_DO_INIT_TASKS` instead.
+    #:
     #: List of commands to be executed during initialization. These commands typically
     #: include database migrations, setting feature flags, etc.
     #:
@@ -123,25 +229,39 @@ class Filters:
     #:
     #:     - ``service`` is the name of the container in which the task will be executed.
     #:     - ``path`` is a tuple that corresponds to a template relative path.
-    #:       Example: ``("myplugin", "hooks", "myservice", "pre-init")`` (see:py:data:`IMAGES_BUILD`).
+    #:       Example: ``("myplugin", "hooks", "myservice", "pre-init")`` (see :py:data:`IMAGES_BUILD`).
     #:       The command to execute will be read from that template, after it is rendered.
-    COMMANDS_INIT: Filter[list[tuple[str, tuple[str, ...]]], str] = filters.get(
+    COMMANDS_INIT: Filter[list[tuple[str, tuple[str, ...]]], []] = filters.get(
         "commands:init"
     )
 
+    #: DEPRECATED use :py:data:`CLI_DO_INIT_TASKS` instead with a lower priority score.
+    #:
     #: List of commands to be executed prior to initialization. These commands are run even
     #: before the mysql databases are created and the migrations are applied.
     #:
-    #: :parameter list[tuple[str, tuple[str, ...]]] tasks: list of ``(service, path)`` tasks. (see :py:data:`COMMANDS_INIT`).
+    #: :parameter list[tuple[str, tuple[str, ...]]] tasks: list of ``(service, path)``
+    #:   tasks. (see :py:data:`COMMANDS_INIT`).
     COMMANDS_PRE_INIT: Filter[list[tuple[str, tuple[str, ...]]], []] = filters.get(
         "commands:pre-init"
     )
 
+    #: Same as :py:data:`COMPOSE_LOCAL_JOBS_TMP` but for the development environment.
+    COMPOSE_DEV_JOBS_TMP: Filter[Config, []] = filters.get("compose:dev-jobs:tmp")
+
     #: Same as :py:data:`COMPOSE_LOCAL_TMP` but for the development environment.
     COMPOSE_DEV_TMP: Filter[Config, []] = filters.get("compose:dev:tmp")
 
-    #: Same as :py:data:`COMPOSE_LOCAL_JOBS_TMP` but for the development environment.
-    COMPOSE_DEV_JOBS_TMP: Filter[Config, []] = filters.get("compose:dev-jobs:tmp")
+    #: Same as :py:data:`COMPOSE_LOCAL_TMP` but for jobs
+    COMPOSE_LOCAL_JOBS_TMP: Filter[Config, []] = filters.get("compose:local-jobs:tmp")
+
+    #: Contents of the (local|dev)/docker-compose.tmp.yml files that will be generated at
+    #: runtime. This is used for instance to bind-mount folders from the host (see
+    #: :py:data:`COMPOSE_MOUNTS`)
+    #:
+    #: :parameter dict[str, ...] docker_compose_tmp: values which will be serialized to local/docker-compose.tmp.yml.
+    #:   Keys and values will be rendered before saving, such that you may include ``{{ ... }}`` statements.
+    COMPOSE_LOCAL_TMP: Filter[Config, []] = filters.get("compose:local:tmp")
 
     #: List of folders to bind-mount in docker-compose containers, either in ``lekt local`` or ``lekt dev``.
     #:
@@ -164,6 +284,7 @@ class Filters:
     #:   conditionnally add mounts.
     COMPOSE_MOUNTS: Filter[list[tuple[str, str]], [str]] = filters.get("compose:mounts")
 
+<<<<<<< HEAD:lekt/hooks/consts.py
     #: Contents of the (local|dev)/docker-compose.tmp.yml files that will be generated at
     #: runtime. This is used for instance to bind-mount folders from the host (see
     #: :py:data:`COMPOSE_MOUNTS`)
@@ -211,6 +332,8 @@ class Filters:
     #:   all be added as subcommands of the main ``tutor`` command.
     CLI_COMMANDS: Filter[list[click.Command], []] = filters.get("cli:commands")
 
+=======
+>>>>>>> upstream/master:lekt/hooks/catalog.py
     #: Declare new default configuration settings that don't necessarily have to be saved in the user
     #: ``config.yml`` file. Default settings may be overridden with ``lekt config save --set=...``, in which
     #: case they will automatically be added to ``config.yml``.
@@ -228,12 +351,19 @@ class Filters:
         "config:overrides"
     )
 
-    #: Declare uniqaue configuration settings that must be saved in the user ``config.yml`` file. This is where
+    #: Declare unique configuration settings that must be saved in the user ``config.yml`` file. This is where
     #: you should declare passwords and randomly-generated values that are different from one environment to the next.
     #:
     #: :parameter list[tuple[str, ...]] items: list of (name, value) new settings. All
     #:   names must be prefixed with the plugin name in all-caps.
     CONFIG_UNIQUE: Filter[list[tuple[str, Any]], []] = filters.get("config:unique")
+
+    #: Use this filter to modify the ``docker build`` command. For instance, to replace
+    #: the ``build`` subcommand by ``buildx build``.
+    #:
+    #: :parameter list[str] command: the full build command, including options and
+    #:   arguments. Note that these arguments do not include the leading ``docker`` command.
+    DOCKER_BUILD_COMMAND: Filter[list[str], []] = filters.get("docker:build:command")
 
     #: List of patches that should be inserted in a given location of the templates. The
     #: filter name must be formatted with the patch name.
@@ -265,24 +395,6 @@ class Filters:
     #:
     #: :parameter list[str] patterns: list of regular expression patterns. See :py:data:`ENV_PATTERNS_IGNORE`.
     ENV_PATTERNS_INCLUDE: Filter[list[str], []] = filters.get("env:patterns:include")
-
-    #: List of all template root folders.
-    #:
-    #: :parameter list[str] templates_root: absolute paths to folders which contain templates.
-    #:   The templates in these folders will then be accessible by the environment
-    #:   renderer using paths that are relative to their template root.
-    ENV_TEMPLATE_ROOTS: Filter[list[str], []] = filters.get("env:templates:roots")
-
-    #: List of template source/destination targets.
-    #:
-    #: :parameter list[tuple[str, str]] targets: list of (source, destination) pairs.
-    #:   Each source is a path relative to one of the template roots, and each destination
-    #:   is a path relative to the environment root. For instance: adding ``("c/d",
-    #:   "a/b")`` to the filter will cause all files from "c/d" to be rendered to the ``a/b/c/d``
-    #:   subfolder.
-    ENV_TEMPLATE_TARGETS: Filter[list[tuple[str, str]], []] = filters.get(
-        "env:templates:targets"
-    )
 
     #: List of `Jinja2 filters <https://jinja.palletsprojects.com/en/latest/templates/#filters>`__ that will be
     #: available in templates. Jinja2 filters are basically functions that can be used
@@ -317,11 +429,92 @@ class Filters:
         list[tuple[str, Callable[..., Any]]], []
     ] = filters.get("env:templates:filters")
 
+    #: List of all template root folders.
+    #:
+    #: :parameter list[str] templates_root: absolute paths to folders which contain templates.
+    #:   The templates in these folders will then be accessible by the environment
+    #:   renderer using paths that are relative to their template root.
+    ENV_TEMPLATE_ROOTS: Filter[list[str], []] = filters.get("env:templates:roots")
+
+    #: List of template source/destination targets.
+    #:
+    #: :parameter list[tuple[str, str]] targets: list of (source, destination) pairs.
+    #:   Each source is a path relative to one of the template roots, and each destination
+    #:   is a path relative to the environment root. For instance: adding ``("c/d",
+    #:   "a/b")`` to the filter will cause all files from "c/d" to be rendered to the ``a/b/c/d``
+    #:   subfolder.
+    ENV_TEMPLATE_TARGETS: Filter[list[tuple[str, str]], []] = filters.get(
+        "env:templates:targets"
+    )
+
     #: List of extra variables to be included in all templates.
     #:
     #: :parameter filters: list of (name, value) tuples.
     ENV_TEMPLATE_VARIABLES: Filter[list[tuple[str, Any]], []] = filters.get(
         "env:templates:variables"
+    )
+
+    #: List of images to be built when we run ``tutor images build ...``.
+    #:
+    #: :parameter list[tuple[str, tuple[str, ...], str, tuple[str, ...]]] tasks: list of ``(name, path, tag, args)`` tuples.
+    #:
+    #:    - ``name`` is the name of the image, as in ``tutor images build myimage``.
+    #:    - ``path`` is the relative path to the folder that contains the Dockerfile.
+    #:      For instance ``("myplugin", "build", "myservice")`` indicates that the template will be read from
+    #:      ``myplugin/build/myservice/Dockerfile``
+    #:    - ``tag`` is the Docker tag that will be applied to the image. It will be
+    #:      rendered at runtime with the user configuration. Thus, the image tag could
+    #:      be ``"{{ DOCKER_REGISTRY }}/myimage:{{ TUTOR_VERSION }}"``.
+    #:    - ``args`` is a list of arguments that will be passed to ``docker build ...``.
+    #: :parameter Config config: user configuration.
+    IMAGES_BUILD: Filter[
+        list[tuple[str, tuple[str, ...], str, tuple[str, ...]]], [Config]
+    ] = filters.get("images:build")
+
+    #: List of images to be pulled when we run ``tutor images pull ...``.
+    #:
+    #: :parameter list[tuple[str, str]] tasks: list of ``(name, tag)`` tuples.
+    #:
+    #:    - ``name`` is the name of the image, as in ``tutor images pull myimage``.
+    #:    - ``tag`` is the Docker tag that will be applied to the image. (see :py:data:`IMAGES_BUILD`).
+    #: :parameter Config config: user configuration.
+    IMAGES_PULL: Filter[list[tuple[str, str]], [Config]] = filters.get("images:pull")
+
+    #: List of images to be pushed when we run ``tutor images push ...``.
+    #: Parameters are the same as for :py:data:`IMAGES_PULL`.
+    IMAGES_PUSH: Filter[list[tuple[str, str]], [Config]] = filters.get("images:push")
+
+    #: List of plugin indexes that are loaded when we run `tutor plugins update`. By
+    #: default, the plugin indexes are stored in the user configuration. This filter makes
+    #: it possible to extend and modify this list with plugins.
+    #:
+    #: :parameter list[str] indexes: list of index URLs. Remember that entries further
+    #:   in the list have priority.
+    PLUGIN_INDEXES: Filter[list[str], []] = filters.get("plugins:indexes:entries")
+
+    #: Filter to modify the url of a plugin index url. This is convenient to alias
+    #: plugin indexes with a simple name, such as "main" or "contrib".
+    #:
+    #: :parameter str url: value passed to the `index add/remove` commands.
+    PLUGIN_INDEX_URL: Filter[str, []] = filters.get("plugins:indexes:url")
+
+    #: When installing an entry from a plugin index, the plugin data from the index will
+    #: go through this filter before it is passed along to `pip install`. Thus, this is a
+    #: good place to add custom authentication when you need to install from a private
+    #: index.
+    #:
+    #: :parameter dict[str, str] plugin: the dict entry from the plugin index. It
+    #:   includes an additional "index" key which contains the plugin index URL.
+    PLUGIN_INDEX_ENTRY_TO_INSTALL: Filter[dict[str, str], []] = filters.get(
+        "plugins:indexes:entries:install"
+    )
+
+    #: Information about each installed plugin, including its version.
+    #: Keep this information to a single line for easier parsing by 3rd-party scripts.
+    #:
+    #: :param list[tuple[str, str]] versions: each pair is a ``(plugin, info)`` tuple.
+    PLUGINS_INFO: Filter[list[tuple[str, str]], []] = filters.get(
+        "plugins:installed:versions"
     )
 
     #: List of installed plugins. In order to be added to this list, a plugin must first
@@ -332,14 +525,6 @@ class Filters:
     #:   plugins.
     PLUGINS_INSTALLED: Filter[list[str], []] = filters.get("plugins:installed")
 
-    #: Information about each installed plugin, including its version.
-    #: Keep this information to a single line for easier parsing by 3rd-party scripts.
-    #:
-    #: :param list[tuple[str, str]] versions: each pair is a ``(plugin, info)`` tuple.
-    PLUGINS_INFO: Filter[list[tuple[str, str]], []] = filters.get(
-        "plugins:installed:versions"
-    )
-
     #: List of loaded plugins.
     #:
     #: :param list[str] plugins: plugin developers probably don't have to modify this
@@ -349,6 +534,7 @@ class Filters:
 
 class Contexts:
     """
+<<<<<<< HEAD:lekt/hooks/consts.py
     Contexts are used to track in which parts of the code filters and actions have been
     declared. Let's look at an example::
 
@@ -367,29 +553,33 @@ class Contexts:
     This makes it easy to disable side-effects by plugins, provided they were created with appropriate contexts.
 
     Here we list all the contexts that are used across Lekt. It is not expected that
+=======
+    Here we list all the :py:class:`contexts <tutor.core.hooks.Context>` that are used across Tutor. It is not expected that
+>>>>>>> upstream/master:lekt/hooks/catalog.py
     plugin developers will ever need to use contexts. But if you do, this is how it
     should be done::
 
         from lekt import hooks
 
-        with hooks.Contexts.MY_CONTEXT.enter():
-            # do stuff and all created hooks will include MY_CONTEXT
+        with hooks.Contexts.SOME_CONTEXT.enter():
+            # do stuff and all created hooks will include SOME_CONTEXT
+            ...
 
-        # Apply only the hook callbacks that were created within MY_CONTEXT
-        hooks.Actions.MY_ACTION.do_from_context(str(hooks.Contexts.MY_CONTEXT))
-        hooks.Filters.MY_FILTER.apply_from_context(hooks.Contexts.MY_CONTEXT.name)
+        # Apply only the hook callbacks that were created within SOME_CONTEXT
+        hooks.Actions.MY_ACTION.do_from_context(str(hooks.Contexts.SOME_CONTEXT))
+        hooks.Filters.MY_FILTER.apply_from_context(hooks.Contexts.SOME_CONTEXT.name)
     """
 
     #: We enter this context whenever we create hooks for a specific application or :
     #: plugin. For instance, plugin "myplugin" will be enabled within the "app:myplugin"
     #: context.
-    APP = contexts.ContextTemplate("app:{0}")
+    APP = ContextTemplate("app:{0}")
 
     #: Plugins will be installed and enabled within this context.
-    PLUGINS = contexts.Context("plugins")
+    PLUGINS = Context("plugins")
 
     #: YAML-formatted v0 plugins will be installed within this context.
-    PLUGINS_V0_YAML = contexts.Context("plugins:v0:yaml")
+    PLUGINS_V0_YAML = Context("plugins:v0:yaml")
 
     #: Python entrypoint plugins will be installed within this context.
-    PLUGINS_V0_ENTRYPOINT = contexts.Context("plugins:v0:entrypoint")
+    PLUGINS_V0_ENTRYPOINT = Context("plugins:v0:entrypoint")

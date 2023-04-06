@@ -1,12 +1,11 @@
-# change version ranges when upgrading from nutmeg
-# lekt-android>=14.0.0,<15.0.0
-# lekt-discovery>=14.0.0,<15.0.0
-# lekt-ecommerce>=14.0.0,<15.0.0
-# tutor-forum>=14.0.0,<15.0.0
-# lekt-license>=14.0.0,<15.0.0
+# change version ranges when upgrading from olive
+# tutor-android>=15.0.0,<16.0.0
+# tutor-discovery>=15.0.0,<16.0.0
+# tutor-ecommerce>=15.0.0,<16.0.0
+# tutor-forum>=15.0.0,<16.0.0
+# tutor-license>=15.0.0,<16.0.0
 lekt-mfe @ git+https://github.com/lektorium-tutor/lekt-mfe@master
-# lekt-minio>=14.0.0,<15.0.0
-# lekt-notes>=14.0.0,<15.0.0
-# lekt-richie>=14.0.0,<15.0.0
-# lekt-webui>=14.0.0,<15.0.0
-# lekt-xqueue>=14.0.0,<15.0.0
+# tutor-minio>=15.0.0,<16.0.0
+# tutor-notes>=15.0.0,<16.0.0
+# tutor-webui>=15.0.0,<16.0.0
+# tutor-xqueue>=15.0.0,<16.0.0

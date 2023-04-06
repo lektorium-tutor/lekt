@@ -5,17 +5,23 @@ Open edX development
 
 In addition to running Open edX in production, Lekt can be used for local development of Open edX. This means that it is possible to hack on Open edX without setting up a Virtual Machine. Essentially, this replaces the devstack provided by edX.
 
+.. _edx_platform_dev_env:
 
 First-time setup
 ----------------
 
-First, ensure you have already :ref:`installed Lekt <install>` (for development against the named releases of Open edX) or :ref:`Lekt Nightly <nightly>` (for development against Open edX's master branches).
+Firstly, either :ref:`install Lekt <install>` (for development against the named releases of Open edX) or :ref:`install Lekt Nightly <nightly>` (for development against Open edX's master branches).
 
-Then, launch the developer platform setup process::
+Then, run one of the following in order to launch the developer platform setup process::
 
-    lekt dev quickstart
+    # To use the edx-platform repository that is built into the image, run:
+    lekt dev launch
 
-This will perform several tasks for you. It will:
+    # To bind-mount and run a local clone of edx-platform, replace
+    # './edx-platform' with the path to the local clone and run:
+    lekt dev launch --mount=./edx-platform
+
+This will perform several tasks. It will:
 
 * stop any existing locally-running Lekt containers,
 
@@ -33,25 +39,44 @@ This will perform several tasks for you. It will:
 
 * run service initialization scripts, such as service user creation and Waffle configuration.
 
+Additionally, when a local clone of edx-platform is bind-mounted, it will:
+
+* re-run setup.py,
+* clean-reinstall Node modules, and
+* regenerate static assets.
+
 Once setup is complete, the platform will be running in the background:
 
 * LMS will be accessible at `http://local.lektorium.tv:8000 <http://local.lektorium.tv:8000>`_.
 * CMS will be accessible at `http://studio.local.lektorium.tv:8001 <http://studio.local.lektorium.tv:8001>`_.
 * Plugged-in services should be accessible at their documented URLs.
 
+Now, use the ``tutor dev ...`` command-line interface to manage the development environment. Some common commands are described below.
+
+.. note::
+
+  Wherever the ``[--mount=./edx-platform]`` option is present, either:
+
+  * omit it when running of the edx-platform repository built into the image, or
+  * substitute it with ``--mount=<path/to/edx-platform>``.
+
+  Read more about bind-mounts :ref:`below <bind_mounts>`.
 
 Stopping the platform
 ---------------------
 
-To bring down your platform's containers, simply run::
+To bring down the platform's containers, simply run::
 
   lekt dev stop
-
 
 Starting the platform back up
 -----------------------------
 
-Once you have used ``quickstart`` once, you can start the platform in the future with the lighter-weight ``start`` command, which brings up containers but does not perform any initialization tasks::
+Once first-time setup has been performed with ``launch``, the platform can be started going forward with the lighter-weight ``start -d`` command, which brings up containers *detached* (that is: in the background), but does not perform any initialization tasks::
+
+  tutor dev start -d [--mount=./edx-platform]
+
+Or, to start with platform with containers *attached* (that is: in the foreground, the current terminal), omit the ``-d`` flag::
 
   lekt dev start     # Run platform in the same terminal ("attached")
   lekt dev start -d  # Or, run platform the in the background ("detached")
@@ -59,26 +84,43 @@ Once you have used ``quickstart`` once, you can start the platform in the future
 Nonetheless, ``quickstart`` is idempotent, so it is always safe to run it again in the future without risk to your data. In fact, you may find it useful to use this command as a one-stop-shop for pulling images, running migrations, initializing new plugins you have enabled, and/or executing any new initialization steps that may have been introduced since you set up Lekt::
 
   lekt dev quickstart --pullimages
+  lekt dev start [--mount=./edx-platform]
 
+When running containers attached, stop the platform with ``Ctrl+c``, or switch to detached mode using ``Ctrl+z``.
+
+Finally, the platform can also be started back up with ``launch``. It will take longer than ``start``, but it will ensure that config is applied, databases are provisioned & migrated, plugins are fully initialized, and (if applicable) the bind-mounted edx-platform is set up. Notably, ``launch`` is idempotent, so it is always safe to run it again without risk to data. Including the ``--pullimages`` flag will also ensure that container images are up-to-date::
+
+  tutor dev launch [--mount=./edx-platform] --pullimages
+
+Debugging with breakpoints
+--------------------------
+
+To debug a local edx-platform repository, add a `python breakpoint <https://docs.python.org/3/library/functions.html#breakpoint>`__ with ``breakpoint()`` anywhere in the code. Then, attach to the applicable service's container by running ``start`` (without ``-d``) followed by the service's name::
+
+  # Debugging LMS:
+  tutor dev start [--mount=./edx-platform] lms
+
+  # Or, debugging CMS:
+  tutor dev start [--mount=./edx-platform] cms
 
 Running arbitrary commands
 --------------------------
 
 To run any command inside one of the containers, run ``lekt dev run [OPTIONS] SERVICE [COMMAND] [ARGS]...``. For instance, to open a bash shell in the LMS or CMS containers::
 
-    lekt dev run lms bash
-    lekt dev run cms bash
+    lekt dev run [--mount=./edx-platform] lms bash
+    lekt dev run [--mount=./edx-platform] cms bash
 
 To open a python shell in the LMS or CMS, run::
 
-    lekt dev run lms ./manage.py lms shell
-    lekt dev run cms ./manage.py cms shell
+    lekt dev run [--mount=./edx-platform] lms ./manage.py lms shell
+    lekt dev run [--mount=./edx-platform] cms ./manage.py cms shell
 
 You can then import edx-platform and django modules and execute python code.
 
-To collect assets, you can use the ``openedx-assets`` command that ships with Lekt::
+To rebuild assets, you can use the ``openedx-assets`` command that ships with Lekt::
 
-    lekt dev run lms openedx-assets build --env=dev
+    lekt dev run [--mount=./edx-platform] lms openedx-assets build --env=dev
 
 
 .. _specialized for developer usage: 
@@ -92,7 +134,7 @@ The ``openedx-dev`` Docker image is based on the same ``openedx`` image used by 
 
 - Additional Python and system requirements are installed for convenient debugging: `ipython <https://ipython.org/>`__, `ipdb <https://pypi.org/project/ipdb/>`__, vim, telnet.
 
-- The edx-platform `development requirements <https://github.com/openedx/edx-platform/blob/open-release/nutmeg.master/requirements/edx/development.in>`__ are installed.
+- The edx-platform `development requirements <https://github.com/openedx/edx-platform/blob/open-release/olive.master/requirements/edx/development.in>`__ are installed.
 
 
 If you are using a custom ``openedx`` image, then you will need to rebuild ``openedx-dev`` every time you modify ``openedx``. To so, run::
@@ -112,7 +154,7 @@ It may sometimes be convenient to mount container directories on the host, for i
 Bind-mount volumes with ``--mount``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``quickstart``, ``run``, ``init`` and ``start`` subcommands of ``lekt dev`` and ``lekt local`` support the ``-m/--mount`` option (see :option:`lekt dev start -m`) which can take two different forms. The first is explicit::
+The ``launch``, ``run``, ``init`` and ``start`` subcommands of ``lekt dev`` and ``lekt local`` support the ``-m/--mount`` option (see :option:`lekt dev start -m`) which can take two different forms. The first is explicit::
 
     lekt dev start --mount=lms:/path/to/edx-platform:/openedx/edx-platform lms
 
@@ -283,6 +325,7 @@ Then, run unit tests with ``pytest`` commands::
     export EDXAPP_TEST_MONGO_HOST=mongodb
     pytest common
     pytest openedx
+    pytest xmodule
 
     # Run tests on LMS
     export DJANGO_SETTINGS_MODULE=lms.envs.lekt.test

@@ -2,9 +2,9 @@
     :start-after: _readme_intro_start:
     :end-before: _readme_intro_end:
 
-.. image:: ./img/quickstart.gif
-    :alt: Lekt local quickstart
-    :target: https://terminalizer.com/view/91b0bfdd557
+.. image:: ./img/launch.webp
+    :alt: Lekt local launch
+    :target: https://www.terminalizer.com/view/3a8d55835686
 
 ----------------------------------
 

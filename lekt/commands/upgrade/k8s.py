@@ -1,3 +1,5 @@
+import click
+
 from lekt import config as lekt_config
 from lekt import env as lekt_env
 from lekt import fmt
@@ -8,8 +10,8 @@ from lekt.types import Config
 from . import common as common_upgrade
 
 
-def upgrade_from(context: Context, from_release: str) -> None:
-    config = lekt_config.load(context.root)
+def upgrade_from(context: click.Context, from_release: str) -> None:
+    config = lekt_config.load(context.obj.root)
 
     running_release = from_release
     if running_release == "ironwood":
@@ -29,8 +31,12 @@ def upgrade_from(context: Context, from_release: str) -> None:
         running_release = "maple"
 
     if running_release == "maple":
-        upgrade_from_maple(context, config)
+        upgrade_from_maple(context.obj, config)
         running_release = "nutmeg"
+
+    if running_release == "nutmeg":
+        common_upgrade.upgrade_from_nutmeg(context, config)
+        running_release = "olive"
 
 
 def upgrade_from_ironwood(config: Config) -> None:
@@ -48,15 +54,15 @@ your MongoDb cluster from v3.2 to v3.6. You should run something similar to:
     lekt k8s stop
     lekt config save --set DOCKER_IMAGE_MONGODB=mongo:3.4.24
     lekt k8s start
-    tutor k8s exec mongodb mongo --eval 'db.adminCommand({ setFeatureCompatibilityVersion: "3.4" })'
+    lekt k8s exec mongodb mongo --eval 'db.adminCommand({ setFeatureCompatibilityVersion: "3.4" })'
 
     # Upgrade from v3.4 to v3.6
-    tutor k8s stop
-    tutor config save --set DOCKER_IMAGE_MONGODB=mongo:3.6.18
-    tutor k8s start
-    tutor k8s exec mongodb mongo --eval 'db.adminCommand({ setFeatureCompatibilityVersion: "3.6" })'
+    lekt k8s stop
+    lekt config save --set DOCKER_IMAGE_MONGODB=mongo:3.6.18
+    lekt k8s start
+    lekt k8s exec mongodb mongo --eval 'db.adminCommand({ setFeatureCompatibilityVersion: "3.6" })'
 
-    tutor config save --unset DOCKER_IMAGE_MONGODB"""
+    lekt config save --unset DOCKER_IMAGE_MONGODB"""
     fmt.echo_info(message)
 
 
@@ -72,10 +78,10 @@ def upgrade_from_juniper(config: Config) -> None:
     message = """Automatic release upgrade is unsupported in Kubernetes. To upgrade from Juniper, you should upgrade
 your MySQL database from v5.6 to v5.7. You should run something similar to:
 
-    tutor k8s start
-    tutor k8s exec mysql bash -e -c "mysql_upgrade \
-        -u $(tutor config printvalue MYSQL_ROOT_USERNAME) \
-        --password='$(tutor config printvalue MYSQL_ROOT_PASSWORD)'
+    lekt k8s start
+    lekt k8s exec mysql bash -e -c "mysql_upgrade \
+        -u $(lekt config printvalue MYSQL_ROOT_USERNAME) \
+        --password='$(lekt config printvalue MYSQL_ROOT_PASSWORD)'
 """
     fmt.echo_info(message)
 
@@ -91,11 +97,11 @@ def upgrade_from_koa(config: Config) -> None:
     message = """Automatic release upgrade is unsupported in Kubernetes. To upgrade from Koa to Lilac, you should upgrade
 your MongoDb cluster from v3.6 to v4.0. You should run something similar to:
 
-    tutor k8s stop
-    tutor config save --set DOCKER_IMAGE_MONGODB=mongo:4.0.25
-    tutor k8s start
-    tutor k8s exec mongodb mongo --eval 'db.adminCommand({ setFeatureCompatibilityVersion: "4.0" })'
-    tutor config save --unset DOCKER_IMAGE_MONGODB
+    lekt k8s stop
+    lekt config save --set DOCKER_IMAGE_MONGODB=mongo:4.0.25
+    lekt k8s start
+    lekt k8s exec mongodb mongo --eval 'db.adminCommand({ setFeatureCompatibilityVersion: "4.0" })'
+    lekt config save --unset DOCKER_IMAGE_MONGODB
     """
     fmt.echo_info(message)
 
@@ -114,13 +120,14 @@ def upgrade_from_maple(context: Context, config: Config) -> None:
     # The environment needs to be updated because the backpopulate/backfill commands are from Nutmeg
     lekt_env.save(context.root, config)
 
-    # Start mysql
-    k8s.kubectl_apply(
-        context.root,
-        "--selector",
-        "app.kubernetes.io/name=mysql",
-    )
-    k8s.wait_for_deployment_ready(config, "mysql")
+    if config["RUN_MYSQL"]:
+        # Start mysql
+        k8s.kubectl_apply(
+            context.root,
+            "--selector",
+            "app.kubernetes.io/name=mysql",
+        )
+        k8s.wait_for_deployment_ready(config, "mysql")
 
     # lms upgrade
     k8s.kubectl_apply(

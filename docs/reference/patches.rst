@@ -1,14 +1,18 @@
 .. _patches:
 
-================
-Template patches
-================
+======================
+Template patch catalog
+======================
 
 This is the list of all patches used across Lekt (outside of any plugin). Alternatively, you can search for patches in Lekt templates by grepping the source code::
 
-    git clone https://github.com/lektorium-tutor/tutor
-    cd tutor
+    git clone https://github.com/lektorium-tutor/lekt
+    cd lekt
     git grep "{{ patch" -- lekt/templates
+
+Or you can list all available patches with the following command::
+
+    lekt config patches list
 
 See also `this GitHub search <https://github.com/search?utf8=✓&q={{+patch+repo%3Alektorium-tutor%2Ftutor+path%3A%2Ftutor%2Ftemplates&type=Code&ref=advsearch&l=&l= 8>`__.
 
@@ -352,3 +356,14 @@ Python-formatted LMS settings in development. Values defined here override the v
 File: ``apps/openedx/settings/lms/production.py``
 
 Python-formatted LMS settings in production. Values defined here override the values from :patch:`openedx-lms-common-settings`.
+
+``uwsgi-config``
+================
+
+File: ``apps/openedx/settings/uwsgi.ini``
+
+A .INI formatted file used to extend or override the uWSGI configuration.
+
+Check the uWSGI documentation for more details about the `.INI format <https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html#ini-files>`__ and the `list of available options <https://uwsgi-docs.readthedocs.io/en/latest/Options.html>`__.
+
+.. patch:: uwsgi-config

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import re
 import typing as t
@@ -7,23 +9,25 @@ import click
 from click.shell_completion import CompletionItem
 from typing_extensions import TypeAlias
 
-from lekt import bindmounts
 from lekt import config as lekt_config
 from lekt import env as lekt_env
-from lekt import fmt, hooks, jobs, serialize, utils
-from lekt.commands.context import BaseJobContext
+from lekt import fmt, hooks, serialize, utils
+from lekt.commands import jobs
+from lekt.commands.context import BaseTaskContext
+from lekt.core.hooks import Filter  # pylint: disable=unused-import
 from lekt.exceptions import LektError
+from lekt.tasks import BaseComposeTaskRunner
 from lekt.types import Config
 
-COMPOSE_FILTER_TYPE: TypeAlias = "hooks.filters.Filter[t.Dict[str, t.Any], []]"
+COMPOSE_FILTER_TYPE: TypeAlias = "Filter[dict[str, t.Any], []]"
 
 
-class ComposeJobRunner(jobs.BaseComposeJobRunner):
+class ComposeTaskRunner(BaseComposeTaskRunner):
     def __init__(self, root: str, config: Config):
         super().__init__(root, config)
         self.project_name = ""
-        self.docker_compose_files: t.List[str] = []
-        self.docker_compose_job_files: t.List[str] = []
+        self.docker_compose_files: list[str] = []
+        self.docker_compose_job_files: list[str] = []
 
     def docker_compose(self, *command: str) -> int:
         """
@@ -54,7 +58,7 @@ class ComposeJobRunner(jobs.BaseComposeJobRunner):
         Update the contents of the docker-compose.tmp.yml and
         docker-compose.jobs.tmp.yml files, which are generated at runtime.
         """
-        compose_base: t.Dict[str, t.Any] = {
+        compose_base: dict[str, t.Any] = {
             "version": "{{ DOCKER_COMPOSE_VERSION }}",
             "services": {},
         }
@@ -84,7 +88,7 @@ class ComposeJobRunner(jobs.BaseComposeJobRunner):
             docker_compose_jobs_tmp_path,
         )
 
-    def run_job(self, service: str, command: str) -> int:
+    def run_task(self, service: str, command: str) -> int:
         """
         Run the "{{ service }}-job" service from local/docker-compose.jobs.yml with the
         specified command.
@@ -108,11 +112,11 @@ class ComposeJobRunner(jobs.BaseComposeJobRunner):
         )
 
 
-class BaseComposeContext(BaseJobContext):
+class BaseComposeContext(BaseTaskContext):
     COMPOSE_TMP_FILTER: COMPOSE_FILTER_TYPE = NotImplemented
     COMPOSE_JOBS_TMP_FILTER: COMPOSE_FILTER_TYPE = NotImplemented
 
-    def job_runner(self, config: Config) -> ComposeJobRunner:
+    def job_runner(self, config: Config) -> ComposeTaskRunner:
         raise NotImplementedError
 
 
@@ -133,11 +137,11 @@ class MountParam(click.ParamType):
         value: str,
         param: t.Optional["click.Parameter"],
         ctx: t.Optional[click.Context],
-    ) -> t.List["MountType"]:
+    ) -> list["MountType"]:
         mounts = self.convert_explicit_form(value) or self.convert_implicit_form(value)
         return mounts
 
-    def convert_explicit_form(self, value: str) -> t.List["MountParam.MountType"]:
+    def convert_explicit_form(self, value: str) -> list["MountParam.MountType"]:
         """
         Argument is of the form "containers:/host/path:/container/path".
         """
@@ -145,8 +149,8 @@ class MountParam(click.ParamType):
         if not match:
             return []
 
-        mounts: t.List["MountParam.MountType"] = []
-        services: t.List[str] = [
+        mounts: list["MountParam.MountType"] = []
+        services: list[str] = [
             service.strip() for service in match["services"].split(",")
         ]
         host_path = os.path.abspath(os.path.expanduser(match["host_path"]))
@@ -158,11 +162,11 @@ class MountParam(click.ParamType):
             mounts.append((service, host_path, container_path))
         return mounts
 
-    def convert_implicit_form(self, value: str) -> t.List["MountParam.MountType"]:
+    def convert_implicit_form(self, value: str) -> list["MountParam.MountType"]:
         """
         Argument is of the form "/host/path"
         """
-        mounts: t.List["MountParam.MountType"] = []
+        mounts: list["MountParam.MountType"] = []
         host_path = os.path.abspath(os.path.expanduser(value))
         for service, container_path in hooks.Filters.COMPOSE_MOUNTS.iterate(
             os.path.basename(host_path)
@@ -174,7 +178,7 @@ class MountParam(click.ParamType):
 
     def shell_complete(
         self, ctx: click.Context, param: click.Parameter, incomplete: str
-    ) -> t.List[CompletionItem]:
+    ) -> list[CompletionItem]:
         """
         Mount argument completion works only for the single path (implicit) form. The
         reason is that colons break words in bash completion:
@@ -196,7 +200,7 @@ mount_option = click.option(
 
 
 def mount_tmp_volumes(
-    all_mounts: t.Tuple[t.List[MountParam.MountType], ...],
+    all_mounts: tuple[list[MountParam.MountType], ...],
     context: BaseComposeContext,
 ) -> None:
     for mounts in all_mounts:
@@ -229,8 +233,8 @@ def mount_tmp_volume(
 
     @compose_tmp_filter.add()
     def _add_mounts_to_docker_compose_tmp(
-        docker_compose: t.Dict[str, t.Any],
-    ) -> t.Dict[str, t.Any]:
+        docker_compose: dict[str, t.Any],
+    ) -> dict[str, t.Any]:
         services = docker_compose.setdefault("services", {})
         services.setdefault(service, {"volumes": []})
         services[service]["volumes"].append(f"{host_path}:{container_path}")
@@ -250,8 +254,8 @@ def start(
     context: BaseComposeContext,
     skip_build: bool,
     detach: bool,
-    mounts: t.Tuple[t.List[MountParam.MountType]],
-    services: t.List[str],
+    mounts: tuple[list[MountParam.MountType]],
+    services: list[str],
 ) -> None:
     command = ["up", "--remove-orphans"]
     if not skip_build:
@@ -268,7 +272,7 @@ def start(
 @click.command(help="Stop a running platform")
 @click.argument("services", metavar="service", nargs=-1)
 @click.pass_obj
-def stop(context: BaseComposeContext, services: t.List[str]) -> None:
+def stop(context: BaseComposeContext, services: list[str]) -> None:
     config = lekt_config.load(context.root)
     context.job_runner(config).docker_compose("stop", *services)
 
@@ -280,7 +284,7 @@ def stop(context: BaseComposeContext, services: t.List[str]) -> None:
 @click.option("-d", "--detach", is_flag=True, help="Start in daemon mode")
 @click.argument("services", metavar="service", nargs=-1)
 @click.pass_context
-def reboot(context: click.Context, detach: bool, services: t.List[str]) -> None:
+def reboot(context: click.Context, detach: bool, services: list[str]) -> None:
     context.invoke(stop, services=services)
     context.invoke(start, detach=detach, services=services)
 
@@ -294,7 +298,7 @@ fully stop the platform, use the 'reboot' command.""",
 )
 @click.argument("services", metavar="service", nargs=-1)
 @click.pass_obj
-def restart(context: BaseComposeContext, services: t.List[str]) -> None:
+def restart(context: BaseComposeContext, services: list[str]) -> None:
     config = lekt_config.load(context.root)
     command = ["restart"]
     if "all" in services:
@@ -311,77 +315,21 @@ def restart(context: BaseComposeContext, services: t.List[str]) -> None:
     context.job_runner(config).docker_compose(*command)
 
 
-@click.command(help="Initialise all applications")
-@click.option("-l", "--limit", help="Limit initialisation to this service or plugin")
+@jobs.do_group
 @mount_option
 @click.pass_obj
-def init(
-    context: BaseComposeContext,
-    limit: str,
-    mounts: t.Tuple[t.List[MountParam.MountType]],
-) -> None:
-    mount_tmp_volumes(mounts, context)
-    config = lekt_config.load(context.root)
-    runner = context.job_runner(config)
-    jobs.initialise(runner, limit_to=limit)
+def do(context: BaseComposeContext, mounts: tuple[list[MountParam.MountType]]) -> None:
+    """
+    Run a custom job in the right container(s).
+    """
 
-
-@click.command(help="Create an Open edX user and interactively set their password")
-@click.option("--superuser", is_flag=True, help="Make superuser")
-@click.option("--staff", is_flag=True, help="Make staff user")
-@click.option(
-    "-p",
-    "--password",
-    help="Specify password from the command line. If undefined, you will be prompted to input a password",
-)
-@click.argument("name")
-@click.argument("email")
-@click.pass_obj
-def createuser(
-    context: BaseComposeContext,
-    superuser: str,
-    staff: bool,
-    password: str,
-    name: str,
-    email: str,
-) -> None:
-    config = lekt_config.load(context.root)
-    runner = context.job_runner(config)
-    command = jobs.create_user_command(superuser, staff, name, email, password=password)
-    runner.run_job("lms", command)
-
-
-@click.command(
-    help="Assign a theme to the LMS and the CMS. To reset to the default theme , use 'default' as the theme name."
-)
-@click.option(
-    "-d",
-    "--domain",
-    "domains",
-    multiple=True,
-    help=(
-        "Limit the theme to these domain names. By default, the theme is "
-        "applied to the LMS and the CMS, both in development and production mode"
-    ),
-)
-@click.argument("theme_name")
-@click.pass_obj
-def settheme(
-    context: BaseComposeContext, domains: t.List[str], theme_name: str
-) -> None:
-    config = lekt_config.load(context.root)
-    runner = context.job_runner(config)
-    domains = domains or jobs.get_all_openedx_domains(config)
-    jobs.set_theme(theme_name, domains, runner)
-
-
-@click.command(help="Import the demo course")
-@click.pass_obj
-def importdemocourse(context: BaseComposeContext) -> None:
-    config = lekt_config.load(context.root)
-    runner = context.job_runner(config)
-    fmt.echo_info("Importing demo course")
-    jobs.import_demo_course(runner)
+    @hooks.Actions.DO_JOB.add()
+    def _mount_tmp_volumes(_job_name: str, *_args: t.Any, **_kwargs: t.Any) -> None:
+        """
+        We add this logic to an action callback because we do not want to trigger it
+        whenever we run `lekt local do <job> --help`.
+        """
+        mount_tmp_volumes(mounts, context)
 
 
 @click.command(
@@ -398,35 +346,13 @@ def importdemocourse(context: BaseComposeContext) -> None:
 @click.pass_context
 def run(
     context: click.Context,
-    mounts: t.Tuple[t.List[MountParam.MountType]],
-    args: t.List[str],
+    mounts: tuple[list[MountParam.MountType]],
+    args: list[str],
 ) -> None:
     extra_args = ["--rm"]
     if not utils.is_a_tty():
         extra_args.append("-T")
     context.invoke(dc_command, mounts=mounts, command="run", args=[*extra_args, *args])
-
-
-@click.command(
-    name="bindmount",
-    help="Copy the contents of a container directory to a ready-to-bind-mount host directory",
-)
-@click.argument("service")
-@click.argument("path")
-@click.pass_obj
-def bindmount_command(context: BaseComposeContext, service: str, path: str) -> None:
-    """
-    This command is made obsolete by the --mount arguments.
-    """
-    fmt.echo_alert(
-        "The 'bindmount' command is deprecated and will be removed in a later release. Use 'copyfrom' instead."
-    )
-    config = lekt_config.load(context.root)
-    host_path = bindmounts.create(context.job_runner(config), service, path)
-    fmt.echo_info(
-        f"Bind-mount volume created at {host_path}. You can now use it in all `local` and `dev` "
-        f"commands with the `--volume={path}` option."
-    )
 
 
 @click.command(
@@ -486,7 +412,7 @@ def copyfrom(
 )
 @click.argument("args", nargs=-1, required=True)
 @click.pass_context
-def execute(context: click.Context, args: t.List[str]) -> None:
+def execute(context: click.Context, args: list[str]) -> None:
     context.invoke(dc_command, command="exec", args=args)
 
 
@@ -529,32 +455,19 @@ def status(context: click.Context) -> None:
 @click.pass_obj
 def dc_command(
     context: BaseComposeContext,
-    mounts: t.Tuple[t.List[MountParam.MountType]],
+    mounts: tuple[list[MountParam.MountType]],
     command: str,
-    args: t.List[str],
+    args: list[str],
 ) -> None:
     mount_tmp_volumes(mounts, context)
     config = lekt_config.load(context.root)
-    volumes, non_volume_args = bindmounts.parse_volumes(args)
-    volume_args = []
-    for volume_arg in volumes:
-        if ":" not in volume_arg:
-            # This is a bind-mounted volume from the "volumes/" folder.
-            host_bind_path = bindmounts.get_path(context.root, volume_arg)
-            if not os.path.exists(host_bind_path):
-                raise LektError(
-                    f"Bind-mount volume directory {host_bind_path} does not exist. It must first be created "
-                    f"with the '{bindmount_command.name}' command."
-                )
-            volume_arg = f"{host_bind_path}:{volume_arg}"
-        volume_args += ["--volume", volume_arg]
-    context.job_runner(config).docker_compose(command, *volume_args, *non_volume_args)
+    context.job_runner(config).docker_compose(command, *args)
 
 
 @hooks.Filters.COMPOSE_MOUNTS.add()
 def _mount_edx_platform(
-    volumes: t.List[t.Tuple[str, str]], name: str
-) -> t.List[t.Tuple[str, str]]:
+    volumes: list[tuple[str, str]], name: str
+) -> list[tuple[str, str]]:
     """
     When mounting edx-platform with `--mount=/path/to/edx-platform`, bind-mount the host
     repo in the lms/cms containers.
@@ -577,14 +490,14 @@ def add_commands(command_group: click.Group) -> None:
     command_group.add_command(stop)
     command_group.add_command(restart)
     command_group.add_command(reboot)
-    command_group.add_command(init)
-    command_group.add_command(createuser)
-    command_group.add_command(importdemocourse)
-    command_group.add_command(settheme)
     command_group.add_command(dc_command)
     command_group.add_command(run)
     command_group.add_command(copyfrom)
-    command_group.add_command(bindmount_command)
     command_group.add_command(execute)
     command_group.add_command(logs)
     command_group.add_command(status)
+
+    @hooks.Actions.PLUGINS_LOADED.add()
+    def _add_do_commands() -> None:
+        jobs.add_job_commands(do)
+        command_group.add_command(do)

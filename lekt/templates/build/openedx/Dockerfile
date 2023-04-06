@@ -21,15 +21,6 @@ RUN git clone https://github.com/pyenv/pyenv $PYENV_ROOT --branch v2.2.2 --depth
 RUN $PYENV_ROOT/bin/pyenv install $PYTHON_VERSION
 RUN $PYENV_ROOT/versions/$PYTHON_VERSION/bin/python -m venv /openedx/venv
 
-###### Install Dockerize to wait for mysql DB availability
-FROM minimal as dockerize
-# https://github.com/powerman/dockerize/releases
-ARG DOCKERIZE_VERSION=v0.16.0
-RUN dockerize_url="https://github.com/powerman/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-$(uname -m | sed 's@aarch@arm@')" \
-    && echo "Downloading dockerize from $dockerize_url" \
-    && curl --fail --location --output /usr/local/bin/dockerize $dockerize_url \
-    && chmod a+x /usr/local/bin/dockerize
-
 ###### Checkout edx-platform code
 FROM minimal as code
 ARG EDX_PLATFORM_REPOSITORY={{ EDX_PLATFORM_REPOSITORY }}
@@ -47,15 +38,13 @@ WORKDIR /openedx/edx-platform
 #{{ patch("openedx-dockerfile-git-patches-default") }}
 #{%- else %}
 # Patch edx-platform
-# Fix broken "Pages" view in Studio
-# https://github.com/openedx/edx-platform/pull/30550
-#RUN curl -fsSL https://github.com/open-craft/edx-platform/commit/3d54f284f82b61e693ad652d8d6e46a226fcb36d.patch | git am
-# Fix xblock ajax handler vulnerability
-# https://github.com/overhangio/edx-platform/tree/overhangio/sec-xblock-ajax
-#RUN curl -fsSL https://github.com/overhangio/edx-platform/commit/3f0f9eed42.patch | git am
-# Fix XSS vulnerability on "next" parameter
-# https://github.com/overhangio/edx-platform/tree/overhangio/sec-redirect-xss
-#RUN curl -fsSL https://github.com/overhangio/edx-platform/commit/e16f8c0986.patch | git am
+# Fix broken Circuit Schematic Builder problem template
+# https://github.com/openedx/edx-platform/pull/31365
+#RUN curl -fsSL https://github.com/openedx/edx-platform/commit/20b93b8b01276edadddfbbb67f15714fddd81c31.patch | git am
+
+# Use supported YouTube API for transcripts imports
+# https://github.com/openedx/edx-platform/pull/31862
+#RUN curl -fsSL https://github.com/openedx/edx-platform/commit/210dd1d7c211e531b9bc4376d1692a0bb0e6b651.patch | git am
 #{%- endif %}
 
 #{# Example: RUN curl -fsSL https://github.com/openedx/edx-platform/commit/<GITSHA1> | git am #}
@@ -78,20 +67,15 @@ ENV VIRTUAL_ENV /openedx/venv/
 
 RUN apt update && apt install -y software-properties-common libmysqlclient-dev libxmlsec1-dev libgeos-dev
 
-# Note that this means that we need to reinstall all requirements whenever there is a
-# change in edx-platform, which sucks. But there is no obvious alternative, as we need
-# to install some packages from edx-platform.
-COPY --from=code /openedx/edx-platform /openedx/edx-platform
-WORKDIR /openedx/edx-platform
-
 # Install the right version of pip/setuptools
 # https://pypi.org/project/setuptools/
 # https://pypi.org/project/pip/
 # https://pypi.org/project/wheel/
-RUN pip install setuptools==65.3.0 pip==22.2.2 wheel==0.37.1
+RUN pip install setuptools==65.5.1 pip==22.3.1. wheel==0.38.4
 
 # Install base requirements
-RUN pip install -r ./requirements/edx/base.txt
+COPY --from=code /openedx/edx-platform/requirements/edx/base.txt /tmp/base.txt
+RUN pip install -r /tmp/base.txt
 
 # Install django-redis for using redis as a django cache
 # https://pypi.org/project/django-redis/
@@ -99,7 +83,7 @@ RUN pip install django-redis==5.2.0
 
 # Install uwsgi
 # https://pypi.org/project/uWSGI/
-RUN pip install uwsgi==2.0.20
+RUN pip install uwsgi==2.0.21
 
 {{ patch("openedx-dockerfile-post-python-requirements") }}
 
@@ -116,8 +100,9 @@ FROM python as nodejs-requirements
 ENV PATH /openedx/nodeenv/bin:/openedx/venv/bin:${PATH}
 
 # Install nodeenv with the version provided by edx-platform
-RUN pip install nodeenv==1.6.0
-RUN nodeenv /openedx/nodeenv --node=12.13.0 --prebuilt
+# https://github.com/openedx/edx-platform/blob/master/requirements/edx/base.txt
+RUN pip install nodeenv==1.7.0
+RUN nodeenv /openedx/nodeenv --node=16.14.0 --prebuilt
 
 # Install nodejs requirements
 ARG NPM_REGISTRY={{ NPM_REGISTRY }}
@@ -141,7 +126,8 @@ RUN if [ "$APP_USER_ID" = 0 ]; then echo "app user may not be root" && false; fi
 RUN useradd --home-dir /openedx --create-home --shell /bin/bash --uid ${APP_USER_ID} app
 USER ${APP_USER_ID}
 
-COPY --from=dockerize /usr/local/bin/dockerize /usr/local/bin/dockerize
+# https://hub.docker.com/r/powerman/dockerize/tags
+COPY --from=docker.io/powerman/dockerize:0.19.0 /usr/local/bin/dockerize /usr/local/bin/dockerize
 COPY --chown=app:app --from=code /openedx/edx-platform /openedx/edx-platform
 COPY --chown=app:app --from=locales /openedx/locale /openedx/locale
 COPY --chown=app:app --from=python /opt/pyenv /opt/pyenv
@@ -154,8 +140,9 @@ ENV PATH /openedx/venv/bin:./node_modules/.bin:/openedx/nodeenv/bin:${PATH}
 ENV VIRTUAL_ENV /openedx/venv/
 WORKDIR /openedx/edx-platform
 
-# Re-install local requirements, otherwise egg-info folders are missing
-RUN pip install -r requirements/edx/local.in
+# We install edx-platform here because it creates an egg-info folder in the current
+# repo. We need both the source code and the virtualenv to run this command.
+RUN pip install -e .
 
 # Create folder that will store lms/cms.env.yml files, as well as
 # the lekt-specific settings files.
@@ -211,6 +198,13 @@ RUN openedx-assets themes \
 # Create a data directory, which might be used (or not)
 RUN mkdir /openedx/data
 
+# If this "canary" file is missing from a container, then that indicates that a
+# local edx-platform was bind-mounted into that container, thus overwriting the
+# canary. This information is useful during edx-platform initialisation.
+RUN echo \
+  "This copy of edx-platform was built into a Docker image." \
+  > bindmount-canary
+
 # service variant is "lms" or "cms"
 ENV SERVICE_VARIANT lms
 ENV DJANGO_SETTINGS_MODULE lms.envs.lekt.production
@@ -231,7 +225,9 @@ USER app
 
 # Install dev python requirements
 RUN pip install -r requirements/edx/development.txt
-RUN pip install ipdb==0.13.4 ipython==7.27.0
+# https://pypi.org/project/ipdb/
+# https://pypi.org/project/ipython
+RUN pip install ipdb==0.13.9 ipython==8.7.0
 
 # Add ipdb as default PYTHONBREAKPOINT
 ENV PYTHONBREAKPOINT=ipdb.set_trace
@@ -272,17 +268,14 @@ ADD "https://api.github.com/repos/lektorium-tutor/lektorium_main/commits?per_pag
 ###### Final image with production cmd
 FROM private as final
 
+# Default amount of uWSGI processes
+ENV UWSGI_WORKERS=2
+
+# Copy the default uWSGI configuration
+COPY --chown=app:app settings/uwsgi.ini .
+
 # Run server
-CMD uwsgi \
-    --static-map /static=/openedx/staticfiles/ \
-    --static-map /media=/openedx/media/ \
-    --http 0.0.0.0:8000 \
-    --thunder-lock \
-    --single-interpreter \
-    --enable-threads \
-    --processes=${UWSGI_WORKERS:-2} \
-    --buffer-size=8192 \
-    --wsgi-file $SERVICE_VARIANT/wsgi.py
+CMD uwsgi uwsgi.ini
 
 {{ patch("openedx-dockerfile-final") }}
 

@@ -10,6 +10,8 @@ You may be thinking that creating a plugin might be overkill for your use case. 
 
 A plugin can be created either as a simple, single Python module (a ``*.py`` file) or as a full-blown Python package. Single Python modules are easier to write, while Python packages can be distributed more easily with ``pip install ...``. We'll start by writing our plugin as a single Python module.
 
+Plugins work by making extensive use of the Tutor hooks API. The list of available hooks is available from the :ref:`hooks catalog <hooks_catalog>`. Developers who want to understand how hooks work should check the :ref:`hooks API <hooks_api>`.
+
 Writing a plugin as a single Python module
 ==========================================
 
@@ -73,7 +75,7 @@ This imports the ``hooks`` module from Lekt, which grants us access to ``hooks.A
         <content>
     )
 
-This means "add ``<content>`` to the ``{{ patch("<name>") }}`` statement, thanks to the  ENV_PATCHES filter". In our case, we want to modify the LMS settings, both in production and development. The right patch for that is :patch:`openedx-lms-common-settings`. We add one item, which is a single Python-formatted line of code::
+This means "add ``<content>`` to the ``{{ patch("<name>") }}`` statement, thanks to the :py:data:`tutor.hooks.Filters.ENV_PATCHES` filter". In our case, we want to modify the LMS settings, both in production and development. The right patch for that is :patch:`openedx-lms-common-settings`. We add one item, which is a single Python-formatted line of code::
 
     "FEATURES['ALLOW_PUBLIC_ACCOUNT_CREATION'] = False"
 
@@ -218,7 +220,7 @@ You can now run the "myservice" container which will execute the ``CMD`` stateme
 Declaring initialisation tasks
 ------------------------------
 
-Services often need to run specific tasks before they can be started. For instance, the LMS and the CMS need to apply database migrations. These commands are written in shell scripts that are executed whenever we run ``quickstart``. We call these scripts "init tasks". To add a new local init task, we must first add the corresponding service to the ``docker-compose-jobs.yml`` file by implementing the :patch:`local-docker-compose-jobs-services` patch::
+Services often need to run specific tasks before they can be started. For instance, the LMS and the CMS need to apply database migrations. These commands are written in shell scripts that are executed whenever we run ``launch``. We call these scripts "init tasks". To add a new local initialisation task, we must first add the corresponding service to the ``docker-compose-jobs.yml`` file by implementing the :patch:`local-docker-compose-jobs-services` patch::
 
     hooks.Filters.ENV_PATCHES.add_item(
         (
@@ -239,19 +241,22 @@ Next, we create the folder which will contain our init task script::
     $ mkdir "$(lekt plugins printroot)/templates/myplugin/tasks"
 
 Edit ``$(lekt plugins printroot)/templates/myplugin/tasks/init.sh``::
+Next, we create an initialisation task by adding an item to the :py:data:`lekt.hooks.Filters.CLI_DO_INIT_TASKS` filter::
 
+
+    hooks.Filters.CLI_DO_INIT_TASKS.add_item(
+        (
+            "myservice",
+            """
     echo "++++++ initialising my plugin..."
     echo "++++++ done!"
-
-Add our init task script to the :py:data:`tutor.hooks.Filters.COMMANDS_INIT` filter::
-
-    hooks.Filters.COMMANDS_INIT.add_item(
-        ("myservice", ("myplugin", "tasks", "init.sh")),
+    """
+        )
     )
 
 Run this initialisation task with::
 
-    $ lekt local init --limit=myplugin
+    $ lekt local do init --limit=myplugin
     ...
     Running init task: myplugin/tasks/init.sh
     ...
@@ -354,8 +359,14 @@ Eventually, our plugin is composed of the following files, all stored within the
     )
     hooks.Filters.IMAGES_PUSH.add_item(("myservice", "myservice:latest"))
     hooks.Filters.IMAGES_PULL.add_item(("myservice", "myservice:latest"))
-    hooks.Filters.COMMANDS_INIT.add_item(
-        ("myservice", ("myplugin", "tasks", "init.sh")),
+    hooks.Filters.CLI_DO_INIT_TASKS.add_item(
+        (
+            "myservice",
+            """
+    echo "++++++ initialising my plugin..."
+    echo "++++++ done!"
+    """
+        )
     )
 
 ``templates/myplugin/build/myservice/Dockerfile``

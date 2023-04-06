@@ -5,12 +5,13 @@ import unittest
 import unittest.result
 
 from lekt import hooks
-from lekt.commands.context import BaseJobContext
-from lekt.jobs import BaseJobRunner
+from lekt.commands.context import BaseTaskContext
+from lekt.core.hooks.contexts import enter as enter_context
+from lekt.tasks import BaseTaskRunner
 from lekt.types import Config
 
 
-class TestJobRunner(BaseJobRunner):
+class TestTaskRunner(BaseTaskRunner):
     """
     Mock job runner for unit testing.
 
@@ -18,7 +19,7 @@ class TestJobRunner(BaseJobRunner):
     separated by dashes.
     """
 
-    def run_job(self, service: str, command: str) -> int:
+    def run_task(self, service: str, command: str) -> int:
         print(os.linesep.join([f"Service: {service}", "-----", command, "----- "]))
         return 0
 
@@ -36,13 +37,13 @@ def temporary_root() -> "tempfile.TemporaryDirectory[str]":
     return tempfile.TemporaryDirectory(prefix="lekt-test-root-")
 
 
-class TestContext(BaseJobContext):
+class TestContext(BaseTaskContext):
     """
     Click context that will use only test job runners.
     """
 
-    def job_runner(self, config: Config) -> TestJobRunner:
-        return TestJobRunner(self.root, config)
+    def job_runner(self, config: Config) -> TestTaskRunner:
+        return TestTaskRunner(self.root, config)
 
 
 class PluginsTestCase(unittest.TestCase):
@@ -64,8 +65,7 @@ class PluginsTestCase(unittest.TestCase):
             hooks.Contexts.PLUGINS_V0_YAML.name,
             "unittests",
         ]:
-            hooks.filters.clear_all(context=context)
-            hooks.actions.clear_all(context=context)
+            hooks.clear_all(context=context)
 
     def run(
         self, result: t.Optional[unittest.result.TestResult] = None
@@ -74,5 +74,5 @@ class PluginsTestCase(unittest.TestCase):
         Run all actions and filters with a test context, such that they can be cleared
         from one run to the next.
         """
-        with hooks.contexts.enter("unittests"):
+        with enter_context("unittests"):
             return super().run(result=result)

@@ -15,4 +15,4 @@ class TestContextTests(unittest.TestCase):
             self.assertFalse(
                 os.path.exists(os.path.join(context.root, lekt_config.CONFIG_FILENAME))
             )
-            self.assertTrue(isinstance(runner, TestJobRunner))
+            self.assertTrue(isinstance(runner, TestTaskRunner))

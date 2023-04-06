@@ -32,9 +32,9 @@ All-in-one command
 
 A fully-functional platform can be configured and run in one command::
 
-    lekt local quickstart
+    lekt local launch
 
-But you may want to run commands one at a time: it's faster when you need to run only part of the local deployment process, and it helps you understand how your platform works. In the following, we decompose the ``quickstart`` command.
+But you may want to run commands one at a time: it's faster when you need to run only part of the local deployment process, and it helps you understand how your platform works. In the following, we decompose the ``launch`` command.
 
 Configuration
 ~~~~~~~~~~~~~
@@ -80,7 +80,7 @@ Service initialisation
 
 ::
 
-    lekt local init
+    lekt local do init
 
 This command should be run just once. It will initialise all applications in a running platform. In particular, this will create the required databases tables and apply database migrations for all applications.
 
@@ -120,7 +120,7 @@ Creating a new user with staff and admin rights
 
 You will most certainly need to create a user to administer the platform. Just run::
 
-    lekt local createuser --staff --superuser yourusername user@email.com
+    lekt local do createuser --staff --superuser yourusername user@email.com
 
 You will be asked to set the user password interactively.
 
@@ -131,7 +131,7 @@ Importing the demo course
 
 After a fresh installation, your platform will not have a single course. To import the `Open edX demo course <https://github.com/openedx/edx-demo-course>`_, run::
 
-    lekt local importdemocourse
+    lekt local do importdemocourse
 
 .. _settheme:
 
@@ -140,7 +140,7 @@ Setting a new theme
 
 The default Open edX theme is rather bland, so Lekt makes it easy to switch to a different theme::
 
-    lekt local settheme mytheme
+    lekt local do settheme mytheme
 
 Out of the box, only the default "open-edx" theme is available. We also developed `Indigo, a beautiful, customizable theme <https://github.com/lektorium-tutor/indigo>`__ which is easy to install with Lekt.
 

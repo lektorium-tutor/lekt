@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 import typing as t
 
@@ -13,6 +15,10 @@ def load(stream: t.Union[str, t.IO[str]]) -> t.Any:
 
 def load_all(stream: str) -> t.Iterator[t.Any]:
     return yaml.load_all(stream, Loader=yaml.SafeLoader)
+
+
+def dump_all(documents: t.Sequence[t.Any], fileobj: TextIOWrapper) -> None:
+    yaml.safe_dump_all(documents, stream=fileobj, default_flow_style=False)
 
 
 def dump(content: t.Any, fileobj: TextIOWrapper) -> None:
@@ -36,7 +42,7 @@ def parse(v: t.Union[str, t.IO[str]]) -> t.Any:
     return v
 
 
-def parse_key_value(text: str) -> t.Optional[t.Tuple[str, t.Any]]:
+def parse_key_value(text: str) -> t.Optional[tuple[str, t.Any]]:
     """
     Parse <KEY>=<YAML VALUE> command line arguments.
 

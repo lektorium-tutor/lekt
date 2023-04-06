@@ -1,4 +1,10 @@
+<<<<<<< HEAD:lekt/hooks/contexts.py
 # The Lekt plugin system is licensed under the terms of the Apache 2.0 license.
+=======
+from __future__ import annotations
+
+# The Tutor plugin system is licensed under the terms of the Apache 2.0 license.
+>>>>>>> upstream/master:lekt/core/hooks/contexts.py
 __license__ = "Apache 2.0"
 
 import typing as t
@@ -6,7 +12,28 @@ from contextlib import contextmanager
 
 
 class Context:
-    CURRENT: t.List[str] = []
+    """
+    Contexts are used to track in which parts of the code filters and actions have been
+    declared. Let's look at an example::
+
+        from tutor.core.hooks import contexts
+
+        with contexts.enter("c1"):
+            @filters.add("f1")
+            def add_stuff_to_filter(...):
+                ...
+
+    The fact that our custom filter was added in a certain context allows us to later
+    remove it. To do so, we write::
+
+        from tutor import hooks
+        filters.clear("f1", context="c1")
+
+    For instance, contexts make it easy to disable side-effects by plugins, provided
+    they were created with a specific context.
+    """
+
+    CURRENT: list[str] = []
 
     def __init__(self, name: str):
         self.name = name
@@ -59,13 +86,18 @@ def enter(name: str) -> t.ContextManager[None]:
 
     Usage::
 
+<<<<<<< HEAD:lekt/hooks/contexts.py
         from lekt import hooks
+=======
+        from tutor.core import hooks
+>>>>>>> upstream/master:lekt/core/hooks/contexts.py
 
         with hooks.contexts.enter("my-context"):
             # declare new actions and filters
             ...
 
-        # Later on, actions and filters can be disabled with:
+        # Later on, actions and filters that were created within this context can be
+        # disabled with:
         hooks.actions.clear_all(context="my-context")
         hooks.filters.clear_all(context="my-context")
 

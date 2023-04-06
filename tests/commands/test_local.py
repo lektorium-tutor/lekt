@@ -1,4 +1,5 @@
 import os
+import pathlib
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -14,8 +15,8 @@ class LocalTests(unittest.TestCase, TestCommandMixin):
         self.assertIsNone(result.exception)
         self.assertEqual(0, result.exit_code)
 
-    def test_local_quickstart_help(self) -> None:
-        result = self.invoke(["local", "quickstart", "--help"])
+    def test_local_launch_help(self) -> None:
+        result = self.invoke(["local", "launch", "--help"])
         self.assertIsNone(result.exception)
         self.assertEqual(0, result.exit_code)
 
@@ -27,6 +28,8 @@ class LocalTests(unittest.TestCase, TestCommandMixin):
     def test_copyfrom(self) -> None:
         with temporary_root() as root:
             with tempfile.TemporaryDirectory() as directory:
+                # resolve actual path, just like click.Path does it.
+                directory = os.fsdecode(pathlib.Path(directory).resolve())
                 with patch("lekt.utils.docker_compose") as mock_docker_compose:
                     self.invoke_in_root(root, ["config", "save"])
 

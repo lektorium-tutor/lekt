@@ -63,15 +63,15 @@ If the above command does not work, you should fix your Docker installation. Som
 "Running migrations... Killed!" / "Command failed with status 137: docker-compose"
 ----------------------------------------------------------------------------------
 
-Open edX requires at least 4 GB RAM, in particular, to run the SQL migrations. If the ``lekt local quickstart`` command dies after displaying "Running migrations", you most probably need to buy more memory or add swap to your machine.
+Open edX requires at least 4 GB RAM, in particular, to run the SQL migrations. If the ``lekt local launch`` command dies after displaying "Running migrations", you most probably need to buy more memory or add swap to your machine.
 
-On macOS, by default, Docker allocates at most 2 GB of RAM to containers. ``quickstart`` tries to check your current allocation and outputs a warning if it can't find a value of at least 4 GB. You should follow `these instructions from the official Docker documentation <https://docs.docker.com/docker-for-mac/#advanced>`__ to allocate at least 4-5 GB to the Docker daemon.
+On macOS, by default, Docker allocates at most 2 GB of RAM to containers. ``launch`` tries to check your current allocation and outputs a warning if it can't find a value of at least 4 GB. You should follow `these instructions from the official Docker documentation <https://docs.docker.com/docker-for-mac/#advanced>`__ to allocate at least 4-5 GB to the Docker daemon.
 
-If migrations were killed halfway, there is a good chance that the MySQL database is in a state that is hard to recover from. The easiest way to recover is simply to delete all the MySQL data and restart the quickstart process. After you have allocated more memory to the Docker daemon, run::
+If migrations were killed halfway, there is a good chance that the MySQL database is in a state that is hard to recover from. The easiest way to recover is simply to delete all the MySQL data and restart the launch process. After you have allocated more memory to the Docker daemon, run::
 
     lekt local stop
     sudo rm -rf "$(lekt config printroot)/data/mysql"
-    lekt local quickstart
+    lekt local launch
 
 .. warning::
     THIS WILL ERASE ALL YOUR DATA! Do not run this on a production instance. This solution is only viable for new Open edX installations.
@@ -84,14 +84,14 @@ The most common reason this happens is that you are running two different instan
     lekt dev stop
     lekt local stop
     lekt k8s stop
-    
+
 And then run your command(s) again, ensuring you're consistently using the correct Lekt variant (``lekt dev``, ``lekt local``, or ``lekt k8s``).
 
 If that doesn't work, then check if you have any other Docker containers running that may using port 3306::
 
     docker ps -a
-   
-For example, if you have ever used `Lekt Nightly <https://docs.tutor.overhang.io/tutorials/nightly.html>`_, check whether you still have ``tutor_nightly_`` containers running. Conversely, if you're trying to run Lekt Nightly now, check whether you have non-Nightly ``tutor_`` containers running. If so, switch to that other version of Lekt, run ``lekt (dev|local|k8s) stop``, and then switch back to your preferred version of Lekt.
+
+For example, if you have ever used `Lekt Nightly <https://docs.tutor.overhang.io/tutorials/nightly.html>`_, check whether you still have ``tutor_nightly_`` containers running. Conversely, if you're trying to run Tutor Nightly now, check whether you have non-Nightly ``tutor_`` containers running. If so, switch to that other version of Lekt, run ``lekt (dev|local|k8s) stop``, and then switch back to your preferred version of Lekt.
 
 Alternatively, if there are any other non-Lekt containers using port 3306, then stop and remove them::
 
@@ -111,6 +111,34 @@ Help! The Docker containers are eating all my RAM/CPU/CHEESE
 You can identify which containers are consuming most resources by running::
 
     docker stats
+
+In idle mode, the "mysql" container should use ~200MB memory; ~200-300MB for the the "lms" and "cms" containers.
+
+On some operating systems, such as RedHat, Arch Linux or Fedora, a very high limit of the number of open files (``nofile``) per container may cause the "mysql", "lms" and "cms" containers to use a lot of memory: up to 8-16GB. To check whether you might impacted, run::
+
+    cat /proc/$(pgrep dockerd)/limits | grep "Max open files"
+
+If the output is 1073741816 or higher, then it is likely that you are affected by `this mysql issue <https://github.com/docker-library/mysql/issues/579>`__. To learn more about the root cause, read `this containerd issue comment <https://github.com/containerd/containerd/pull/7566#issuecomment-1285417325>`__. Basically, the OS is hard-coding a very high limit for the allowed number of open files, and this is causing some containers to fail. To resolve the problem, you should configure the Docker daemon to enforce a lower value, as described `here <https://github.com/docker-library/mysql/issues/579#issuecomment-1432576518>`__. Edit ``/etc/docker/daemon.json`` and add the following contents::
+
+    {
+        "default-ulimits": {
+            "nofile": {
+                "Name": "nofile",
+                "Hard": 1048576,
+                "Soft": 1048576
+            }
+        }
+    }
+
+Check your configuration is valid with::
+
+    dockerd --validate
+
+Then restart the Docker service::
+
+    sudo systemctl restart docker.service
+
+Launch your Open edX platform again with ``tutor local launch``. You should observe normal memory usage.
 
 "Build failed running pavelib.servers.lms: Subprocess return code: 1"
 -----------------------------------------------------------------------

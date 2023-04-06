@@ -6,7 +6,7 @@ Upgrading from v3+
 
 Just upgrade Lekt using your :ref:`favorite installation method <install>` and run quickstart again::
 
-    lekt local quickstart
+    lekt local launch
 
 Upgrading from v1 or v2
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -22,4 +22,4 @@ Then, install Lekt using one of the :ref:`installation methods <install>`. Then,
 
 Finally, launch your platform with::
 
-    lekt local quickstart
+    lekt local launch

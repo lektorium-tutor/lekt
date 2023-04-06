@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 import os
-import typing as t
 
 from lekt import env, exceptions, fmt, hooks, plugins, serialize, utils
 from lekt.types import Config, ConfigValue, cast_config, get_typed
@@ -19,7 +20,7 @@ def load(root: str) -> Config:
         raise exceptions.LektError(
             "Project root does not exist. Make sure to generate the initial "
             "configuration with `lekt config save --interactive` or `lekt local "
-            "quickstart` prior to running other commands."
+            "launch` prior to running other commands."
         )
     env.check_is_up_to_date(root)
     return load_full(root)
@@ -108,7 +109,7 @@ def get_base() -> Config:
     Entries in this configuration are unrendered.
     """
     base = get_template("base.yml")
-    extra_config: t.List[t.Tuple[str, ConfigValue]] = []
+    extra_config: list[tuple[str, ConfigValue]] = []
     extra_config = hooks.Filters.CONFIG_UNIQUE.apply(extra_config)
     extra_config = hooks.Filters.CONFIG_OVERRIDES.apply(extra_config)
     for name, value in extra_config:
@@ -139,7 +140,7 @@ def get_template(filename: str) -> Config:
 
     Entries in this configuration are unrendered.
     """
-    config = serialize.load(env.read_template_file("config", filename))
+    config = serialize.load(env.read_core_template_file("config", filename))
     return cast_config(config)
 
 
@@ -220,10 +221,9 @@ def upgrade_obsolete(config: Config) -> None:
     ]:
         if name in config:
             config[name.replace("ACTIVATE_", "RUN_")] = config.pop(name)
-    # Replace RUN_CADDY by ENABLE_WEB_PROXY
+    # Replace nginx by caddy
     if "RUN_CADDY" in config:
         config["ENABLE_WEB_PROXY"] = config.pop("RUN_CADDY")
-    # Replace RUN_CADDY by ENABLE_WEB_PROXY
     if "NGINX_HTTP_PORT" in config:
         config["CADDY_HTTP_PORT"] = config.pop("NGINX_HTTP_PORT")
 
@@ -270,7 +270,7 @@ def enable_plugins(config: Config) -> None:
     plugins.load_all(get_enabled_plugins(config))
 
 
-def get_enabled_plugins(config: Config) -> t.List[str]:
+def get_enabled_plugins(config: Config) -> list[str]:
     """
     Return the list of plugins that are enabled, as per the configuration. Note that
     this may differ from the list of loaded plugins. For instance when a plugin is
