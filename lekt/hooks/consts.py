@@ -11,10 +11,7 @@ from typing import Any, Callable, Iterable
 
 import click
 
-<<<<<<< HEAD:lekt/hooks/consts.py
-from lekt.types import Config
-=======
-from tutor.core.hooks import (
+from lekt.core.hooks import (
     Action,
     ActionTemplate,
     Context,
@@ -24,30 +21,23 @@ from tutor.core.hooks import (
     actions,
     filters,
 )
-from tutor.types import Config
->>>>>>> upstream/master:lekt/hooks/catalog.py
+from lekt.types import Config
 
 __all__ = ["Actions", "Filters", "Contexts"]
 
 
 class Actions:
     """
-<<<<<<< HEAD:lekt/hooks/consts.py
-    This class is a container for the names of all actions used across Lekt
-    (see :py:mod:`lekt.hooks.actions.do`). For each action, we describe the
-    arguments that are passed to the callback functions.
-=======
-    This class is a container for all actions used across Tutor (see
-    :py:class:`tutor.core.hooks.Action`). Actions are used to trigger callback functions at
-    specific moments in the Tutor life cycle.
->>>>>>> upstream/master:lekt/hooks/catalog.py
+    This class is a container for all actions used across Lekt (see
+    :py:class:`lekt.core.hooks.Action`). Actions are used to trigger callback functions at
+    specific moments in the Lekt life cycle.
 
     To create a new callback for an existing action, start by importing the hooks
     module::
 
         from lekt import hooks
 
-    Then create your callback function and decorate it with the :py:meth:`add <tutor.core.hooks.Action.add>` method of the
+    Then create your callback function and decorate it with the :py:meth:`add <lekt.core.hooks.Action.add>` method of the
     action you're interested in::
 
         @hooks.Actions.SOME_ACTION.add()
@@ -62,11 +52,11 @@ class Actions:
             print(root, config["LMS_HOST", name])
 
     Your callback function will then be called whenever the ``COMPOSE_PROJECT_STARTED.do`` method
-    is called, i.e: when ``tutor local start`` or ``tutor dev start`` is run.
+    is called, i.e: when ``lekt local start`` or ``lekt dev start`` is run.
 
     Note that action callbacks do not return anything.
 
-    For more information about how actions work, check out the :py:class:`tutor.core.hooks.Action` API.
+    For more information about how actions work, check out the :py:class:`lekt.core.hooks.Action` API.
     """
 
     #: Triggered whenever a "docker-compose start", "up" or "restart" command is executed.
@@ -93,11 +83,7 @@ class Actions:
     #: This action does not have any parameter.
     CORE_READY: Action[[]] = actions.get("core:ready")
 
-<<<<<<< HEAD:lekt/hooks/consts.py
-    #: Called as soon as we have access to the Lekt project root.
-=======
     #: Called just before triggering the job tasks of any ``... do <job>`` command.
->>>>>>> upstream/master:lekt/hooks/catalog.py
     #:
     #: :parameter str job: job name.
     #: :parameter args: job positional arguments.
@@ -144,21 +130,16 @@ class Actions:
 
 class Filters:
     """
-<<<<<<< HEAD:lekt/hooks/consts.py
-    Here are the names of all filters used across Lekt. For each filter, the
-    type of the first argument also indicates the type of the expected returned value.
-=======
-    Here are the names of all filters used across Tutor. (see
-    :py:class:`tutor.core.hooks.Filter`) Filters are used to modify some data at
-    specific points during the Tutor life cycle.
->>>>>>> upstream/master:lekt/hooks/catalog.py
+    Here are the names of all filters used across Lekt. (see
+    :py:class:`lekt.core.hooks.Filter`) Filters are used to modify some data at
+    specific points during the Lekt life cycle.
 
     To add a callback to an existing filter, start by importing the hooks module::
 
         from lekt import hooks
 
     Then create your callback function and decorate it with :py:meth:`add
-    <tutor.core.hooks.Filter.add>` method of the filter instance you need::
+    <lekt.core.hooks.Filter.add>` method of the filter instance you need::
 
         @hooks.Filters.SOME_FILTER.add()
         def your_filter_callback(some_data):
@@ -284,56 +265,6 @@ class Filters:
     #:   conditionnally add mounts.
     COMPOSE_MOUNTS: Filter[list[tuple[str, str]], [str]] = filters.get("compose:mounts")
 
-<<<<<<< HEAD:lekt/hooks/consts.py
-    #: Contents of the (local|dev)/docker-compose.tmp.yml files that will be generated at
-    #: runtime. This is used for instance to bind-mount folders from the host (see
-    #: :py:data:`COMPOSE_MOUNTS`)
-    #:
-    #: :parameter dict[str, ...] docker_compose_tmp: values which will be serialized to local/docker-compose.tmp.yml.
-    #:   Keys and values will be rendered before saving, such that you may include ``{{ ... }}`` statements.
-    COMPOSE_LOCAL_TMP: Filter[Config, []] = filters.get("compose:local:tmp")
-
-    #: Same as :py:data:`COMPOSE_LOCAL_TMP` but for jobs
-    COMPOSE_LOCAL_JOBS_TMP: Filter[Config, []] = filters.get("compose:local-jobs:tmp")
-
-    #: List of images to be built when we run ``lekt images build ...``.
-    #:
-    #: :parameter list[tuple[str, tuple[str, ...], str, tuple[str, ...]]] tasks: list of ``(name, path, tag, args)`` tuples.
-    #:
-    #:    - ``name`` is the name of the image, as in ``lekt images build myimage``.
-    #:    - ``path`` is the relative path to the folder that contains the Dockerfile.
-    #:      For instance ``("myplugin", "build", "myservice")`` indicates that the template will be read from
-    #:      ``myplugin/build/myservice/Dockerfile``
-    #:    - ``tag`` is the Docker tag that will be applied to the image. It will be
-    #:      rendered at runtime with the user configuration. Thus, the image tag could
-    #:      be ``"{{ DOCKER_REGISTRY }}/myimage:{{ LEKT_VERSION }}"``.
-    #:    - ``args`` is a list of arguments that will be passed to ``docker build ...``.
-    #: :parameter Config config: user configuration.
-    IMAGES_BUILD: Filter[
-        list[tuple[str, tuple[str, ...], str, tuple[str, ...]]], [Config]
-    ] = filters.get("images:build")
-
-    #: List of images to be pulled when we run ``lekt images pull ...``.
-    #:
-    #: :parameter list[tuple[str, str]] tasks: list of ``(name, tag)`` tuples.
-    #:
-    #:    - ``name`` is the name of the image, as in ``lekt images pull myimage``.
-    #:    - ``tag`` is the Docker tag that will be applied to the image. (see :py:data:`IMAGES_BUILD`).
-    #: :parameter Config config: user configuration.
-    IMAGES_PULL: Filter[list[tuple[str, str]], [Config]] = filters.get("images:pull")
-
-    #: List of images to be pushed when we run ``lekt images push ...``.
-    #: Parameters are the same as for :py:data:`IMAGES_PULL`.
-    IMAGES_PUSH: Filter[list[tuple[str, str]], [Config]] = filters.get("images:push")
-
-    #: List of command line interface (CLI) commands.
-    #:
-    #: :parameter list commands: commands are instances of ``click.Command``. They will
-    #:   all be added as subcommands of the main ``tutor`` command.
-    CLI_COMMANDS: Filter[list[click.Command], []] = filters.get("cli:commands")
-
-=======
->>>>>>> upstream/master:lekt/hooks/catalog.py
     #: Declare new default configuration settings that don't necessarily have to be saved in the user
     #: ``config.yml`` file. Default settings may be overridden with ``lekt config save --set=...``, in which
     #: case they will automatically be added to ``config.yml``.
@@ -534,28 +465,7 @@ class Filters:
 
 class Contexts:
     """
-<<<<<<< HEAD:lekt/hooks/consts.py
-    Contexts are used to track in which parts of the code filters and actions have been
-    declared. Let's look at an example::
-
-        from lekt import hooks
-
-        with hooks.contexts.enter("c1"):
-            @filters.add("f1") def add_stuff_to_filter(...):
-                ...
-
-    The fact that our custom filter was added in a certain context allows us to later
-    remove it. To do so, we write::
-
-        from lekt import hooks
-        filters.clear("f1", context="c1")
-
-    This makes it easy to disable side-effects by plugins, provided they were created with appropriate contexts.
-
-    Here we list all the contexts that are used across Lekt. It is not expected that
-=======
     Here we list all the :py:class:`contexts <tutor.core.hooks.Context>` that are used across Tutor. It is not expected that
->>>>>>> upstream/master:lekt/hooks/catalog.py
     plugin developers will ever need to use contexts. But if you do, this is how it
     should be done::
 

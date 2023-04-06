@@ -60,7 +60,7 @@ def main():
     collect.add_argument(
         "-s",
         "--settings",
-        default="tutor.assets",
+        default="lekt.assets",
         help="Django settings module",
     )
     collect.add_argument(

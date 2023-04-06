@@ -4,6 +4,6 @@ __license__ = "Apache 2.0"
 import typing as t
 
 # The imports that follow are the hooks API
-from tutor.core.hooks import clear_all, priorities
+from lekt.core.hooks import clear_all, priorities
 
 from .catalog import Actions, Contexts, Filters

@@ -320,9 +320,9 @@ def read_url(url: str) -> str:
             content: str = response.read().decode()
             return content
         except URLError as e:
-            raise exceptions.TutorError(f"Request error: {e}") from e
+            raise exceptions.LektError(f"Request error: {e}") from e
         except UnicodeDecodeError as e:
-            raise exceptions.TutorError(
+            raise exceptions.LektError(
                 f"Remote response must be encoded as utf8: {e}"
             ) from e
     try:
@@ -330,9 +330,9 @@ def read_url(url: str) -> str:
             # local file index
             return f.read()
     except FileNotFoundError as e:
-        raise exceptions.TutorError(f"File could not be found: {e}") from e
+        raise exceptions.LektError(f"File could not be found: {e}") from e
     except UnicodeDecodeError as e:
-        raise exceptions.TutorError(f"File must be encoded as utf8: {e}") from e
+        raise exceptions.LektError(f"File must be encoded as utf8: {e}") from e
 
 
 def is_url(text: str) -> bool:

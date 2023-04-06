@@ -1,5 +1,5 @@
-from tutor import fmt, hooks, utils
-from tutor.types import Config, get_typed
+from lekt import fmt, hooks, utils
+from lekt.types import Config, get_typed
 
 
 def get_tag(config: Config, name: str) -> str:

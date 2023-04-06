@@ -9,9 +9,9 @@ import typing as t
 import click
 from typing_extensions import ParamSpec
 
-from tutor import config as tutor_config
-from tutor import env, fmt, hooks
-from tutor.hooks import priorities
+from lekt import config as lekt_config
+from lekt import env, fmt, hooks
+from lekt.hooks import priorities
 
 
 class DoGroup(click.Group):
@@ -274,7 +274,7 @@ def do_callback(service_commands: t.Iterable[tuple[str, str]]) -> None:
     This callback is added to the "do" subcommands by the `add_job_commands` function.
     """
     context = click.get_current_context().obj
-    config = tutor_config.load(context.root)
+    config = lekt_config.load(context.root)
     runner = context.job_runner(config)
     for service, command in service_commands:
         runner.run_task_from_str(service, command)

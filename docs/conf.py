@@ -57,11 +57,11 @@ nitpick_ignore = [
 # Resolve type aliases here
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_type_aliases
 autodoc_type_aliases: dict[str, str] = {
-    "T1": "tutor.core.hooks.filters.T1",
-    "L": "tutor.core.hooks.filters.L",
+    "T1": "lekt.core.hooks.filters.T1",
+    "L": "lekt.core.hooks.filters.L",
     # python 3.10
-    "T": "tutor.core.hooks.actions.T",
-    "T2": "tutor.core.hooks.filters.T2",
+    "T": "lekt.core.hooks.actions.T",
+    "T2": "lekt.core.hooks.filters.T2",
 }
 
 

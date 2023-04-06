@@ -1,5 +1,5 @@
-from tutor import env
-from tutor.types import Config
+from lekt import env
+from lekt.types import Config
 
 
 class BaseTaskRunner:

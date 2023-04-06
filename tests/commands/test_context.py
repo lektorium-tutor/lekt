@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from tests.helpers import TestContext, TestJobRunner, temporary_root
+from tests.helpers import TestContext, TestTaskRunner, temporary_root
 from lekt import config as lekt_config
 
 

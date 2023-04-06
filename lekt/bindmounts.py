@@ -2,9 +2,9 @@ import os
 
 import click
 
-from .exceptions import LektError
-from .jobs import BaseComposeJobRunner
-from .utils import get_user_id
+from lekt.exceptions import LektError
+from lekt.tasks import BaseComposeTaskRunner
+from lekt.utils import get_user_id
 
 
 def create(

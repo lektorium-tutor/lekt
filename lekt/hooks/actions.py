@@ -1,10 +1,6 @@
-<<<<<<< HEAD:lekt/hooks/actions.py
-# The Lekt plugin system is licensed under the terms of the Apache 2.0 license.
-=======
 from __future__ import annotations
 
-# The Tutor plugin system is licensed under the terms of the Apache 2.0 license.
->>>>>>> upstream/master:lekt/core/hooks/actions.py
+# The Lekt plugin system is licensed under the terms of the Apache 2.0 license.
 __license__ = "Apache 2.0"
 
 import sys
@@ -137,7 +133,7 @@ class Action(t.Generic[T]):
         :param name: name of the action for which callbacks will be run.
         :param context: limit the set of callback actions to those that
             were declared within a certain context (see
-            :py:func:`tutor.core.hooks.contexts.enter`).
+            :py:func:`lekt.core.hooks.contexts.enter`).
         """
         for callback in self.callbacks:
             if callback.is_in_context(context):
@@ -223,29 +219,6 @@ def add(
 ) -> t.Callable[[ActionCallbackFunc[T]], ActionCallbackFunc[T]]:
     """
     Decorator to add a callback action associated to a name.
-<<<<<<< HEAD:lekt/hooks/actions.py
-
-    :param name: name of the action. For forward compatibility, it is
-        recommended not to hardcode any string here, but to pick a value from
-        :py:class:`lekt.hooks.Actions` instead.
-    :param priority: optional order in which the action callbacks are performed. Higher
-        values mean that they will be performed later. The default value is
-        ``DEFAULT_PRIORITY`` (10). Actions that should be performed last should
-        have a priority of 100.
-
-    Usage::
-
-        from lekt import hooks
-
-        @hooks.actions.add("my-action")
-        def do_stuff():
-            ...
-
-    The ``do_stuff`` callback function will be called on ``hooks.actions.do("my-action")``. (see :py:func:`do`)
-
-    The signature of each callback action function must match the signature of the corresponding ``hooks.actions.do`` call. Callback action functions are not supposed to return any value. Returned values will be ignored.
-=======
->>>>>>> upstream/master:lekt/core/hooks/actions.py
     """
     return get(name).add(priority=priority)
 

@@ -1,5 +1,5 @@
-from tutor.tasks import BaseTaskRunner
-from tutor.types import Config
+from lekt.tasks import BaseTaskRunner
+from lekt.types import Config
 
 
 class Context:

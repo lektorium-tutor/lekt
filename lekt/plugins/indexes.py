@@ -5,10 +5,10 @@ import typing as t
 
 from yaml.parser import ParserError
 
-from tutor import env, fmt, hooks, serialize, utils
-from tutor.__about__ import __version__, __version_suffix__
-from tutor.exceptions import TutorError
-from tutor.types import Config, get_typed
+from lekt import env, fmt, hooks, serialize, utils
+from lekt.__about__ import __version__, __version_suffix__
+from lekt.exceptions import LektError
+from lekt.types import Config, get_typed
 
 PLUGIN_INDEXES_KEY = "PLUGIN_INDEXES"
 # Current release name ('zebulon' or 'nightly') and version (1-26)
@@ -135,7 +135,7 @@ def get_all(config: Config) -> list[str]:
     indexes = get_typed(config, PLUGIN_INDEXES_KEY, list)
     for url in indexes:
         if not isinstance(url, str):
-            raise TutorError(
+            raise LektError(
                 f"Invalid plugin index: {url}. Expected 'str', got '{url.__class__}'"
             )
     return indexes
@@ -153,7 +153,7 @@ def fetch(config: Config) -> list[dict[str, str]]:
         try:
             fmt.echo_info(f"Fetching index {url}...")
             all_plugins += fetch_url(url)
-        except TutorError as e:
+        except LektError as e:
             fmt.echo_error(f"  Failed to update index. {e.args[0]}")
 
     return deduplicate_plugins(all_plugins)
@@ -182,7 +182,7 @@ def parse_index(content: str) -> list[dict[str, str]]:
     try:
         plugins = serialize.load(content)
     except ParserError as e:
-        raise TutorError(f"Could not parse index: {e}") from e
+        raise LektError(f"Could not parse index: {e}") from e
     validate_index(plugins)
     valid_plugins = []
     for plugin in plugins:
@@ -200,7 +200,7 @@ def parse_index(content: str) -> list[dict[str, str]]:
 
 def validate_index(plugins: t.Any) -> list[dict[str, str]]:
     if not isinstance(plugins, list):
-        raise TutorError(
+        raise LektError(
             f"Invalid plugin index format. Expected list, got {plugins.__class__}"
         )
     return plugins
@@ -221,7 +221,7 @@ def find_in_cache(name: str) -> IndexEntry:
     for entry in iter_cache_entries():
         if entry.name == name:
             return entry
-    raise TutorError(f"Plugin '{name}' could not be found in indexes")
+    raise LektError(f"Plugin '{name}' could not be found in indexes")
 
 
 def iter_cache_entries() -> t.Iterator[IndexEntry]:
@@ -239,7 +239,7 @@ def load_cache() -> list[dict[str, str]]:
         with open(Indexes.CACHE_PATH, encoding="utf8") as cache_if:
             plugins = serialize.load(cache_if)
     except FileNotFoundError as e:
-        raise TutorError(
+        raise LektError(
             f"Local index cache could not be found in {Indexes.CACHE_PATH}. Run `tutor plugins update`."
         ) from e
     return validate_index(plugins)

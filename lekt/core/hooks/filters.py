@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-# The Tutor plugin system is licensed under the terms of the Apache 2.0 license.
+# The lekt plugin system is licensed under the terms of the Apache 2.0 license.
 __license__ = "Apache 2.0"
 
 import sys

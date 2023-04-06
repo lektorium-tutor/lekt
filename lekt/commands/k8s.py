@@ -156,12 +156,12 @@ class K8sTaskRunner(BaseTaskRunner):
         for job in all_jobs:
             job_name = job["metadata"]["name"]
             if not isinstance(job_name, str):
-                raise exceptions.TutorError(
+                raise exceptions.LektError(
                     f"Invalid job name: '{job_name}'. Expected str."
                 )
             if job_name == name:
                 return job
-        raise exceptions.TutorError(f"Could not find job '{name}'")
+        raise exceptions.LektError(f"Could not find job '{name}'")
 
     def _load_jobs(self) -> Iterable[Any]:
         manifests = self.render("k8s", "jobs.yml")
@@ -377,12 +377,12 @@ def do(context: K8sContext) -> None:
     def _start_base_deployments(_job_name: str, *_args: Any, **_kwargs: Any) -> None:
         """
         We add this logic to an action callback because we do not want to trigger it
-        whenever we run `tutor k8s do <job> --help`.
+        whenever we run `lekt k8s do <job> --help`.
         """
-        config = tutor_config.load(context.root)
+        config = lekt_config.load(context.root)
         wait_for_deployment_ready(config, "caddy")
         for name in ["elasticsearch", "mysql", "mongodb"]:
-            if tutor_config.is_service_activated(config, name):
+            if lekt_config.is_service_activated(config, name):
                 wait_for_deployment_ready(config, name)
 
 

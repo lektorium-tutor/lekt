@@ -163,7 +163,7 @@ def patches_command() -> None:
 @click.command(name="list", help="Print all available patches")
 @click.pass_obj
 def patches_list(context: Context) -> None:
-    config = tutor_config.load(context.root)
+    config = lekt_config.load(context.root)
     renderer = env.PatchRenderer(config)
     renderer.print_patches_locations()
 

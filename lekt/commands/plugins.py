@@ -84,11 +84,11 @@ def plugins_command() -> None:
 
     After the plugin index cache has been updated, plugins can be searched with:
 
-        tutor plugins search <pattern>
+        lekt plugins search <pattern>
 
     Plugins are installed with:
 
-        tutor plugins install <name>
+        lekt plugins install <name>
     """
     # All plugin commands should work even if there is no existing config file. This is
     # because users might enable or install plugins prior to configuration or
@@ -177,7 +177,7 @@ def update(context: Context) -> None:
     """
     Update the list of available plugins.
     """
-    config = tutor_config.load(context.root)
+    config = lekt_config.load(context.root)
     update_indexes(config)
 
 

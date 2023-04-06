@@ -23,7 +23,7 @@ commonAnnotations:
 commonLabels:
   app.kubernetes.io/instance: openedx-{{ ID }}
   app.kubernetes.io/part-of: openedx
-  app.kubernetes.io/managed-by: tutor
+  app.kubernetes.io/managed-by: lekt
   {{ patch("kustomization-commonlabels")|indent(2) }}
 
 configMapGenerator:

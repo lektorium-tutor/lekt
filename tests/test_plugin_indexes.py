@@ -2,20 +2,20 @@ import os
 import unittest
 from unittest.mock import patch
 
-from tutor.exceptions import TutorError
-from tutor.plugins import indexes
-from tutor.types import Config
+from lekt.exceptions import LektError
+from lekt.plugins import indexes
+from lekt.types import Config
 
 
 class PluginIndexesTest(unittest.TestCase):
     def test_named_index_url(self) -> None:
         self.assertEqual(
-            f"https://myindex.com/tutor/{indexes.RELEASE}/plugins.yml",
-            indexes.named_index_url("https://myindex.com/tutor"),
+            f"https://myindex.com/lekt/{indexes.RELEASE}/plugins.yml",
+            indexes.named_index_url("https://myindex.com/lekt"),
         )
         self.assertEqual(
-            f"https://myindex.com/tutor/{indexes.RELEASE}/plugins.yml",
-            indexes.named_index_url("https://myindex.com/tutor/"),
+            f"https://myindex.com/lekt/{indexes.RELEASE}/plugins.yml",
+            indexes.named_index_url("https://myindex.com/lekt/"),
         )
 
         local_url = os.path.join("path", "to", "index", indexes.RELEASE)
@@ -28,10 +28,10 @@ class PluginIndexesTest(unittest.TestCase):
         # Valid, empty index
         self.assertEqual([], indexes.parse_index("[]"))
         # Invalid index, list expected
-        with self.assertRaises(TutorError):
+        with self.assertRaises(LektError):
             self.assertEqual([], indexes.parse_index("{}"))
         # Invalid, empty index
-        with self.assertRaises(TutorError):
+        with self.assertRaises(LektError):
             self.assertEqual([], indexes.parse_index("["))
         # Partially valid index
         with patch.object(indexes.fmt, "echo"):

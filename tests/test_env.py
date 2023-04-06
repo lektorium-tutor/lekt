@@ -270,7 +270,7 @@ class PatchRendererTests(unittest.TestCase):
         self.render.current_template = "current_template"
         return super().setUp()
 
-    @patch("tutor.env.Renderer.render_template")
+    @patch("lekt.env.Renderer.render_template")
     def test_render_template(self, render_template_mock: Mock) -> None:
         """Test that render_template changes the current template and
         calls once render_template from Renderer with the current template."""
@@ -279,7 +279,7 @@ class PatchRendererTests(unittest.TestCase):
         self.assertEqual(self.render.current_template, "new_template")
         render_template_mock.assert_called_once_with("new_template")
 
-    @patch("tutor.env.Renderer.patch")
+    @patch("lekt.env.Renderer.patch")
     def test_patch_with_first_patch(self, patch_mock: Mock) -> None:
         """Test that patch is called from Renderer and adds patches_locations
         when we didn't have that patch."""
@@ -304,7 +304,7 @@ class PatchRendererTests(unittest.TestCase):
             {"first_patch": ["template_1", "current_template"]},
         )
 
-    @patch("tutor.env.plugins.iter_patches")
+    @patch("lekt.env.plugins.iter_patches")
     def test_patch_with_custom_patch_in_a_plugin_patch(
         self, iter_patches_mock: Mock
     ) -> None:
@@ -313,7 +313,7 @@ class PatchRendererTests(unittest.TestCase):
         - When first_patch is in a plugin patches and has a 'custom_patch',
         the patches_locations will reflect that 'custom_patch' is from
         first_patch location.
-        - If in tutor-mfe/tutormfe/patches/caddyfile you add a custom patch
+        - If in lekt-mfe/lektmfe/patches/caddyfile you add a custom patch
         inside the caddyfile patch, the patches_locations will reflect that.
 
         Expected behavior:
@@ -339,7 +339,7 @@ class PatchRendererTests(unittest.TestCase):
             },
         )
 
-    @patch("tutor.env.plugins.iter_patches")
+    @patch("lekt.env.plugins.iter_patches")
     def test_patch_with_processed_patch_in_a_plugin_patch(
         self, iter_patches_mock: Mock
     ) -> None:
@@ -364,8 +364,8 @@ class PatchRendererTests(unittest.TestCase):
             },
         )
 
-    @patch("tutor.env.Renderer.iter_templates_in")
-    @patch("tutor.env.PatchRenderer.render_template")
+    @patch("lekt.env.Renderer.iter_templates_in")
+    @patch("lekt.env.PatchRenderer.render_template")
     def test_render_all(
         self, render_template_mock: Mock, iter_templates_in_mock: Mock
     ) -> None:
@@ -379,7 +379,7 @@ class PatchRendererTests(unittest.TestCase):
         render_template_mock.assert_has_calls(calls)
 
     @patch("sys.stdout", new_callable=StringIO)
-    @patch("tutor.env.PatchRenderer.render_all")
+    @patch("lekt.env.PatchRenderer.render_all")
     def test_print_patches_locations(
         self, render_all_mock: Mock, stdout_mock: Mock
     ) -> None:
